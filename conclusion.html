@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="fr-CH">
+<head>
+  <meta charset="UTF-8">
+  <title>Conclusion – Mots clés</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bleu: #003a8f;
+      --bleu-clair: #e8eef8;
+      --vert: #1f7a3d;
+      --vert-clair: #e8f5ec;
+      --neutre: #f7f9fc;
+      --neutre-2: #eef2f8;
+      --texte: #111;
+      --texte-doux: #3a3a3a;
+      --accent: #0b66d4;
+      --ombre: 0 10px 25px rgba(0,0,0,0.08);
+      --ombre-forte: 0 14px 30px rgba(0,0,0,0.12);
+    }
+
+    body{
+      font-family:'Open Sans', Arial, sans-serif;
+      margin:0;
+      background: linear-gradient(180deg, #eaf0f8, var(--neutre));
+      color: var(--texte);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+
+    header{
+      background: linear-gradient(135deg, var(--bleu), var(--accent));
+      color:#fff;
+      padding:28px 60px;
+    }
+
+    header h1{
+      margin:0;
+      font-size: clamp(32px, 2.8vw, 44px);
+    }
+
+    header p{
+      margin:8px 0 0;
+      font-size: clamp(18px, 1.5vw, 22px);
+      opacity:0.95;
+    }
+
+    main{
+      flex:1;
+      padding:40px 60px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:30px;
+      background: radial-gradient(circle at top right, rgba(0,80,200,0.06), transparent 45%),
+                  radial-gradient(circle at bottom left, rgba(31,122,61,0.06), transparent 45%);
+    }
+
+    .bloc{
+      background:#fff;
+      border-radius:18px;
+      padding:32px;
+      box-shadow:var(--ombre);
+      border:1px solid #dfe6f2;
+      border-left:6px solid var(--bleu);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .bloc:nth-of-type(even){
+      border-left-color:var(--vert);
+    }
+
+    .bloc::after{
+      content:"";
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      height:4px;
+      background:linear-gradient(90deg,var(--bleu-clair),var(--vert-clair));
+    }
+
+    .bloc h2{
+      margin:0 0 15px 0;
+      font-size: clamp(24px, 2.2vw, 34px);
+      color:var(--bleu);
+      border-left:6px solid var(--vert);
+      padding-left:14px;
+    }
+
+    .bloc ul{
+      font-size: clamp(18px, 1.6vw, 26px);
+      line-height:1.6;
+    }
+
+    .definition{
+      background:linear-gradient(90deg,var(--vert-clair),var(--bleu-clair));
+      padding:18px 20px;
+      border-radius:12px;
+      border-left:6px solid var(--vert);
+      font-size: clamp(18px, 1.6vw, 24px);
+      line-height:1.5;
+      margin-bottom:15px;
+    }
+
+    .planning{
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      margin-top:10px;
+    }
+
+    .etape{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      background: var(--neutre);
+      padding:14px 18px;
+      border-radius:12px;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .etape:hover{
+      transform: translateX(6px);
+      background: var(--neutre-2);
+    }
+
+    .duree{
+      font-weight: bold;
+      font-size: clamp(16px, 1.4vw, 22px);
+      color: var(--bleu);
+      min-width: 44px;
+      text-align:center;
+    }
+
+    .contenu{
+      font-size: clamp(18px, 1.6vw, 24px);
+      text-align: left;
+      flex: 1;
+    }
+
+    footer{
+      padding:18px 40px;
+      background: var(--neutre-2);
+      border-top: 1px solid #e3e8f1;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:16px;
+      flex-wrap:wrap;
+      color: var(--texte-doux);
+    }
+
+    button{
+      font-size: clamp(14px, 1.1vw, 18px);
+      padding:12px 22px;
+      border-radius:30px;
+      border:none;
+      background:linear-gradient(135deg,var(--bleu),var(--accent));
+      color:#fff;
+      cursor:pointer;
+      box-shadow:0 6px 14px rgba(0,0,0,0.15);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover{ transform: translateY(-2px); box-shadow: var(--ombre-forte); }
+
+    .nav-btn{
+      text-decoration:none;
+      background:linear-gradient(135deg,var(--bleu),var(--accent));
+      color:#fff;
+      padding:12px 22px;
+      border-radius:30px;
+      font-size: clamp(14px, 1.1vw, 18px);
+      box-shadow:0 6px 14px rgba(0,0,0,0.15);
+      display:inline-block;
+      transition:transform .2s ease, box-shadow .2s ease;
+    }
+
+    .nav-btn:hover{ transform:translateY(-2px); box-shadow:0 14px 30px rgba(0,0,0,0.12); }
+
+    .nav-links{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    @media(max-width:1000px){
+      main{grid-template-columns:1fr;}
+    }
+
+    @media print{
+      button{display:none;}
+      body{background:#fff;}
+    }
+
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Conclusion</h1>
+  <p>Mots clés importants · Théorie · Explications</p>
+</header>
+
+<main>
+
+  <section class="bloc">
+    <h2>🧩 Mots clés importants</h2>
+    <div class="planning">
+      <div class="etape"><div class="duree">🖱️</div><div class="contenu">Souris</div></div>
+      <div class="etape"><div class="duree">🧭</div><div class="contenu">Curseur (flèche)</div></div>
+      <div class="etape"><div class="duree">👆</div><div class="contenu">Clic gauche</div></div>
+      <div class="etape"><div class="duree">⚡</div><div class="contenu">Double-clic</div></div>
+      <div class="etape"><div class="duree">🧾</div><div class="contenu">Clic droit</div></div>
+      <div class="etape"><div class="duree">🌀</div><div class="contenu">Molette</div></div>
+      <div class="etape"><div class="duree">📋</div><div class="contenu">Menu</div></div>
+      <div class="etape"><div class="duree">📁</div><div class="contenu">Dossier</div></div>
+      <div class="etape"><div class="duree">📄</div><div class="contenu">Fichier</div></div>
+      <div class="etape"><div class="duree">🧷</div><div class="contenu">Offre d'emploi</div></div>
+      <div class="etape"><div class="duree">📨</div><div class="contenu">Candidature</div></div>
+      <div class="etape"><div class="duree">✉️</div><div class="contenu">E-mail</div></div>
+    </div>
+  </section>
+
+  <section class="bloc">
+    <h2>📚 Théorie et explications</h2>
+
+    <div class="definition">
+      <strong>🖱️ Souris :</strong><br>
+      Outil pour bouger le curseur et agir sur l’ordinateur.
+    </div>
+
+    <div class="definition">
+      <strong>🧭 Curseur :</strong><br>
+      Petite flèche à l’écran. Elle montre où l’on agit.
+    </div>
+
+    <div class="definition">
+      <strong>👆 Clic gauche :</strong><br>
+      Sélectionner ou ouvrir un élément.
+    </div>
+
+    <div class="definition">
+      <strong>⚡ Double-clic :</strong><br>
+      Ouvrir rapidement un dossier ou un fichier.
+    </div>
+
+    <div class="definition">
+      <strong>🧾 Clic droit :</strong><br>
+      Ouvrir un menu avec plusieurs actions possibles.
+    </div>
+
+    <div class="definition">
+      <strong>🌀 Molette :</strong><br>
+      Monter ou descendre dans une page.
+    </div>
+
+    <div class="definition">
+      <strong>⭐ Important :</strong><br>
+      Pour chercher un emploi, il faut savoir cliquer, ouvrir, lire et choisir calmement.
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  <div>Objectif atteint : utiliser la souris pour chercher un emploi</div>
+  <div class="nav-links">
+    <button onclick="window.print()">Télécharger en PDF</button>
+    <a class="nav-btn" href="debriefing.html">⬅ Retour</a>
+    <a class="nav-btn" href="atelier_recherche_demploi.html">Suivant ➜</a>
+  </div>
+</footer>
+
+</body>
+</html>

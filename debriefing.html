@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="fr-CH">
+<head>
+  <meta charset="UTF-8" />
+  <title>Détente et débriefing</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --bleu: #003a8f;
+      --bleu-clair: #e8eef8;
+      --vert: #1f7a3d;
+      --vert-clair: #e8f5ec;
+      --neutre: #f7f9fc;
+      --neutre-2: #eef2f8;
+      --texte: #111;
+      --texte-doux: #3a3a3a;
+      --accent: #0b66d4;
+      --rouge: #b42318;
+      --rouge-clair: #fdecec;
+      --ombre: 0 10px 25px rgba(0,0,0,0.08);
+      --ombre-forte: 0 14px 30px rgba(0,0,0,0.12);
+    }
+
+    *{ box-sizing: border-box; }
+
+    body{
+      font-family:'Open Sans', Arial, sans-serif;
+      margin:0;
+      background: linear-gradient(180deg, #eaf0f8, var(--neutre));
+      color: var(--texte);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+
+    header{
+      background: linear-gradient(135deg, var(--bleu), var(--accent));
+      color:#fff;
+      padding:28px 60px;
+    }
+
+    header h1{ margin:0; font-size: clamp(32px, 2.8vw, 44px); }
+    header p{ margin:8px 0 0; font-size: clamp(18px, 1.5vw, 22px); opacity:.95; }
+
+    main{
+      flex:1;
+      padding:40px 60px;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      overflow:auto;
+      background: radial-gradient(circle at top right, rgba(0,80,200,0.06), transparent 45%),
+                  radial-gradient(circle at bottom left, rgba(31,122,61,0.06), transparent 45%);
+    }
+
+    .carte{
+      background:#fff;
+      border-radius:18px;
+      padding:40px;
+      box-shadow: var(--ombre);
+      min-width: 0;
+      border:1px solid #dfe6f2;
+      border-left:6px solid var(--bleu);
+      position:relative;
+      overflow:hidden;
+      width: min(1200px, 100%);
+    }
+
+    .carte{
+      display:none;
+    }
+
+    .carte.active{
+      display:block;
+    }
+
+    .carte:nth-of-type(even){
+      border-left-color:var(--vert);
+    }
+
+    .carte::after{
+      content:"";
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      height:4px;
+      background:linear-gradient(90deg,var(--bleu-clair),var(--vert-clair));
+    }
+
+    .carte h2{
+      margin:0 0 15px 0;
+      font-size: clamp(24px, 2.2vw, 34px);
+      color:var(--bleu);
+      border-left:6px solid var(--vert);
+      padding-left:14px;
+    }
+
+    .hint{
+      font-size: clamp(16px, 1.4vw, 22px);
+      opacity:.85;
+      margin-top:-10px;
+      margin-bottom:18px;
+    }
+
+    .question{
+      font-size: clamp(20px, 1.7vw, 28px);
+      font-weight:700;
+      background:linear-gradient(90deg,var(--vert-clair),var(--bleu-clair));
+      padding:24px;
+      border-radius:14px;
+      border-left:6px solid var(--vert);
+      margin-bottom:18px;
+    }
+
+    .votes{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:20px;
+    }
+
+    .vote-card{
+      background:var(--neutre);
+      padding:24px;
+      border-radius:16px;
+      font-size: clamp(18px, 1.5vw, 24px);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      cursor:pointer;
+      transition:transform .2s ease, background .2s ease;
+      user-select:none;
+      min-width:0;
+    }
+
+    .vote-card:hover{ transform:translateY(-4px); background:var(--bleu-clair); }
+
+    .count{
+      font-size: clamp(18px, 1.5vw, 26px);
+      font-weight:800;
+      background: linear-gradient(135deg, var(--vert), #2a9b55);
+      color:#fff;
+      padding:6px 14px;
+      border-radius:20px;
+      min-width:40px;
+      text-align:center;
+    }
+
+    .actions{
+      display:flex;
+      gap:12px;
+      justify-content:flex-end;
+      align-items:center;
+      margin-top:18px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      padding:12px 22px;
+      border-radius:30px;
+      border:none;
+      background: linear-gradient(135deg, var(--bleu), var(--accent));
+      color:#fff;
+      font-size: clamp(14px, 1.1vw, 18px);
+      cursor:pointer;
+      box-shadow:0 6px 14px rgba(0,0,0,0.15);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn:disabled{ opacity:.55; cursor:not-allowed; }
+    .btn-secondary{ background:#6b7280; }
+    .btn:hover{ transform: translateY(-2px); box-shadow: var(--ombre-forte); }
+    .btn.btn-secondary:hover{ box-shadow: var(--ombre-forte); }
+
+    #feedback{
+      margin-top:18px;
+      font-size: clamp(18px, 1.5vw, 24px);
+      font-weight:800;
+      padding:14px 16px;
+      border-radius:12px;
+      border-left:6px solid var(--vert);
+      background:var(--vert-clair);
+      display:none;
+      line-height:1.35;
+    }
+
+    #feedback.bad{ border-left-color: var(--rouge); background: var(--rouge-clair); }
+
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:20px;
+    }
+
+    .chip{
+      background: var(--bleu-clair);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: clamp(16px, 1.4vw, 22px);
+      font-weight: 600;
+    }
+
+    .text-input{
+      width:100%;
+      padding:12px;
+      font-size: clamp(16px, 1.4vw, 22px);
+      border-radius:10px;
+      border:1px solid #ccc;
+    }
+
+    #melange-feedback{
+      margin-top:15px;
+      font-size: clamp(18px, 1.5vw, 24px);
+      font-weight:800;
+      min-height: 1.2em;
+    }
+
+    footer{
+      padding:18px 40px;
+      background: var(--neutre-2);
+      border-top: 1px solid #e3e8f1;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap: 16px;
+      flex-wrap: wrap;
+      color: var(--texte-doux);
+    }
+
+    .nav-btn{
+      text-decoration:none;
+      background:linear-gradient(135deg,var(--bleu),var(--accent));
+      color:#fff;
+      padding:12px 22px;
+      border-radius:30px;
+      font-size: clamp(14px, 1.1vw, 18px);
+      white-space: nowrap;
+      box-shadow:0 6px 14px rgba(0,0,0,0.15);
+      transition:transform .2s ease, box-shadow .2s ease;
+      display:inline-block;
+    }
+
+    .nav-btn:hover{ transform:translateY(-2px); box-shadow:0 14px 30px rgba(0,0,0,0.12); }
+
+    .nav-links{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .card-controls{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .card-indicator{
+      font-size: clamp(14px, 1.1vw, 18px);
+      color: var(--texte-doux);
+      min-width: 120px;
+      text-align:center;
+    }
+
+    @media (max-width:1100px){
+      header{ padding:24px 18px; }
+      main{ padding:28px 18px; }
+      .carte{ padding:24px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Détente et débriefing</h1>
+  <p>Temps de détente, retour collectif et consolidation des apprentissages</p>
+</header>
+
+<main>
+
+  <!-- 1) Haut gauche -->
+  <section class="carte" id="auto-section" style="grid-column:1">
+    <h2>📊 Autoévaluation initiale</h2>
+    <div class="question">🎯 Quel est votre niveau avec la souris aujourd’hui ?</div>
+    <div class="votes">
+      <div class="vote-card" onclick="voteAuto(0)">😕 Très peu<div class="count" id="a0">0</div></div>
+      <div class="vote-card" onclick="voteAuto(1)">🙂 Un peu<div class="count" id="a1">0</div></div>
+      <div class="vote-card" onclick="voteAuto(2)">À l’aise<div class="count" id="a2">0</div></div>
+      <div class="vote-card" onclick="voteAuto(3)">🚀 Avancé<div class="count" id="a3">0</div></div>
+    </div>
+  </section>
+
+  <!-- 2) Bas droite -->
+  <section class="carte" id="ressenti-section" style="grid-column:2">
+    <h2>🧭 Comment s’est passé le cours ?</h2>
+    <div class="question">💬 Comment vous êtes-vous senti(e) avec la souris aujourd’hui ?</div>
+    <div class="votes">
+      <div class="vote-card" onclick="voteRessenti(0)">🙂 Bien<div class="count" id="r0">0</div></div>
+      <div class="vote-card" onclick="voteRessenti(1)">😐 Moyen<div class="count" id="r1">0</div></div>
+      <div class="vote-card" onclick="voteRessenti(2)">😕 Difficile<div class="count" id="r2">0</div></div>
+      <div class="vote-card" onclick="voteRessenti(3)">❓ Pas compris<div class="count" id="r3">0</div></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="card-controls">
+    <button class="btn btn-secondary" id="card-prev">⬅︎ Retour</button>
+    <div class="card-indicator" id="card-indicator">Carte 1 / 4</div>
+    <button class="btn" id="card-next">Suivant ➜</button>
+  </div>
+  <div class="nav-links">
+    <a class="nav-btn" href="decouverte_partage.html">⬅ Retour</a>
+    <a class="nav-btn" href="conclusion.html">Suivant ➜</a>
+  </div>
+</footer>
+
+<script>
+  const state = {
+    auto: [0,0,0,0],
+    ressenti: [0,0,0,0],
+  };
+
+  // ===== Votes Autoévaluation initiale =====
+  window.voteAuto = function(i){
+    state.auto[i]++;
+    const el = document.getElementById('a'+i);
+    if(el) el.textContent = String(state.auto[i]);
+  };
+
+  // ===== Votes Ressenti =====
+  window.voteRessenti = function(i){
+    state.ressenti[i]++;
+    const el = document.getElementById('r'+i);
+    if(el) el.textContent = String(state.ressenti[i]);
+  };
+
+  // ===== Tests (console) =====
+  function runTests(){
+    function assert(cond, msg){ if(!cond) throw new Error('Test échoué: ' + msg); }
+
+    assert(typeof window.voteAuto === 'function', 'voteAuto doit exister');
+    assert(typeof window.voteRessenti === 'function', 'voteRessenti doit exister');
+
+    // auto + ressenti
+    const a0 = document.getElementById('a0');
+    const r0 = document.getElementById('r0');
+    assert(a0 && r0, 'compteurs a0 et r0 doivent exister');
+
+    const a0before = Number(a0.textContent);
+    window.voteAuto(0);
+    const a0after = Number(a0.textContent);
+    assert(a0after === a0before + 1, 'voteAuto doit incrémenter');
+
+    const r0before = Number(r0.textContent);
+    window.voteRessenti(0);
+    const r0after = Number(r0.textContent);
+    assert(r0after === r0before + 1, 'voteRessenti doit incrémenter');
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    runTests();
+
+    const cards = Array.from(document.querySelectorAll('main .carte'));
+    const prevBtn = document.getElementById('card-prev');
+    const nextBtn = document.getElementById('card-next');
+    const indicator = document.getElementById('card-indicator');
+    let current = 0;
+
+    function updateCards(){
+      cards.forEach((card, idx) => {
+        card.classList.toggle('active', idx === current);
+      });
+      if(indicator){
+        indicator.textContent = 'Carte ' + (current + 1) + ' / ' + cards.length;
+      }
+      if(prevBtn) prevBtn.disabled = current === 0;
+      if(nextBtn) nextBtn.disabled = current === cards.length - 1;
+    }
+
+    if(prevBtn){
+      prevBtn.addEventListener('click', () => {
+        if(current > 0){
+          current--;
+          updateCards();
+        }
+      });
+    }
+
+    if(nextBtn){
+      nextBtn.addEventListener('click', () => {
+        if(current < cards.length - 1){
+          current++;
+          updateCards();
+        }
+      });
+    }
+
+    updateCards();
+  });
+</script>
+
+</body>
+</html>

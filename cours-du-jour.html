@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="fr-CH">
+<head>
+  <meta charset="UTF-8">
+  <title>Accueil – Cours du jour</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bleu: #003a8f;
+      --bleu-clair: #e8eef8;
+      --vert: #1f7a3d;
+      --vert-clair: #e8f5ec;
+      --neutre: #f7f9fc;
+      --neutre-2: #eef2f8;
+      --texte: #111;
+      --texte-doux: #3a3a3a;
+      --accent: #0b66d4;
+      --ombre: 0 10px 25px rgba(0,0,0,0.08);
+      --ombre-forte: 0 14px 30px rgba(0,0,0,0.12);
+    }
+
+    body {
+      font-family: 'Open Sans', Arial, sans-serif;
+      background: linear-gradient(180deg, #eaf0f8, var(--neutre));
+      margin: 0;
+      color: var(--texte);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--bleu), var(--accent));
+      color: #fff;
+      padding: 28px 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(34px, 3.2vw, 48px);
+    }
+
+    header .subtitle {
+      font-size: clamp(18px, 1.6vw, 22px);
+      margin-top: 6px;
+      opacity: 0.95;
+    }
+
+    header .meta {
+      text-align: right;
+      font-size: clamp(18px, 1.6vw, 22px);
+      line-height: 1.5;
+    }
+
+    .niveau-badge,
+    .horaire-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-top: 6px;
+    }
+
+    .niveau-badge {
+      background: rgba(255,255,255,0.15);
+      font-weight: bold;
+    }
+
+    .horaire-badge {
+      background: rgba(255,255,255,0.25);
+      font-size: clamp(16px, 1.4vw, 20px);
+    }
+
+    main {
+      flex: 1;
+      padding: 40px 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      background: radial-gradient(circle at top right, rgba(0,80,200,0.06), transparent 45%),
+                  radial-gradient(circle at bottom left, rgba(31,122,61,0.06), transparent 45%);
+    }
+
+    .bloc {
+      background: #fff;
+      border-radius: 18px;
+      padding: 32px;
+      box-shadow: var(--ombre);
+      border: 1px solid #dfe6f2;
+      border-left: 6px solid var(--bleu);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bloc:nth-of-type(even) {
+      border-left-color: var(--vert);
+    }
+
+    .bloc::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--bleu-clair), var(--vert-clair));
+    }
+
+    .bloc h2 {
+      margin: 0 0 15px 0;
+      font-size: clamp(24px, 2.2vw, 34px);
+      color: var(--bleu);
+      border-left: 6px solid var(--vert);
+      padding-left: 14px;
+    }
+
+    .bloc h2.icon-right {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .bloc h2.icon-right .icon {
+      font-size: clamp(32px, 3.2vw, 48px);
+      line-height: 1;
+    }
+
+    .bloc p,
+    .bloc ul {
+      font-size: clamp(18px, 1.6vw, 26px);
+      line-height: 1.55;
+    }
+
+    .objectif {
+      font-size: clamp(20px, 1.8vw, 30px);
+      font-weight: bold;
+      background: linear-gradient(90deg, var(--vert-clair), var(--bleu-clair));
+      padding: 16px 20px;
+      border-radius: 12px;
+      border-left: 6px solid var(--vert);
+    }
+
+    .planning {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .etape {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--neutre);
+      padding: 14px 18px;
+      border-radius: 12px;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .etape:hover {
+      transform: translateX(6px);
+      background: var(--neutre-2);
+    }
+
+    .duree {
+      font-weight: bold;
+      font-size: clamp(16px, 1.4vw, 22px);
+      color: var(--bleu);
+      min-width: 140px;
+    }
+
+    .contenu {
+      font-size: clamp(18px, 1.6vw, 24px);
+      text-align: right;
+      flex: 1;
+    }
+
+    .lien-etape {
+      text-decoration: none;
+      color: var(--bleu);
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 20px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .lien-etape:hover {
+      background: var(--bleu-clair);
+      color: var(--vert);
+    }
+
+    .pause {
+      background: #fff4e5;
+    }
+
+    .pause .duree {
+      color: #c96a00;
+    }
+
+    .long {
+      background: var(--vert-clair);
+    }
+
+    .long .duree {
+      color: var(--vert);
+    }
+
+
+    .organisation {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    .orga-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: var(--neutre);
+      padding: 16px 20px;
+      border-radius: 14px;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .orga-item:hover {
+      transform: translateX(6px);
+      background: var(--neutre-2);
+    }
+
+    .orga-icon {
+      font-size: 28px;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    .orga-text {
+      font-size: clamp(18px, 1.6vw, 24px);
+      flex: 1;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 40px;
+      font-size: clamp(14px, 1.1vw, 18px);
+      color: var(--texte-doux);
+      background: var(--neutre-2);
+      border-top: 1px solid #e3e8f1;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .nav-btn {
+      text-decoration: none;
+      background: linear-gradient(135deg, var(--bleu), var(--accent));
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 30px;
+      font-size: clamp(14px, 1.1vw, 18px);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--ombre-forte);
+    }
+
+    button {
+      font-size: clamp(14px, 1.1vw, 18px);
+      padding: 12px 22px;
+      border-radius: 30px;
+      border: none;
+      background: linear-gradient(135deg, var(--bleu), var(--accent));
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--ombre-forte);
+    }
+
+    @media (max-width: 1000px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div>
+    <h1>Cours du jour</h1>
+    <div class="subtitle">Bureautique – Atelier de recherche d'emploi</div>
+  </div>
+  <div class="meta">
+    <div id="date"></div>
+    <div class="niveau-badge" id="niveau"></div>
+    <div class="horaire-badge" id="horaire"></div>
+  </div>
+</header>
+
+<main>
+
+  <section class="bloc">
+    <h2 class="icon-right">🧭 Situation <span class="icon" aria-hidden="true">🖱️</span></h2>
+    <p>Je cherche un emploi.<br>J’utilise la souris pour agir sur l’ordinateur.</p>
+  </section>
+
+  <section class="bloc">
+    <h2>🎯 Objectif</h2>
+    <p class="objectif">Utiliser la souris pour effectuer une recherche d’emploi à l’ordinateur.</p>
+  </section>
+
+  <section class="bloc">
+    <h2>🗓️ Déroulement du matin</h2>
+    <div class="planning">
+
+      <div class="etape">
+        <div class="duree">15 min</div>
+        <div class="contenu">🤝 Découverte du cours et partage collectif</div>
+      </div>
+
+      <div class="etape">
+        <div class="duree">15 min</div>
+        <div class="contenu">
+          <a class="lien-etape" href="pages/souris/observation.html">
+            🖱️ Observation de la souris ▶
+          </a>
+        </div>
+      </div>
+
+      <div class="etape">
+        <div class="duree">60 min</div>
+        <div class="contenu">
+          <a class="lien-etape" href="https://exemple-exercices-souris.ch" target="_blank" rel="noopener">
+            🧩 Exercices pratiques 🌐
+          </a>
+        </div>
+      </div>
+
+      <div class="etape pause">
+        <div class="duree">10h – 10h15</div>
+        <div class="contenu">☕ Pause</div>
+      </div>
+
+      <div class="etape">
+        <div class="duree">15 min</div>
+        <div class="contenu">🧠 Débriefing</div>
+      </div>
+
+      <div class="etape">
+        <div class="duree">15 min</div>
+        <div class="contenu">✅ Conclusion</div>
+      </div>
+
+      <div class="etape long">
+        <div class="duree">60 min</div>
+        <div class="contenu">🔎 Atelier de recherche d'emploi</div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="bloc">
+    <h2>🧩 Organisation</h2>
+    <div class="organisation">
+
+      <div class="orga-item">
+        <div class="orga-icon">👥</div>
+        <div class="orga-text">Explication collective</div>
+      </div>
+
+      <div class="orga-item">
+        <div class="orga-icon">📺</div>
+        <div class="orga-text">Démonstration à l’écran</div>
+      </div>
+
+      <div class="orga-item">
+        <div class="orga-icon">🧭</div>
+        <div class="orga-text">Essais guidés individuels</div>
+      </div>
+
+      <div class="orga-item">
+        <div class="orga-icon">🗣️</div>
+        <div class="orga-text">Conclusion et mots-clés</div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div>Formation adultes · Projection horizontale · Lecture à distance</div>
+  <div class="nav-links">
+    <button onclick="document.documentElement.requestFullscreen()">Plein écran</button>
+    <a class="nav-btn" href="decouverte_partage.html">Suivant ➜</a>
+  </div>
+</footer>
+
+<script>
+  const NIVEAU_COURS = "TRE/BUR 1";
+  const HORAIRE_COURS = "8h30 – 11h45";
+
+  const aujourdHui = new Date();
+  document.getElementById('date').textContent =
+    aujourdHui.toLocaleDateString('fr-CH', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+
+  document.getElementById('niveau').textContent = "Niveau : " + NIVEAU_COURS;
+  document.getElementById('horaire').textContent = "Horaire : " + HORAIRE_COURS;
+</script>
+
+</body>
+</html>

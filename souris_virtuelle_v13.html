@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<title>Souris virtuelle – Windows</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{height:100vh;font-family:'Segoe UI',Tahoma,sans-serif;overflow:hidden;user-select:none;display:flex;}
+
+/* ══ CURSEURS WINDOWS ══ */
+body{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='24'%3E%3Cpath d='M2 2 L2 18 L6 14 L9 20 L11 19 L8 13 L13 13Z' fill='white' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E") 2 2, default;}
+.cur-text{cursor:text!important;}
+.cur-pointer{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='24'%3E%3Cpath d='M6 2 C6 2 6 14 6 14 L8 12 L10 16 L12 15 L10 11 L13 11Z' fill='white' stroke='black' stroke-width='1'/%3E%3C/svg%3E") 6 2, pointer!important;}
+.cur-move{cursor:move!important;}
+.cur-resize-se{cursor:nwse-resize!important;}
+.cur-resize-ew{cursor:ew-resize!important;}
+.cur-crosshair{cursor:crosshair!important;}
+.cur-grab{cursor:grab!important;}
+.cur-grabbing{cursor:grabbing!important;}
+
+/* ══ SIDEBAR ══ */
+#sidebar{width:185px;min-width:185px;background:#0a0a1a;display:flex;flex-direction:column;align-items:center;padding:14px 10px;gap:10px;z-index:9999;border-right:1px solid #1a1a3a;}
+#mouse-w{width:90px;height:138px;border:4px solid #555;border-radius:45px 45px 54px 54px;background:#fff;position:relative;box-shadow:0 4px 20px rgba(0,0,0,.5);flex-shrink:0;}
+.mbtn{position:absolute;width:50%;height:42%;top:0;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;transition:background .08s,transform .08s;}
+.mbtn span{font-size:7px;color:#aaa;font-weight:bold;text-transform:uppercase;}
+#mb-l{left:0;border-right:1.5px solid #ddd;border-radius:45px 0 0 0;}
+#mb-r{right:0;border-radius:0 45px 0 0;}
+.mwhl{position:absolute;width:14px;height:28px;top:30px;left:50%;transform:translateX(-50%);background:#eee;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.mwhl-i{width:10px;height:20px;background:#bbb;border-radius:6px;transition:background .15s,transform .15s;}
+#mw-lbl{position:absolute;font-size:7px;color:#aaa;bottom:12px;width:100%;text-align:center;text-transform:uppercase;}
+.mb-on{background:rgba(76,175,80,.55)!important;transform:scale(.92);}
+.mw-on{background:#2196f3!important;}
+.mb-drag{background:rgba(233,30,99,.45)!important;}
+.sb-card{width:100%;background:rgba(255,255,255,.04);border-radius:8px;padding:7px 9px;border:1px solid rgba(255,255,255,.05);}
+.sb-card h3{font-size:8px;text-transform:uppercase;letter-spacing:1px;color:#3a4060;margin-bottom:4px;}
+#coord-v{font-size:13px;font-weight:bold;color:#6c63ff;font-family:monospace;}
+#coord-v small{font-size:9px;color:#333;display:block;}
+#exp-t{font-size:10.5px;line-height:1.6;color:#777;min-height:52px;}
+#btn-rst{width:100%;background:#c62828;color:#fff;border:none;border-radius:12px;padding:7px;font-size:11px;font-weight:bold;cursor:pointer;}
+#btn-rst:hover{background:#e53935;}
+
+/* ══ BUREAU ══ */
+#desktop{flex:1;position:relative;overflow:hidden;background:linear-gradient(145deg,#1565c0 0%,#0d47a1 50%,#1a237e 100%);}
+#desktop::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 25% 35%,rgba(255,255,255,.06) 0%,transparent 55%);pointer-events:none;z-index:0;}
+
+/* ── Icônes bureau draggables ── */
+.dicon{position:absolute;display:flex;flex-direction:column;align-items:center;gap:3px;width:76px;padding:6px 4px;border-radius:5px;font-size:10px;color:#fff;text-shadow:1px 1px 4px rgba(0,0,0,.9);text-align:center;line-height:1.3;z-index:10;cursor:default;transition:background .12s;}
+.dicon:hover{background:rgba(255,255,255,.15);}
+.dicon.selected{background:rgba(100,149,237,.5);outline:1px solid rgba(100,149,237,.8);}
+.dicon.dragging-icon{opacity:.6;z-index:20;}
+.dicon .ico{font-size:32px;filter:drop-shadow(1px 2px 4px rgba(0,0,0,.6));pointer-events:none;}
+.dicon-lbl{pointer-events:none;display:block;word-break:break-word;}
+.icon-rename-input{width:68px;background:rgba(0,60,160,.7);color:#fff;border:1px solid #aad;font-size:10px;text-align:center;padding:1px 2px;outline:none;border-radius:2px;}
+
+/* ══ FENÊTRES ══ */
+.win{position:absolute;display:none;flex-direction:column;min-width:280px;min-height:180px;
+  border-radius:6px 6px 3px 3px;border:1px solid rgba(0,0,0,.6);overflow:hidden;z-index:500;
+  transform-origin:top left;
+  transition:transform .18s cubic-bezier(.34,1.56,.64,1), opacity .15s;
+  box-shadow:2px 2px 0 rgba(0,0,0,.4),0 10px 40px rgba(0,0,0,.6);}
+.win.opening{animation:winOpen .22s cubic-bezier(.34,1.4,.64,1) forwards;}
+.win.closing{animation:winClose .15s ease-in forwards;}
+.win.minimizing{animation:winMin .18s ease-in forwards;}
+.win.restoring{animation:winOpen .2s cubic-bezier(.34,1.4,.64,1) forwards;}
+.win.open{display:flex;}
+.win.minimized{display:none!important;}
+@keyframes winOpen{from{transform:scale(.3);opacity:0;}to{transform:scale(1);opacity:1;}}
+@keyframes winClose{from{transform:scale(1);opacity:1;}to{transform:scale(.3);opacity:0;display:none;}}
+@keyframes winMin{from{transform:scale(1);opacity:1;}to{transform:scale(.1) translateY(200px);opacity:0;}}
+
+.titlebar{height:28px;display:flex;align-items:center;padding:0 6px;gap:5px;cursor:move;flex-shrink:0;
+  background:linear-gradient(180deg,#5294e8 0%,#2264c8 50%,#1850b0 100%);border-bottom:1px solid #1040a0;}
+.win:not(.focused) .titlebar{background:linear-gradient(180deg,#888 0%,#666 50%,#555 100%);border-bottom-color:#444;}
+.tb-ico{font-size:14px;}
+.tb-title{flex:1;font-size:12px;font-weight:bold;color:#fff;text-shadow:1px 1px 2px rgba(0,0,0,.6);white-space:nowrap;overflow:hidden;}
+.win:not(.focused) .tb-title{color:#ccc;}
+.tb-btns{display:flex;gap:2px;}
+.wbtn{width:22px;height:19px;border-radius:3px;border:1px solid rgba(0,0,0,.4);font-size:10px;font-weight:bold;cursor:pointer;color:#fff;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#6ab4ea,#3a7cc8);transition:filter .1s;}
+.wbtn:hover{filter:brightness(1.3);}
+.wbtn.wclose{background:linear-gradient(180deg,#e87070,#c83030);}
+.wbtn.wmin::after{content:'–';}
+.wbtn.wmax::after{content:'□';}
+.wbtn.wclose::after{content:'✕';}
+.win:not(.focused) .wbtn{background:linear-gradient(180deg,#aaa,#888);}
+
+/* Menus barre */
+.menubar{background:#ece9d8;border-bottom:1px solid #b0a898;display:flex;padding:1px 2px;flex-shrink:0;position:relative;}
+.mi{padding:3px 8px;font-size:12px;color:#000;cursor:pointer;border-radius:3px;white-space:nowrap;}
+.mi:hover,.mi.active{background:#316ac5;color:#fff;}
+.dd-menu{position:fixed;background:#fff;border:1px solid #888;box-shadow:2px 2px 8px rgba(0,0,0,.35);z-index:99999;padding:2px 0;min-width:190px;display:none;}
+.dd-menu.open{display:block;}
+.ddr{padding:4px 24px 4px 8px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.ddr:hover{background:#316ac5;color:#fff;}
+.ddr.dis{color:#aaa;pointer-events:none;}
+.ddr .di{font-size:13px;width:18px;flex-shrink:0;}
+.ddr .sc{margin-left:auto;color:#888;font-size:11px;padding-left:16px;}
+.ddr:hover .sc{color:#cce;}
+.ddsep{height:1px;background:#d4d0c8;margin:2px 0;}
+
+/* Toolbar */
+.toolbar{background:#ece9d8;border-bottom:1px solid #b0a898;display:flex;align-items:center;padding:2px 4px;gap:2px;flex-shrink:0;}
+.tbtn{background:transparent;border:1px solid transparent;border-radius:3px;padding:3px 6px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.tbtn:hover{background:#ddd;border-color:#999;}
+.tsep{width:1px;height:20px;background:#b0a898;margin:0 3px;}
+.win-body{flex:1;overflow:auto;position:relative;background:#fff;}
+.statusbar{height:20px;background:#ece9d8;border-top:1px solid #b0a898;display:flex;align-items:center;padding:0 6px;font-size:11px;color:#444;flex-shrink:0;gap:8px;}
+.ssep{width:1px;height:13px;background:#b0a898;}
+.rh{position:absolute;bottom:0;right:0;width:16px;height:16px;z-index:10;
+  background:linear-gradient(135deg,transparent 30%,#aaa 30%,#aaa 45%,transparent 45%,transparent 60%,#aaa 60%,#aaa 75%,transparent 75%);}
+
+/* ── Explorateur ── */
+#win-exp{width:530px;top:30px;left:95px;}
+.exp-tree{width:155px;min-width:155px;border-right:1px solid #b0a898;background:#fff;overflow-y:auto;font-size:12px;flex-shrink:0;}
+.trow{padding:3px 6px 3px 8px;cursor:pointer;display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.trow:hover{background:#ddeeff;}
+.trow.active{background:#316ac5;color:#fff;}
+.exp-addr{background:#ece9d8;border-bottom:1px solid #b0a898;display:flex;align-items:center;gap:6px;padding:3px 8px;font-size:12px;flex-shrink:0;}
+.abar{flex:1;background:#fff;border:1px solid #7f9db9;padding:2px 6px;font-size:12px;}
+.file-grid{display:flex;flex-wrap:wrap;gap:8px;padding:10px;}
+.file-list{display:flex;flex-direction:column;}
+.fitem{display:flex;flex-direction:column;align-items:center;gap:3px;width:74px;padding:6px 4px;border-radius:4px;cursor:default;font-size:11px;text-align:center;line-height:1.3;}
+.fitem:hover{background:#ddeeff;}
+.fitem.selected{background:#316ac5;color:#fff;}
+.fitem .ico{font-size:28px;}
+.litem{display:flex;align-items:center;gap:8px;padding:3px 8px;font-size:12px;cursor:default;border-bottom:1px solid #f0f0f0;}
+.litem:hover{background:#ddeeff;}
+.litem.selected{background:#316ac5;color:#fff;}
+.litem .ico{font-size:17px;}
+.litem .ln{flex:1;}
+.litem .ls{width:65px;text-align:right;font-size:11px;color:#888;}
+.litem.selected .ls{color:#cce;}
+
+/* ── Bloc-notes ── */
+#win-np{width:420px;top:60px;left:140px;}
+#np-a{width:100%;height:100%;border:none;outline:none;resize:none;font-family:'Courier New',monospace;font-size:13px;padding:4px;line-height:1.7;background:#fff;}
+
+/* ── Navigateur ── */
+#win-browser{width:560px;top:25px;left:85px;}
+.browser-bar{background:#f5f5f5;border-bottom:1px solid #ccc;display:flex;align-items:center;gap:6px;padding:5px 8px;flex-shrink:0;}
+.br-nav{background:#e8e8e8;border:1px solid #ccc;border-radius:3px;width:26px;height:24px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;}
+.br-nav:hover{background:#ddd;}
+.br-url{flex:1;background:#fff;border:1px solid #aaa;border-radius:3px;padding:3px 8px;font-size:12px;outline:none;}
+.br-url:focus{border-color:#316ac5;box-shadow:0 0 0 2px rgba(49,106,197,.2);}
+.br-go{background:#316ac5;color:#fff;border:none;border-radius:3px;padding:3px 10px;font-size:12px;cursor:pointer;}
+.br-go:hover{background:#2050a0;}
+.browser-page{flex:1;padding:20px;font-size:13px;color:#222;overflow-y:auto;background:#fff;}
+.bp-loading{display:flex;align-items:center;justify-content:center;height:100%;font-size:14px;color:#888;}
+.bp-h1{font-size:22px;font-weight:bold;color:#1a237e;margin-bottom:12px;border-bottom:2px solid #e0e0e0;padding-bottom:8px;}
+.bp-p{margin-bottom:10px;line-height:1.6;color:#444;}
+.bp-link{color:#316ac5;cursor:pointer;text-decoration:underline;}
+.bp-link:hover{color:#1a5aba;}
+.bp-img{width:100%;max-width:300px;height:120px;background:linear-gradient(135deg,#e0e8ff,#c8d8ff);border:1px solid #ccc;border-radius:4px;margin:8px 0;display:flex;align-items:center;justify-content:center;font-size:40px;}
+.bp-error{color:#c62828;font-size:14px;padding:20px;}
+.fav-bar{background:#e8e8f8;border-bottom:1px solid #ccc;padding:3px 8px;display:flex;gap:8px;flex-shrink:0;}
+.fav-item{font-size:11px;color:#316ac5;cursor:pointer;padding:2px 6px;border-radius:3px;}
+.fav-item:hover{background:#dde;color:#1040a0;}
+#browser-progress{height:3px;background:#316ac5;width:0%;transition:width .3s;flex-shrink:0;}
+
+/* ── Visionneuse images ── */
+#win-viewer{width:480px;top:40px;left:110px;}
+.viewer-body{display:flex;flex-direction:column;align-items:center;justify-content:center;background:#222;flex:1;gap:10px;padding:10px;position:relative;overflow:hidden;}
+.viewer-img{max-width:100%;max-height:100%;object-fit:contain;transition:transform .2s;}
+.viewer-nav{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:10px;background:rgba(0,0,0,.6);border-radius:20px;padding:6px 14px;}
+.vnav-btn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:16px;padding:4px 12px;font-size:11px;cursor:pointer;transition:background .15s;}
+.vnav-btn:hover{background:rgba(255,255,255,.3);}
+.viewer-zoom{position:absolute;top:8px;right:8px;display:flex;gap:4px;}
+.vz-btn{background:rgba(0,0,0,.5);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:3px;width:24px;height:24px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.vz-btn:hover{background:rgba(0,0,0,.7);}
+.viewer-info{font-size:11px;color:#ccc;text-align:center;}
+/* Images SVG générées */
+.sv-img{width:100%;height:200px;border-radius:4px;display:block;}
+
+/* ── Paint ── */
+#win-paint{width:530px;top:25px;left:80px;}
+.paint-wrap{display:flex;height:100%;}
+.pside{width:54px;background:#c0c0c0;border-right:2px solid #808080;padding:4px;display:grid;grid-template-columns:1fr 1fr;gap:2px;align-content:start;flex-shrink:0;}
+.ptool{width:22px;height:22px;background:#c0c0c0;border:2px solid;border-color:#fff #808080 #808080 #fff;display:flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;}
+.ptool.active,.ptool:active{border-color:#808080 #fff #fff #808080;}
+.pmain{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.carea{flex:1;background:#808080;overflow:auto;padding:4px;}
+#pt-cv{display:block;}
+.pcolors{background:#c0c0c0;border-top:2px solid #808080;padding:4px;display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.ccur{width:36px;height:36px;position:relative;flex-shrink:0;}
+.cfg{position:absolute;top:0;left:0;width:24px;height:24px;border:2px solid #000;}
+.cbg{position:absolute;bottom:0;right:0;width:24px;height:24px;border:2px solid #000;border-top-color:#fff;border-left-color:#fff;}
+.palette{display:flex;flex-wrap:wrap;gap:2px;width:290px;}
+.sw{width:16px;height:16px;border:1px solid #888;cursor:pointer;flex-shrink:0;}
+.sw:hover{border-color:#000;transform:scale(1.3);}
+
+/* ── Calculatrice ── */
+#win-calc{width:238px;top:110px;left:315px;}
+.cdisp{background:#c8e8a8;border:2px inset #808080;text-align:right;padding:4px 8px;font-size:20px;font-family:'Courier New',monospace;margin-bottom:8px;min-height:36px;word-break:break-all;}
+.cgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:3px;}
+.cb{padding:6px;font-size:13px;font-weight:bold;cursor:pointer;text-align:center;background:linear-gradient(180deg,#f0f0f0,#d0d0d0);border:2px solid;border-color:#fff #808080 #808080 #fff;}
+.cb:active{border-color:#808080 #fff #fff #808080;}
+.cb.op{background:linear-gradient(180deg,#ffc,#cc9);}
+.cb.eq{background:linear-gradient(180deg,#aaf,#44c);color:#fff;}
+.cb.fn{background:linear-gradient(180deg,#ddd,#bbb);}
+.cb.s2{grid-column:span 2;}
+
+/* ── Corbeille ── */
+#win-trash{width:370px;top:70px;left:195px;}
+.tbar{background:#ece9d8;border-bottom:1px solid #b0a898;padding:6px 10px;display:flex;gap:8px;flex-shrink:0;}
+.tbtn2{background:linear-gradient(180deg,#fff,#e8e8e8);border:1px solid #999;border-radius:3px;padding:4px 10px;font-size:11px;cursor:pointer;}
+.tbtn2:hover{background:linear-gradient(180deg,#eef,#ddf);}
+.tempty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:#aaa;font-size:13px;gap:6px;}
+
+/* ══ BARRE DES TÂCHES ══ */
+#taskbar{position:absolute;bottom:0;left:0;right:0;height:36px;z-index:8000;
+  background:linear-gradient(180deg,#2668d8 0%,#1a52c0 50%,#1040a8 100%);
+  border-top:2px solid #3a88ee;display:flex;align-items:center;padding:0 4px;gap:3px;}
+#st-btn{background:linear-gradient(180deg,#60c030,#3d9010);color:#fff;border:none;border-radius:12px;height:28px;padding:0 14px 0 8px;font-size:13px;font-weight:bold;cursor:pointer;display:flex;align-items:center;gap:5px;}
+#st-btn:hover{filter:brightness(1.12);}
+.tbdiv{width:1px;height:26px;background:rgba(255,255,255,.15);margin:0 2px;}
+#tb-wins{display:flex;gap:3px;flex:1;overflow:hidden;}
+.twb{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:3px;padding:0 8px;height:26px;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:4px;max-width:140px;overflow:hidden;white-space:nowrap;}
+.twb:hover{background:rgba(255,255,255,.22);}
+.twb.active{background:rgba(0,0,0,.25);border-color:rgba(0,0,0,.3);box-shadow:inset 0 1px 3px rgba(0,0,0,.3);}
+#tb-r{margin-left:auto;background:rgba(0,0,40,.3);border-left:2px solid rgba(255,255,255,.15);height:100%;display:flex;align-items:center;padding:0 8px;gap:8px;}
+#tb-clk{color:#fff;font-size:11px;text-align:center;line-height:1.4;}
+/* Indicateur réseau/son cliquables */
+.tb-ico-btn{color:#fff;font-size:14px;cursor:pointer;padding:2px 3px;border-radius:3px;}
+.tb-ico-btn:hover{background:rgba(255,255,255,.2);}
+
+/* ══ MENU DÉMARRER ══ */
+#st-menu{position:absolute;bottom:36px;left:0;width:310px;background:#fff;border:1px solid #003c99;border-radius:6px 6px 0 0;box-shadow:4px -2px 12px rgba(0,0,0,.5);z-index:9000;display:none;overflow:hidden;}
+#st-menu.open{display:flex;flex-direction:column;animation:smOpen .15s ease-out;}
+@keyframes smOpen{from{transform:translateY(10px);opacity:0;}to{transform:none;opacity:1;}}
+.smh{background:linear-gradient(90deg,#1a5ad0,#4a8ae8);padding:8px 12px;display:flex;align-items:center;gap:10px;}
+.smav{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#ffd700,#ff8c00);display:flex;align-items:center;justify-content:center;font-size:22px;border:2px solid rgba(255,255,255,.4);}
+.smnm{color:#fff;font-size:14px;font-weight:bold;}
+.smb{display:flex;}
+.smc{flex:1;padding:5px 0;}
+.smc+.smc{border-left:1px solid #ddd;}
+.smr{padding:6px 10px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:8px;}
+.smr:hover{background:#316ac5;color:#fff;}
+.smr .ico{font-size:18px;width:22px;}
+.smhr{height:1px;background:#ddd;margin:3px 0;}
+.smf{background:#1a5ad0;padding:5px 10px;display:flex;justify-content:flex-end;gap:8px;}
+.smfb{background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:3px;padding:3px 10px;font-size:11px;cursor:pointer;display:flex;align-items:center;gap:5px;}
+.smfb:hover{background:rgba(255,255,255,.3);}
+
+/* ══ MENU CONTEXTUEL DYNAMIQUE ══ */
+#dyn-ctx{position:fixed;background:#fff;border:1px solid #999;box-shadow:2px 3px 10px rgba(0,0,0,.35);z-index:99999;padding:3px 0;min-width:190px;font-size:12px;display:none;}
+#dyn-ctx.open{display:block;}
+.ctx-r{padding:5px 26px 5px 8px;cursor:pointer;display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.ctx-r:hover{background:#316ac5;color:#fff;}
+.ctx-r .ci{font-size:13px;width:18px;flex-shrink:0;}
+.ctx-r .cs{margin-left:auto;color:#888;font-size:11px;padding-left:14px;}
+.ctx-r:hover .cs{color:#cce;}
+.ctx-r.dis{color:#bbb;pointer-events:none;}
+.ctx-sep2{height:1px;background:#ddd;margin:2px 0;}
+
+/* Drag ghost */
+#dgh{position:fixed;pointer-events:none;z-index:99998;background:#ddeeff;border:1px solid #316ac5;border-radius:4px;padding:4px 10px;font-size:12px;display:none;align-items:center;gap:6px;box-shadow:2px 2px 8px rgba(0,0,0,.3);}
+
+/* Tooltip */
+#ttip{position:fixed;background:#ffffe1;color:#000;border:1px solid #888;padding:3px 8px;font-size:11px;pointer-events:none;z-index:99999;display:none;box-shadow:1px 1px 3px rgba(0,0,0,.2);white-space:nowrap;}
+
+/* Trace */
+.trace{position:fixed;width:5px;height:5px;border-radius:50%;background:rgba(108,99,255,.55);pointer-events:none;z-index:99997;transform:translate(-50%,-50%);animation:ft .5s forwards;}
+@keyframes ft{from{opacity:.6;transform:translate(-50%,-50%) scale(1);}to{opacity:0;transform:translate(-50%,-50%) scale(.1);}}
+
+/* Sélection rectangle */
+#sel-box{position:absolute;border:1px dotted rgba(255,255,255,.8);background:rgba(255,255,255,.1);pointer-events:none;display:none;z-index:2;}
+
+/* Notification */
+#clip-n{position:fixed;bottom:46px;right:10px;background:#1a1a2e;color:#fff;border:1px solid #444;padding:7px 14px;border-radius:5px;font-size:12px;display:none;z-index:99990;animation:slideIn .2s ease-out;}
+@keyframes slideIn{from{transform:translateY(20px);opacity:0;}to{transform:none;opacity:1;}}
+
+/* Bulle système tray */
+#tray-bubble{position:absolute;bottom:42px;right:8px;background:#fff;border:1px solid #888;border-radius:6px;padding:10px 14px;font-size:12px;box-shadow:2px 2px 8px rgba(0,0,0,.3);display:none;min-width:160px;z-index:9001;}
+#tray-bubble::after{content:'';position:absolute;bottom:-7px;right:20px;width:12px;height:12px;background:#fff;border-right:1px solid #888;border-bottom:1px solid #888;transform:rotate(45deg);}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<div id="sidebar">
+  <div id="mouse-w">
+    <div class="mbtn" id="mb-l"><span>G</span></div>
+    <div class="mbtn" id="mb-r" style="right:0;left:auto;border-radius:0 45px 0 0;border-right:none;border-left:1.5px solid #ddd;"><span>D</span></div>
+    <div class="mwhl"><div class="mwhl-i" id="mwi"></div></div>
+    <div id="mw-lbl">Molette</div>
+  </div>
+  <div class="sb-card">
+    <h3>📍 Position</h3>
+    <div id="coord-v">X:<span id="cx">0</span> Y:<span id="cy">0</span><small>pixels</small></div>
+  </div>
+  <div class="sb-card" style="flex:1;">
+    <h3>💡 Action</h3>
+    <div id="exp-t">Déplacez la souris ou interagissez avec le bureau.</div>
+  </div>
+  <button id="btn-rst" onclick="doReset()">🔄 Recommencer</button>
+</div>
+
+<!-- ══ BUREAU ══ -->
+<div id="desktop">
+<div id="sel-box"></div>
+<div id="dgh"></div>
+<div id="ttip"></div>
+<div id="dyn-ctx"></div>
+<div id="clip-n"></div>
+<div id="tray-bubble"></div>
+
+<!-- ICÔNES BUREAU (draggables + renommables) -->
+<div class="dicon" id="di-comp"    style="top:14px;left:10px;"  data-win="win-exp">     <div class="ico">🖥️</div><span class="dicon-lbl">Poste de travail</span></div>
+<div class="dicon" id="di-docs"    style="top:100px;left:10px;" data-win="win-exp">     <div class="ico">📁</div><span class="dicon-lbl">Mes documents</span></div>
+<div class="dicon" id="di-np"      style="top:186px;left:10px;" data-win="win-np">      <div class="ico">📝</div><span class="dicon-lbl">Bloc-notes</span></div>
+<div class="dicon" id="di-browser" style="top:272px;left:10px;" data-win="win-browser"> <div class="ico">🌐</div><span class="dicon-lbl">Navigateur</span></div>
+<div class="dicon" id="di-paint"   style="top:358px;left:10px;" data-win="win-paint">   <div class="ico">🎨</div><span class="dicon-lbl">Paint</span></div>
+<div class="dicon" id="di-calc"    style="top:444px;left:10px;" data-win="win-calc">    <div class="ico">🔢</div><span class="dicon-lbl">Calculatrice</span></div>
+<div class="dicon" id="di-viewer"  style="top:14px;left:95px;"  data-win="win-viewer">  <div class="ico">🖼️</div><span class="dicon-lbl">Visionneuse</span></div>
+<div class="dicon" id="di-trash"   style="top:100px;left:95px;" data-win="win-trash">   <div class="ico" id="trash-ico">🗑️</div><span class="dicon-lbl">Corbeille</span></div>
+
+<!-- ══ EXPLORATEUR ══ -->
+<div class="win" id="win-exp" style="top:30px;left:175px;width:530px;height:340px;">
+  <div class="titlebar" data-win="win-exp"><span class="tb-ico">📁</span><span class="tb-title" id="exp-ttl">Mes documents</span>
+    <div class="tb-btns"><button class="wbtn wmin" data-w="win-exp"></button><button class="wbtn wmax" data-w="win-exp"></button><button class="wbtn wclose" data-w="win-exp"></button></div>
+  </div>
+  <div class="menubar">
+    <div class="mi" data-dd="dd-ef">Fichier</div><div class="mi" data-dd="dd-ee">Édition</div>
+    <div class="mi" data-dd="dd-ev">Affichage</div><div class="mi" data-dd="dd-et">Outils</div>
+  </div>
+  <div class="toolbar">
+    <button class="tbtn" data-act="exp-back">◀</button>
+    <button class="tbtn" data-act="exp-up">⬆ Dossier</button>
+    <div class="tsep"></div>
+    <button class="tbtn" data-act="copy">📋 Copier</button>
+    <button class="tbtn" data-act="paste">📌 Coller</button>
+    <button class="tbtn" data-act="delete">🗑️ Suppr.</button>
+    <div class="tsep"></div>
+    <button class="tbtn" data-act="view-icons">⊞</button>
+    <button class="tbtn" data-act="view-list">☰</button>
+  </div>
+  <div class="exp-addr"><span>Adresse :</span><div class="abar" id="exp-path">C:\Mes documents</div></div>
+  <div style="display:flex;flex:1;overflow:hidden;">
+    <div class="exp-tree" id="exp-tree">
+      <div class="trow active" data-path="C:\Mes documents">📁 Mes documents</div>
+      <div class="trow" style="padding-left:20px;" data-path="C:\Mes documents\Images">🖼️ Images</div>
+      <div class="trow" style="padding-left:20px;" data-path="C:\Mes documents\Musique">🎵 Musique</div>
+      <div class="trow" data-path="C:\Bureau">🖥️ Bureau</div>
+      <div class="trow" data-path="C:\Corbeille">🗑️ Corbeille</div>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+      <div id="exp-main" class="file-grid">
+        <div class="fitem" data-name="Rapport.docx"  data-ico="📄"><div class="ico">📄</div>Rapport.docx</div>
+        <div class="fitem" data-name="Photo.jpg"     data-ico="🖼️"><div class="ico">🖼️</div>Photo.jpg</div>
+        <div class="fitem" data-name="Musique.mp3"   data-ico="🎵"><div class="ico">🎵</div>Musique.mp3</div>
+        <div class="fitem" data-name="Budget.xlsx"   data-ico="📊"><div class="ico">📊</div>Budget.xlsx</div>
+        <div class="fitem" data-name="Notes.txt"     data-ico="📝"><div class="ico">📝</div>Notes.txt</div>
+        <div class="fitem" data-name="Vidéo.mp4"     data-ico="🎬"><div class="ico">🎬</div>Vidéo.mp4</div>
+        <div class="fitem" data-name="Archive.zip"   data-ico="📦"><div class="ico">📦</div>Archive.zip</div>
+        <div class="fitem" data-name="Lien.url"      data-ico="🔗"><div class="ico">🔗</div>Lien.url</div>
+      </div>
+    </div>
+  </div>
+  <div class="statusbar"><span id="exp-st">8 objet(s)</span><div class="ssep"></div><span id="exp-sel-st"></span></div>
+  <div class="rh cur-resize-se" data-w="win-exp"></div>
+</div>
+
+<!-- ══ BLOC-NOTES ══ -->
+<div class="win" id="win-np" style="top:60px;left:210px;width:420px;height:310px;">
+  <div class="titlebar" data-win="win-np"><span class="tb-ico">📝</span><span class="tb-title" id="np-ttl">Sans titre – Bloc-notes</span>
+    <div class="tb-btns"><button class="wbtn wmin" data-w="win-np"></button><button class="wbtn wmax" data-w="win-np"></button><button class="wbtn wclose" data-w="win-np"></button></div>
+  </div>
+  <div class="menubar">
+    <div class="mi" data-dd="dd-nf">Fichier</div><div class="mi" data-dd="dd-ne">Édition</div>
+    <div class="mi" data-dd="dd-nfmt">Format</div>
+  </div>
+  <div class="win-body"><textarea id="np-a" class="cur-text" placeholder="Cliquez ici pour écrire…"></textarea></div>
+  <div class="statusbar"><span id="np-pos">Ln 1, Col 1</span></div>
+  <div class="rh cur-resize-se" data-w="win-np"></div>
+</div>
+
+<!-- ══ NAVIGATEUR ══ -->
+<div class="win" id="win-browser" style="top:25px;left:190px;width:560px;height:400px;">
+  <div class="titlebar" data-win="win-browser"><span class="tb-ico">🌐</span><span class="tb-title" id="br-title">Nouveau onglet – Navigateur</span>
+    <div class="tb-btns"><button class="wbtn wmin" data-w="win-browser"></button><button class="wbtn wmax" data-w="win-browser"></button><button class="wbtn wclose" data-w="win-browser"></button></div>
+  </div>
+  <div class="menubar">
+    <div class="mi" data-dd="dd-brf">Fichier</div><div class="mi" data-dd="dd-bre">Édition</div>
+    <div class="mi" data-dd="dd-brv">Affichage</div><div class="mi" data-dd="dd-brh">Favoris</div>
+  </div>
+  <div class="browser-bar">
+    <button class="br-nav" id="br-back" title="Précédent">◀</button>
+    <button class="br-nav" id="br-fwd"  title="Suivant">▶</button>
+    <button class="br-nav" id="br-rld"  title="Actualiser">🔄</button>
+    <button class="br-nav" id="br-home" title="Accueil">🏠</button>
+    <input class="br-url" id="br-url" type="text" value="monordinateur://accueil"/>
+    <button class="br-go" id="br-go">OK</button>
+  </div>
+  <div id="browser-progress"></div>
+  <div class="fav-bar" id="fav-bar">
+    <span class="fav-item" data-url="monordinateur://accueil">🏠 Accueil</span>
+    <span class="fav-item" data-url="monordinateur://documents">📁 Documents</span>
+    <span class="fav-item" data-url="monordinateur://aide">❓ Aide</span>
+    <span class="fav-item" data-url="monordinateur://jeux">🎮 Jeux</span>
+    <span class="fav-item" data-url="monordinateur://meteo">🌤️ Météo</span>
+  </div>
+  <div class="browser-page" id="br-page"><div class="bp-loading">🌐 Chargement…</div></div>
+  <div class="statusbar"><span id="br-st">Prêt</span></div>
+  <div class="rh cur-resize-se" data-w="win-browser"></div>
+</div>
+
+<!-- ══ VISIONNEUSE IMAGES ══ -->
+<div class="win" id="win-viewer" style="top:40px;left:200px;width:480px;height:360px;">
+  <div class="titlebar" data-win="win-viewer"><span class="tb-ico">🖼️</span><span class="tb-title" id="vw-title">Photo.jpg – Visionneuse</span>
+    <div class="tb-btns"><button class="wbtn wmin" data-w="win-viewer"></button><button class="wbtn wmax" data-w="win-viewer"></button><button class="wbtn wclose" data-w="win-viewer"></button></div>
+  </div>
+  <div class="menubar">
+    <div class="mi" data-dd="dd-vwf">Fichier</div><div class="mi" data-dd="dd-vwe">Image</div>
+  </div>
+  <div class="toolbar">
+    <button class="tbtn" data-act="vw-prev">◀ Précédente</button>
+    <button class="tbtn" data-act="vw-next">▶ Suivante</button>
+    <div class="tsep"></div>
+    <button class="tbtn" data-act="vw-zin">🔍+</button>
+    <button class="tbtn" data-act="vw-zout">🔍−</button>
+    <button class="tbtn" data-act="vw-fit">⊡ Ajuster</button>
+    <button class="tbtn" data-act="vw-rot">↻ Rotation</button>
+    <div class="tsep"></div>
+    <button class="tbtn" data-act="vw-print">🖨️</button>
+  </div>
+  <div class="viewer-body">
+    <div id="vw-display" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;overflow:hidden;"></div>
+    <div class="viewer-zoom">
+      <button class="vz-btn" data-act="vw-zin">+</button>
+      <button class="vz-btn" data-act="vw-zout">−</button>
+    </div>
+    <div class="viewer-nav">
+      <button class="vnav-btn" data-act="vw-prev">◀</button>
+      <span id="vw-info" style="color:#ccc;font-size:11px;padding:0 6px;"></span>
+      <button class="vnav-btn" data-act="vw-next">▶</button>
+    </div>
+  </div>
+  <div class="statusbar"><span id="vw-st">Photo.jpg – 1920×1080 px</span></div>
+  <div class="rh cur-resize-se" data-w="win-viewer"></div>
+</div>
+
+<!-- ══ PAINT ══ -->
+<div class="win" id="win-paint" style="top:25px;left:180px;width:530px;height:360px;">
+  <div class="titlebar" data-win="win-paint"><span class="tb-ico">🎨</span><span class="tb-title">Sans titre – Paint</span>
+    <div class="tb-btns"><button class="wbtn wmin" data-w="win-paint"></button><button class="wbtn wmax" data-w="win-paint"></button><button class="wbtn wclose" data-w="win-paint"></button></div>
+  </div>
+  <div class="menubar">
+    <div class="mi" data-dd="dd-ptf">Fichier</div><div class="mi" data-dd="dd-pte">Édition</div>
+    <div class="mi" data-dd="dd-pti">Image</div>
+  </div>
+  <div class="paint-wrap">
+    <div class="pside" id="pt-tools">
+      <div class="ptool active" data-tool="pencil" title="Crayon">✏️</div>
+      <div class="ptool" data-tool="eraser" title="Gomme">⬜</div>
+      <div class="ptool" data-tool="fill"   title="Remplissage">🪣</div>
+      <div class="ptool" data-tool="text"   title="Texte">A</div>
+      <div class="ptool" data-tool="line"   title="Ligne">╱</div>
+      <div class="ptool" data-tool="rect"   title="Rectangle">▭</div>
+      <div class="ptool" data-tool="circle" title="Ellipse">⭕</div>
+      <div class="ptool" data-tool="spray"  title="Aérographe">💨</div>
+    </div>
+    <div class="pmain">
+      <div class="carea"><canvas id="pt-cv" width="390" height="240" class="cur-crosshair"></canvas></div>
+      <div class="pcolors">
+        <div class="ccur"><div class="cfg" id="pt-fg" style="background:#000;"></div><div class="cbg" id="pt-bg" style="background:#fff;"></div></div>
+        <div class="palette" id="palette"></div>
+      </div>
+    </div>
+  </div>
+  <div class="statusbar"><span id="pt-st">Outil : Crayon</span><div class="ssep"></div><span id="pt-pos"></span></div>
+  <div class="rh cur-resize-se" data-w="win-paint"></div>
+</div>
+
+<!-- ══ CALCULATRICE ══ -->
+<div class="win" id="win-calc" style="top:110px;left:390px;width:238px;height:308px;">
+  <div class="titlebar" data-win="win-calc"><span class="tb-ico">🔢</span><span class="tb-title">Calculatrice</span>
+    <div class="tb-btns"><button class="wbtn wmin" data-w="win-calc"></button><button class="wbtn wclose" data-w="win-calc"></button></div>
+  </div>
+  <div class="menubar"><div class="mi" data-dd="dd-cav">Affichage</div><div class="mi" data-dd="dd-cae">Édition</div></div>
+  <div class="win-body" style="background:#c0c0c0;padding:8px;overflow:hidden;">
+    <div class="cdisp" id="ca-d">0</div>
+    <div class="cgrid">
+      <button class="cb fn" data-c="MC">MC</button><button class="cb fn" data-c="MR">MR</button><button class="cb fn" data-c="MS">MS</button><button class="cb fn" data-c="M+">M+</button>
+      <button class="cb fn" data-c="bk">←</button><button class="cb fn" data-c="CE">CE</button><button class="cb fn" data-c="C">C</button><button class="cb op" data-c="pm">±</button>
+      <button class="cb" data-c="7">7</button><button class="cb" data-c="8">8</button><button class="cb" data-c="9">9</button><button class="cb op" data-c="/">÷</button>
+      <button class="cb" data-c="4">4</button><button class="cb" data-c="5">5</button><button class="cb" data-c="6">6</button><button class="cb op" data-c="*">×</button>
+      <button class="cb" data-c="1">1</button><button class="cb" data-c="2">2</button><button class="cb" data-c="3">3</button><button class="cb op" data-c="-">−</button>
+      <button class="cb s2" data-c="0">0</button><button class="cb" data-c=".">.</button><button class="cb op" data-c="+">+</button>
+      <button class="cb eq s2" data-c="=">=</button><button class="cb fn" data-c="sqrt">√</button><button class="cb fn" data-c="%">%</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CORBEILLE ══ -->
+<div class="win" id="win-trash" style="top:70px;left:260px;width:370px;height:270px;">
+  <div class="titlebar" data-win="win-trash"><span class="tb-ico">🗑️</span><span class="tb-title">Corbeille</span>
+    <div class="tb-btns"><button class="wbtn wmin" data-w="win-trash"></button><button class="wbtn wmax" data-w="win-trash"></button><button class="wbtn wclose" data-w="win-trash"></button></div>
+  </div>
+  <div class="menubar"><div class="mi" data-dd="dd-trf">Fichier</div><div class="mi" data-dd="dd-tre">Édition</div></div>
+  <div class="tbar">
+    <button class="tbtn2" data-act="tr-empty">🗑️ Vider</button>
+    <button class="tbtn2" data-act="tr-restore-all">↩ Tout restaurer</button>
+  </div>
+  <div class="win-body" id="trash-body"><div class="tempty">🗑️<br>La corbeille est vide.</div></div>
+  <div class="statusbar" id="tr-st">0 objet(s)</div>
+  <div class="rh cur-resize-se" data-w="win-trash"></div>
+</div>
+
+<!-- DROPDOWNS MENUS -->
+<div class="dd-menu" id="dd-ef"><div class="ddr" data-act="noop"><span class="di">📁</span>Nouveau dossier</div><div class="ddsep"></div><div class="ddr" data-act="close-win" data-w="win-exp"><span class="di">✕</span>Fermer</div></div>
+<div class="dd-menu" id="dd-ee"><div class="ddr" data-act="select-all"><span class="di">🔲</span>Sélectionner tout<span class="sc">Ctrl+A</span></div><div class="ddr" data-act="copy"><span class="di">📋</span>Copier<span class="sc">Ctrl+C</span></div><div class="ddr" data-act="cut"><span class="di">✂️</span>Couper<span class="sc">Ctrl+X</span></div><div class="ddr" data-act="paste"><span class="di">📌</span>Coller<span class="sc">Ctrl+V</span></div><div class="ddsep"></div><div class="ddr" data-act="delete"><span class="di">🗑️</span>Supprimer<span class="sc">Suppr</span></div></div>
+<div class="dd-menu" id="dd-ev"><div class="ddr" data-act="view-icons"><span class="di">⊞</span>Icônes</div><div class="ddr" data-act="view-list"><span class="di">☰</span>Liste</div></div>
+<div class="dd-menu" id="dd-et"><div class="ddr" data-act="noop"><span class="di">⚙️</span>Options…</div></div>
+<div class="dd-menu" id="dd-nf"><div class="ddr" data-act="np-new"><span class="di">📄</span>Nouveau<span class="sc">Ctrl+N</span></div><div class="ddr" data-act="np-save"><span class="di">💾</span>Enregistrer<span class="sc">Ctrl+S</span></div><div class="ddsep"></div><div class="ddr" data-act="close-win" data-w="win-np"><span class="di">✕</span>Quitter</div></div>
+<div class="dd-menu" id="dd-ne"><div class="ddr" data-act="np-undo"><span class="di">↩</span>Annuler<span class="sc">Ctrl+Z</span></div><div class="ddsep"></div><div class="ddr" data-act="np-cut"><span class="di">✂️</span>Couper<span class="sc">Ctrl+X</span></div><div class="ddr" data-act="np-copy"><span class="di">📋</span>Copier<span class="sc">Ctrl+C</span></div><div class="ddr" data-act="np-paste"><span class="di">📌</span>Coller<span class="sc">Ctrl+V</span></div><div class="ddsep"></div><div class="ddr" data-act="np-selall"><span class="di">🔲</span>Tout sél.<span class="sc">Ctrl+A</span></div><div class="ddr" data-act="np-time"><span class="di">📅</span>Date/Heure<span class="sc">F5</span></div></div>
+<div class="dd-menu" id="dd-nfmt"><div class="ddr" data-act="np-wrap"><span class="di">↵</span>Retour à la ligne</div><div class="ddr" data-act="noop"><span class="di">🔤</span>Police…</div></div>
+<div class="dd-menu" id="dd-brf"><div class="ddr" data-act="noop"><span class="di">📄</span>Nouvelle fenêtre</div><div class="ddr" data-act="br-save"><span class="di">💾</span>Enregistrer sous…</div><div class="ddsep"></div><div class="ddr" data-act="close-win" data-w="win-browser"><span class="di">✕</span>Fermer</div></div>
+<div class="dd-menu" id="dd-bre"><div class="ddr" data-act="br-copy"><span class="di">📋</span>Copier<span class="sc">Ctrl+C</span></div><div class="ddr" data-act="br-selall"><span class="di">🔲</span>Sélectionner tout<span class="sc">Ctrl+A</span></div></div>
+<div class="dd-menu" id="dd-brv"><div class="ddr" data-act="br-reload"><span class="di">🔄</span>Actualiser<span class="sc">F5</span></div><div class="ddr" data-act="br-zoom-in"><span class="di">🔍</span>Zoom +<span class="sc">Ctrl++</span></div><div class="ddr" data-act="br-zoom-out"><span class="di">🔍</span>Zoom −<span class="sc">Ctrl+−</span></div></div>
+<div class="dd-menu" id="dd-brh"><div class="ddr" data-act="br-fav-add"><span class="di">⭐</span>Ajouter aux favoris</div><div class="ddsep"></div><div class="ddr" data-url="monordinateur://accueil"><span class="di">🏠</span>Accueil</div></div>
+<div class="dd-menu" id="dd-vwf"><div class="ddr" data-act="vw-print"><span class="di">🖨️</span>Imprimer<span class="sc">Ctrl+P</span></div><div class="ddsep"></div><div class="ddr" data-act="close-win" data-w="win-viewer"><span class="di">✕</span>Fermer</div></div>
+<div class="dd-menu" id="dd-vwe"><div class="ddr" data-act="vw-zin"><span class="di">🔍</span>Zoom avant</div><div class="ddr" data-act="vw-zout"><span class="di">🔍</span>Zoom arrière</div><div class="ddr" data-act="vw-fit"><span class="di">⊡</span>Ajuster à la fenêtre</div><div class="ddsep"></div><div class="ddr" data-act="vw-rot"><span class="di">↻</span>Rotation 90°</div><div class="ddr" data-act="vw-flip"><span class="di">↔️</span>Retourner</div></div>
+<div class="dd-menu" id="dd-ptf"><div class="ddr" data-act="pt-new"><span class="di">📄</span>Nouveau<span class="sc">Ctrl+N</span></div><div class="ddr" data-act="pt-save"><span class="di">💾</span>Enregistrer<span class="sc">Ctrl+S</span></div><div class="ddsep"></div><div class="ddr" data-act="close-win" data-w="win-paint"><span class="di">✕</span>Quitter</div></div>
+<div class="dd-menu" id="dd-pte"><div class="ddr" data-act="pt-undo"><span class="di">↩</span>Annuler<span class="sc">Ctrl+Z</span></div><div class="ddr" data-act="pt-clear"><span class="di">🗑️</span>Effacer tout</div></div>
+<div class="dd-menu" id="dd-pti"><div class="ddr" data-act="pt-flip-h"><span class="di">↔️</span>Retourner H</div><div class="ddr" data-act="pt-flip-v"><span class="di">↕️</span>Retourner V</div></div>
+<div class="dd-menu" id="dd-cav"><div class="ddr" data-act="noop"><span class="di">🔢</span>Standard</div></div>
+<div class="dd-menu" id="dd-cae"><div class="ddr" data-act="calc-copy"><span class="di">📋</span>Copier<span class="sc">Ctrl+C</span></div><div class="ddr" data-act="calc-paste"><span class="di">📌</span>Coller<span class="sc">Ctrl+V</span></div></div>
+<div class="dd-menu" id="dd-trf"><div class="ddr" data-act="tr-empty"><span class="di">🗑️</span>Vider la corbeille</div><div class="ddr" data-act="tr-restore-all"><span class="di">↩</span>Restaurer tout</div><div class="ddsep"></div><div class="ddr" data-act="close-win" data-w="win-trash"><span class="di">✕</span>Fermer</div></div>
+<div class="dd-menu" id="dd-tre"><div class="ddr" data-act="tr-restore-sel"><span class="di">↩</span>Restaurer la sélection</div><div class="ddr" data-act="select-all"><span class="di">🔲</span>Sélectionner tout</div></div>
+
+<!-- ══ BARRE DES TÂCHES ══ -->
+<div id="taskbar">
+  <button id="st-btn" onclick="toggleStart()">🪟 <b>Démarrer</b></button>
+  <div class="tbdiv"></div>
+  <div id="tb-wins"></div>
+  <div id="tb-r">
+    <span class="tb-ico-btn" id="tb-vol" title="Volume">🔊</span>
+    <span class="tb-ico-btn" id="tb-net" title="Réseau">📶</span>
+    <div id="tb-clk">00:00<br><span style="font-size:9px;color:#aad;">01/01</span></div>
+  </div>
+</div>
+
+<!-- ══ MENU DÉMARRER ══ -->
+<div id="st-menu">
+  <div class="smh"><div class="smav">👤</div><div class="smnm">Utilisateur</div></div>
+  <div class="smb">
+    <div class="smc">
+      <div class="smr" onclick="openWin('win-browser')"><span class="ico">🌐</span>Navigateur</div>
+      <div class="smr" onclick="openWin('win-exp')"><span class="ico">📁</span>Mes documents</div>
+      <div class="smr" onclick="openWin('win-np')"><span class="ico">📝</span>Bloc-notes</div>
+      <div class="smr" onclick="openWin('win-paint')"><span class="ico">🎨</span>Paint</div>
+      <div class="smr" onclick="openWin('win-calc')"><span class="ico">🔢</span>Calculatrice</div>
+      <div class="smr" onclick="openWin('win-viewer')"><span class="ico">🖼️</span>Visionneuse</div>
+    </div>
+    <div class="smc">
+      <div class="smr" onclick="openWin('win-trash')"><span class="ico">🗑️</span>Corbeille</div>
+      <div class="smr"><span class="ico">⚙️</span>Panneau de config.</div>
+      <div class="smr"><span class="ico">❓</span>Aide</div>
+      <div class="smhr"></div>
+      <div class="smr" onclick="doReset()"><span class="ico">🔄</span>Recommencer</div>
+    </div>
+  </div>
+  <div class="smf"><div class="smfb">🔴 Arrêter</div><div class="smfb">🔵 Redémarrer</div></div>
+</div>
+
+</div><!-- /desktop -->
+
+<script>
+(()=>{
+// ══════════ ÉTAT GLOBAL ══════════
+const G={
+  mx:0,my:0,btnL:false,btnR:false,
+  lastTrace:0,lastClick:0,
+  clipboard:'',trashItems:[],
+  dragWin:null,dwOX:0,dwOY:0,
+  resWin:null,rwX:0,rwY:0,rwW:0,rwH:0,
+  dragFile:null,
+  dragIcon:null,diOX:0,diOY:0,diStartX:0,diStartY:0,diMoved:false,
+  selActive:false,selX0:0,selY0:0,
+  iconClicks:{},fileClicks:{},
+  brHistory:['monordinateur://accueil'],brIdx:0,
+  vwImages:[],vwCurrent:0,vwZoom:1,vwRot:0,
+};
+
+// ══════════ ÉLÉMENTS ══════════
+const D=id=>document.getElementById(id);
+const mbL=D('mb-l'),mbR=D('mb-r'),mwi=D('mwi');
+const ttip=D('ttip'),expT=D('exp-t'),cxE=D('cx'),cyE=D('cy');
+const dynCtx=D('dyn-ctx'),selBox=D('sel-box'),dgh=D('dgh');
+const clipN=D('clip-n'),startMenu=D('st-menu'),tbWins=D('tb-wins');
+const desktop=D('desktop'),npA=D('np-a'),trayBubble=D('tray-bubble');
+const canvas=D('pt-cv'),ctx=canvas.getContext('2d');
+
+// ══════════ FENÊTRES ══════════
+const wins={};
+document.querySelectorAll('.win').forEach(w=>{
+  wins[w.id]={el:w,min:false,maxed:false,ox:0,oy:0,ow:0,oh:0};
+});
+let zTop=500;
+function bringTop(id){
+  wins[id].el.style.zIndex=++zTop;
+  document.querySelectorAll('.win').forEach(w=>w.classList.remove('focused'));
+  wins[id].el.classList.add('focused');
+}
+
+window.openWin=function(id){
+  const w=wins[id];if(!w)return;
+  w.el.classList.add('open');
+  w.el.classList.remove('minimized');
+  w.min=false;
+  w.el.style.animation='none';
+  requestAnimationFrame(()=>{ w.el.style.animation=''; w.el.classList.add('opening'); });
+  setTimeout(()=>w.el.classList.remove('opening'),250);
+  bringTop(id);updateTaskbar();
+  closeStart();
+  setExp('dbl');tip('Fenêtre ouverte');
+  // Init contenu si besoin
+  if(id==='win-browser') brNavigate(G.brHistory[G.brIdx]);
+  if(id==='win-viewer')  vwLoad(0);
+};
+function closeWin(id){
+  const w=wins[id];if(!w)return;
+  w.el.classList.add('closing');
+  setTimeout(()=>{
+    w.el.classList.remove('open','closing','minimized');
+    w.min=false;updateTaskbar();
+  },180);
+  tip('Fenêtre fermée');
+}
+function minWin(id){
+  const w=wins[id];if(!w)return;
+  w.el.classList.add('minimizing');
+  setTimeout(()=>{w.el.classList.add('minimized');w.el.classList.remove('minimizing');w.min=true;updateTaskbar();},200);
+  tip('Réduit');
+}
+function maxWin(id){
+  const w=wins[id];if(!w)return;
+  const db=desktop.getBoundingClientRect();
+  if(w.maxed){
+    w.el.style.left=w.ox+'px';w.el.style.top=w.oy+'px';
+    w.el.style.width=w.ow+'px';w.el.style.height=w.oh+'px';
+    w.maxed=false;
+  } else {
+    w.ox=w.el.offsetLeft;w.oy=w.el.offsetTop;
+    w.ow=w.el.offsetWidth;w.oh=w.el.offsetHeight;
+    w.el.style.left='0';w.el.style.top='0';
+    w.el.style.width=db.width+'px';w.el.style.height=(db.height-36)+'px';
+    w.maxed=true;
+  }
+  tip('Agrandir / Restaurer');
+}
+function updateTaskbar(){
+  tbWins.innerHTML='';
+  Object.entries(wins).forEach(([id,w])=>{
+    if(!w.el.classList.contains('open')&&!w.min)return;
+    const ico=w.el.querySelector('.tb-ico')?.textContent||'';
+    const title=w.el.querySelector('.tb-title')?.textContent||id;
+    const btn=document.createElement('button');
+    btn.className='twb'+(w.min?'':' active');
+    btn.textContent=ico+' '+title.slice(0,16);
+    btn.addEventListener('mousedown',ev=>{
+      ev.stopPropagation();
+      if(w.min){w.el.classList.remove('minimized');w.min=false;bringTop(id);w.el.classList.add('restoring');setTimeout(()=>w.el.classList.remove('restoring'),220);}
+      else minWin(id);
+      updateTaskbar();
+    });
+    tbWins.appendChild(btn);
+  });
+}
+
+// Boutons fenêtre
+document.querySelectorAll('.wbtn').forEach(b=>{
+  b.addEventListener('mousedown',ev=>{
+    ev.stopPropagation();
+    const id=b.dataset.w;
+    if(b.classList.contains('wclose'))closeWin(id);
+    else if(b.classList.contains('wmin'))minWin(id);
+    else if(b.classList.contains('wmax'))maxWin(id);
+  });
+});
+
+// Drag titlebars
+document.querySelectorAll('.titlebar').forEach(tb=>{
+  tb.addEventListener('mousedown',ev=>{
+    if(ev.target.closest('.tb-btns')||ev.target.closest('.mi'))return;
+    const w=tb.closest('.win');if(!w)return;
+    G.dragWin=w;G.dwOX=G.mx-w.offsetLeft;G.dwOY=G.my-w.offsetTop;
+    bringTop(w.id);ev.stopPropagation();setExp('drag');
+  });
+});
+
+// Resize handles
+document.querySelectorAll('.rh').forEach(rh=>{
+  rh.addEventListener('mousedown',ev=>{
+    const w=rh.closest('.win');if(!w)return;
+    G.resWin=w;G.rwX=G.mx;G.rwY=G.my;G.rwW=w.offsetWidth;G.rwH=w.offsetHeight;
+    ev.stopPropagation();setExp('resize');
+  });
+});
+
+document.querySelectorAll('.win').forEach(w=>{
+  w.addEventListener('mousedown',()=>bringTop(w.id));
+});
+
+// ══════════ MENUS BARRE ══════════
+let openDD=null;
+document.querySelectorAll('.mi[data-dd]').forEach(item=>{
+  item.addEventListener('mousedown',ev=>{
+    ev.stopPropagation();
+    const ddId=item.dataset.dd,dd=D(ddId);if(!dd)return;
+    const already=dd.classList.contains('open');
+    closeAllDD();
+    if(!already){
+      const r=item.getBoundingClientRect();
+      dd.style.left=r.left+'px';dd.style.top=r.bottom+'px';
+      dd.classList.add('open');item.classList.add('active');
+      openDD=ddId;
+    }
+  });
+});
+function closeAllDD(){
+  document.querySelectorAll('.dd-menu.open').forEach(d=>d.classList.remove('open'));
+  document.querySelectorAll('.mi.active').forEach(i=>i.classList.remove('active'));
+  openDD=null;
+}
+document.querySelectorAll('.ddr[data-act]').forEach(row=>{
+  row.addEventListener('mousedown',ev=>{
+    ev.stopPropagation();
+    closeAllDD();
+    doAction(row.dataset.act,row.dataset.w);
+  });
+});
+// Favoris navigateur dans dropdown
+document.querySelectorAll('.ddr[data-url]').forEach(row=>{
+  row.addEventListener('mousedown',ev=>{
+    ev.stopPropagation();closeAllDD();
+    brNavigate(row.dataset.url);
+  });
+});
+document.querySelectorAll('.tbtn[data-act]').forEach(b=>{b.addEventListener('mousedown',ev=>{ev.stopPropagation();doAction(b.dataset.act);});});
+document.querySelectorAll('.tbtn2[data-act]').forEach(b=>{b.addEventListener('mousedown',ev=>{ev.stopPropagation();doAction(b.dataset.act);});});
+document.querySelectorAll('.vz-btn[data-act]').forEach(b=>{b.addEventListener('mousedown',ev=>{ev.stopPropagation();doAction(b.dataset.act);});});
+document.querySelectorAll('.vnav-btn[data-act]').forEach(b=>{b.addEventListener('mousedown',ev=>{ev.stopPropagation();doAction(b.dataset.act);});});
+
+// ══════════ NAVIGATEUR ══════════
+const PAGES={
+  'monordinateur://accueil':{
+    title:'Page d\'accueil',
+    html:`<div class="bp-h1">🏠 Bienvenue sur MonOrdinateur</div>
+    <div class="bp-p">Bienvenue dans votre espace personnel. Utilisez la barre d'adresse pour naviguer.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;">
+      <div style="background:#f0f4ff;border:1px solid #ccd;border-radius:6px;padding:12px;cursor:pointer;" onclick="brNav('monordinateur://documents')">
+        <div style="font-size:28px;margin-bottom:4px;">📁</div><strong>Mes Documents</strong><br><small style="color:#666;">Accédez à vos fichiers</small></div>
+      <div style="background:#f0fff0;border:1px solid #cdc;border-radius:6px;padding:12px;cursor:pointer;" onclick="brNav('monordinateur://jeux')">
+        <div style="font-size:28px;margin-bottom:4px;">🎮</div><strong>Jeux</strong><br><small style="color:#666;">Divertissement</small></div>
+      <div style="background:#fff8f0;border:1px solid #ddc;border-radius:6px;padding:12px;cursor:pointer;" onclick="brNav('monordinateur://meteo')">
+        <div style="font-size:28px;margin-bottom:4px;">🌤️</div><strong>Météo</strong><br><small style="color:#666;">Prévisions locales</small></div>
+      <div style="background:#fff0f8;border:1px solid #dcc;border-radius:6px;padding:12px;cursor:pointer;" onclick="brNav('monordinateur://aide')">
+        <div style="font-size:28px;margin-bottom:4px;">❓</div><strong>Centre d'aide</strong><br><small style="color:#666;">Guides et tutoriels</small></div>
+    </div>`
+  },
+  'monordinateur://documents':{
+    title:'Mes Documents',
+    html:`<div class="bp-h1">📁 Mes Documents</div>
+    <div class="bp-p">Voici vos fichiers récents :</div>
+    <table style="width:100%;border-collapse:collapse;font-size:12px;">
+      <tr style="background:#f0f0f0;"><th style="padding:6px;text-align:left;">Nom</th><th>Taille</th><th>Date</th></tr>
+      <tr style="border-bottom:1px solid #eee;"><td style="padding:5px;">📄 Rapport.docx</td><td>14 Ko</td><td>Aujourd'hui</td></tr>
+      <tr style="border-bottom:1px solid #eee;"><td style="padding:5px;">🖼️ Photo.jpg</td><td>2,4 Mo</td><td>Hier</td></tr>
+      <tr style="border-bottom:1px solid #eee;"><td style="padding:5px;">🎵 Musique.mp3</td><td>4,1 Mo</td><td>12/01</td></tr>
+      <tr style="border-bottom:1px solid #eee;"><td style="padding:5px;">📊 Budget.xlsx</td><td>8 Ko</td><td>10/01</td></tr>
+    </table>`
+  },
+  'monordinateur://jeux':{
+    title:'Jeux',
+    html:`<div class="bp-h1">🎮 Jeux installés</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div style="background:#f5f5f5;border:1px solid #ddd;border-radius:6px;padding:10px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:36px;">♟️</span><div><strong>Échecs</strong><br><small style="color:#666;">Jeu classique de stratégie</small></div>
+        <button style="margin-left:auto;background:#316ac5;color:#fff;border:none;border-radius:4px;padding:5px 12px;cursor:pointer;">Jouer</button>
+      </div>
+      <div style="background:#f5f5f5;border:1px solid #ddd;border-radius:6px;padding:10px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:36px;">💣</span><div><strong>Démineur</strong><br><small style="color:#666;">Trouvez les mines !</small></div>
+        <button style="margin-left:auto;background:#316ac5;color:#fff;border:none;border-radius:4px;padding:5px 12px;cursor:pointer;">Jouer</button>
+      </div>
+      <div style="background:#f5f5f5;border:1px solid #ddd;border-radius:6px;padding:10px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:36px;">🃏</span><div><strong>Solitaire</strong><br><small style="color:#666;">Réussissez la mise !</small></div>
+        <button style="margin-left:auto;background:#316ac5;color:#fff;border:none;border-radius:4px;padding:5px 12px;cursor:pointer;">Jouer</button>
+      </div>
+    </div>`
+  },
+  'monordinateur://meteo':{
+    title:'Météo',
+    html:`<div class="bp-h1">🌤️ Météo — Genève</div>
+    <div style="background:linear-gradient(135deg,#74b9ff,#a29bfe);border-radius:10px;padding:16px;color:#fff;margin-bottom:12px;">
+      <div style="font-size:48px;font-weight:bold;">☀️ 18°C</div>
+      <div>Ensoleillé · Humidité : 45% · Vent : 12 km/h</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">
+      ${['Lun','Mar','Mer','Jeu','Ven'].map((j,i)=>`<div style="text-align:center;background:#f8f8f8;border-radius:6px;padding:8px;font-size:12px;"><div>${j}</div><div style="font-size:22px;">${'☀️🌤️⛅🌧️☀️'[i]}</div><div>${16+i}°</div></div>`).join('')}
+    </div>`
+  },
+  'monordinateur://aide':{
+    title:'Centre d\'aide',
+    html:`<div class="bp-h1">❓ Centre d'aide Windows</div>
+    <div class="bp-p">Bienvenue dans le centre d'aide. Choisissez un sujet :</div>
+    <div style="display:flex;flex-direction:column;gap:6px;">
+      ${[['🖱️','Utiliser la souris','Cliquer, double-cliquer, faire glisser'],['⌨️','Utiliser le clavier','Raccourcis et touches spéciales'],['📁','Gérer les fichiers','Copier, déplacer, supprimer'],['🪟','Fenêtres et bureau','Réduire, agrandir, fermer']].map(([i,t,d])=>`<div class="bp-link" style="padding:8px;background:#f5f5f5;border-radius:4px;display:flex;align-items:center;gap:10px;"><span style="font-size:22px;">${i}</span><div><strong>${t}</strong><br><small style="color:#666;">${d}</small></div></div>`).join('')}
+    </div>`
+  },
+};
+window.brNav=function(url){brNavigate(url);};
+function brNavigate(url){
+  const brPage=D('br-page'),brSt=D('br-st'),brUrl=D('br-url'),brTtl=D('br-title'),brProg=D('browser-progress');
+  brUrl.value=url;
+  brPage.innerHTML='<div class="bp-loading">🌐 Chargement…</div>';
+  brSt.textContent='Chargement de '+url+'…';
+  brProg.style.width='0%';
+  setTimeout(()=>{ brProg.style.width='60%'; },100);
+  setTimeout(()=>{
+    brProg.style.width='100%';
+    const page=PAGES[url];
+    if(page){
+      brPage.innerHTML=page.html;
+      brTtl.textContent=page.title+' – Navigateur';
+      brSt.textContent='Terminé';
+      // Mettre à jour historique
+      if(G.brHistory[G.brIdx]!==url){
+        G.brHistory=G.brHistory.slice(0,G.brIdx+1);
+        G.brHistory.push(url);G.brIdx=G.brHistory.length-1;
+      }
+    } else {
+      brPage.innerHTML='<div class="bp-error">❌ Page introuvable : '+url+'</div>';
+      brSt.textContent='Erreur';
+    }
+    setTimeout(()=>brProg.style.width='0%',400);
+    tip('🌐 '+url);
+  },500);
+}
+
+D('br-go').addEventListener('mousedown',ev=>{ev.stopPropagation();});
+D('br-go').addEventListener('click',()=>{ brNavigate(D('br-url').value); });
+D('br-url').addEventListener('keydown',ev=>{ if(ev.key==='Enter') brNavigate(ev.target.value); ev.stopPropagation(); });
+D('br-url').addEventListener('mousedown',ev=>ev.stopPropagation());
+D('br-url').addEventListener('focus',()=>setExp('type'));
+D('br-back').addEventListener('mousedown',ev=>{ev.stopPropagation();if(G.brIdx>0){G.brIdx--;brNavigate(G.brHistory[G.brIdx]);}});
+D('br-fwd').addEventListener('mousedown',ev=>{ev.stopPropagation();if(G.brIdx<G.brHistory.length-1){G.brIdx++;brNavigate(G.brHistory[G.brIdx]);}});
+D('br-rld').addEventListener('mousedown',ev=>{ev.stopPropagation();brNavigate(G.brHistory[G.brIdx]);});
+D('br-home').addEventListener('mousedown',ev=>{ev.stopPropagation();brNavigate('monordinateur://accueil');});
+document.querySelectorAll('.fav-item').forEach(f=>{
+  f.addEventListener('mousedown',ev=>{ev.stopPropagation();brNavigate(f.dataset.url);});
+});
+
+// ══════════ VISIONNEUSE ══════════
+// Images SVG générées
+const VW_IMAGES=[
+  {name:'Photo.jpg',    w:1920,h:1080,svg:`<svg width="100%" height="200" viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#87CEEB"/><stop offset="100%" stop-color="#E0F0FF"/></linearGradient></defs><rect width="400" height="220" fill="url(#sky)"/><rect y="140" width="400" height="80" fill="#4CAF50"/><rect y="120" width="400" height="30" fill="#66BB6A"/><circle cx="80" cy="50" r="35" fill="#FDD835"/><ellipse cx="200" cy="100" rx="80" ry="30" fill="white" opacity=".7"/><rect x="160" y="130" width="60" height="70" fill="#795548"/><rect x="150" y="100" width="80" height="40" fill="#A1887F"/><rect x="170" y="145" width="20" height="35" fill="#5D4037"/><rect x="250" y="100" width="80" height="100" rx="4" fill="#1565C0"/><rect x="310" y="70" width="60" height="130" rx="4" fill="#1976D2"/></svg>`},
+  {name:'Coucher.jpg', w:1280,h:720,svg:`<svg width="100%" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="sun" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1a237e"/><stop offset="40%" stop-color="#e91e63"/><stop offset="70%" stop-color="#ff9800"/><stop offset="100%" stop-color="#ffd54f"/></linearGradient></defs><rect width="400" height="200" fill="url(#sun)"/><ellipse cx="200" cy="140" rx="200" ry="60" fill="#0d1b4b" opacity=".9"/><circle cx="200" cy="95" r="30" fill="#ffd54f" opacity=".9"/><ellipse cx="200" cy="175" rx="200" ry="30" fill="#0a1128"/></svg>`},
+  {name:'Forêt.jpg',   w:800,h:600,svg:`<svg width="100%" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="200" fill="#1B5E20"/><rect y="140" width="400" height="60" fill="#2E7D32"/>${[60,120,180,240,300,20,100,160,220,280,340].map((x,i)=>`<polygon points="${x},${80+i%3*15} ${x-25},${150} ${x+25},${150}" fill="${i%2?'#2E7D32':'#1B5E20'}"/>`).join('')}<rect x="185" y="150" width="30" height="50" fill="#4E342E"/><ellipse cx="200" cy="100" rx="50" ry="55" fill="#388E3C"/></svg>`},
+  {name:'Montagne.jpg',w:2560,h:1440,svg:`<svg width="100%" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="ciel" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4FC3F7"/><stop offset="100%" stop-color="#B3E5FC"/></linearGradient></defs><rect width="400" height="200" fill="url(#ciel)"/><polygon points="0,200 80,60 160,200" fill="#546E7A"/><polygon points="80,200 200,30 320,200" fill="#455A64"/><polygon points="160,200 320,80 400,200" fill="#607D8B"/><polygon points="170,60 200,30 230,60" fill="white"/><polygon points="85,75 105,55 125,75" fill="white"/><rect y="170" width="400" height="30" fill="#388E3C"/></svg>`},
+];
+G.vwImages=VW_IMAGES;
+function vwLoad(idx){
+  G.vwCurrent=idx; G.vwZoom=1; G.vwRot=0;
+  const img=G.vwImages[idx]; if(!img) return;
+  D('vw-title').textContent=img.name+' – Visionneuse';
+  D('vw-st').textContent=img.name+' — '+img.w+'×'+img.h+' px';
+  D('vw-info').textContent=(idx+1)+' / '+G.vwImages.length;
+  vwRender();
+}
+function vwRender(){
+  const display=D('vw-display'), img=G.vwImages[G.vwCurrent];
+  display.innerHTML=`<div style="transform:rotate(${G.vwRot}deg) scale(${G.vwZoom});transition:transform .2s;transform-origin:center;">${img.svg}</div>`;
+}
+
+// ══════════ PAINT ══════════
+let paintTool='pencil',paintFg='#000',paintBg='#fff';
+let painting=false,ptX=0,ptY=0,ptHist=[];
+const COLORS=['#000000','#808080','#800000','#808000','#008000','#008080','#000080','#800080','#ffffff','#c0c0c0','#ff0000','#ffff00','#00ff00','#00ffff','#0000ff','#ff00ff','#ff8040','#804000','#ffaaaa','#ffffaa','#aaffaa','#aaffff','#aaaaff','#ffaaff'];
+const pal=D('palette');
+COLORS.forEach(c=>{
+  const s=document.createElement('div');s.className='sw';s.style.background=c;
+  s.addEventListener('mousedown',ev=>{ev.stopPropagation();if(ev.button===2){paintBg=c;D('pt-bg').style.background=c;}else{paintFg=c;D('pt-fg').style.background=c;}tip('🎨 '+c);});
+  s.addEventListener('contextmenu',ev=>ev.preventDefault());
+  pal.appendChild(s);
+});
+document.querySelectorAll('.ptool').forEach(t=>{
+  t.addEventListener('mousedown',ev=>{
+    ev.stopPropagation();
+    document.querySelectorAll('.ptool').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');paintTool=t.dataset.tool;
+    D('pt-st').textContent='Outil : '+t.title;tip('Outil : '+t.title);
+  });
+});
+function ptSave(){ptHist.push(ctx.getImageData(0,0,canvas.width,canvas.height));if(ptHist.length>30)ptHist.shift();}
+function ptUndo(){if(ptHist.length){ctx.putImageData(ptHist.pop(),0,0);tip('↩ Annulé');}}
+function ptClear(){ctx.fillStyle=paintBg;ctx.fillRect(0,0,canvas.width,canvas.height);tip('🗑️ Effacé');}
+function ptFlip(dir){const img=ctx.getImageData(0,0,canvas.width,canvas.height);ctx.save();if(dir==='h'){ctx.scale(-1,1);ctx.putImageData(img,-canvas.width,0);}else{ctx.scale(1,-1);ctx.putImageData(img,0,-canvas.height);}ctx.restore();tip('Retourné');}
+function getCV(ev){const r=canvas.getBoundingClientRect();return{x:ev.clientX-r.left,y:ev.clientY-r.top};}
+canvas.addEventListener('mousedown',ev=>{
+  ev.stopPropagation();const p=getCV(ev);ptSave();painting=true;ptX=p.x;ptY=p.y;
+  ctx.strokeStyle=ev.button===2?paintBg:paintFg;ctx.fillStyle=ev.button===2?paintBg:paintFg;
+  ctx.lineWidth=paintTool==='eraser'?16:2;ctx.lineCap='round';
+  if(paintTool==='pencil'||paintTool==='eraser'){ctx.beginPath();ctx.moveTo(p.x,p.y);}
+  else if(paintTool==='fill'){ctx.fillRect(0,0,canvas.width,canvas.height);painting=false;}
+  else if(paintTool==='spray'){sprayAt(p.x,p.y,ev.button===2?paintBg:paintFg);}
+  setExp('drag');
+});
+canvas.addEventListener('mousemove',ev=>{
+  if(!painting)return;ev.stopPropagation();const p=getCV(ev);
+  D('pt-pos').textContent=Math.round(p.x)+','+Math.round(p.y);
+  if(paintTool==='pencil'||paintTool==='eraser'){ctx.lineTo(p.x,p.y);ctx.stroke();}
+  else if(paintTool==='spray'){sprayAt(p.x,p.y,paintFg);}
+  else{
+    const img=ptHist[ptHist.length-1];if(img)ctx.putImageData(img,0,0);
+    ctx.strokeStyle=paintFg;ctx.lineWidth=2;ctx.beginPath();
+    if(paintTool==='line'){ctx.moveTo(ptX,ptY);ctx.lineTo(p.x,p.y);ctx.stroke();}
+    else if(paintTool==='rect'){ctx.strokeRect(ptX,ptY,p.x-ptX,p.y-ptY);}
+    else if(paintTool==='circle'){ctx.ellipse((ptX+p.x)/2,(ptY+p.y)/2,Math.abs(p.x-ptX)/2,Math.abs(p.y-ptY)/2,0,0,Math.PI*2);ctx.stroke();}
+  }
+});
+canvas.addEventListener('mouseup',()=>{painting=false;});
+canvas.addEventListener('contextmenu',ev=>ev.preventDefault());
+function sprayAt(x,y,col){ctx.fillStyle=col;for(let i=0;i<12;i++){const a=Math.random()*Math.PI*2,r=Math.random()*12;ctx.fillRect(x+Math.cos(a)*r,y+Math.sin(a)*r,1.5,1.5);}}
+
+// ══════════ CALCULATRICE ══════════
+let cd='0',cp='',co='',cn=true,cm=0;
+function cu(){D('ca-d').textContent=cd;}
+function cs(v){cd=v;cn=true;cu();}
+document.querySelectorAll('.cb').forEach(b=>{
+  b.addEventListener('mousedown',ev=>{
+    ev.stopPropagation();const c=b.dataset.c;
+    if('0123456789'.includes(c)){cd=cn?c:(cd==='0'?c:cd+c);cn=false;}
+    else if(c==='.'){if(cn){cd='0.';cn=false;}else if(!cd.includes('.'))cd+='.';}
+    else if('+-*/'.includes(c)){if(co&&!cn){const r=calc(parseFloat(cp),parseFloat(cd),co);cd=String(Math.round(r*1e10)/1e10);}cp=cd;co=c;cn=true;}
+    else if(c==='='){if(co){const r=calc(parseFloat(cp),parseFloat(cd),co);cd=String(Math.round(r*1e10)/1e10);co='';cn=true;}}
+    else if(c==='C'){cd='0';cp='';co='';cn=true;}
+    else if(c==='CE'){cd='0';cn=true;}
+    else if(c==='bk'){if(!cn&&cd.length>1)cd=cd.slice(0,-1);else{cd='0';cn=true;}}
+    else if(c==='pm'){cd=String(-parseFloat(cd));}
+    else if(c==='sqrt'){cd=String(Math.round(Math.sqrt(parseFloat(cd))*1e10)/1e10);cn=true;}
+    else if(c==='%'){cd=String(parseFloat(cd)/100);cn=true;}
+    else if(c==='MC'){cm=0;}else if(c==='MR'){cd=String(cm);cn=true;}
+    else if(c==='MS'){cm=parseFloat(cd);}else if(c==='M+'){cm+=parseFloat(cd);}
+    cu();tip('= '+cd);
+  });
+});
+function calc(a,b,op){return op==='+'?a+b:op==='-'?a-b:op==='*'?a*b:b!==0?a/b:0;}
+
+// ══════════ CORBEILLE ══════════
+function updateTrash(){
+  const body=D('trash-body');
+  D('tr-st').textContent=G.trashItems.length+' objet(s)';
+  D('trash-ico').textContent='🗑️';
+  if(!G.trashItems.length){body.innerHTML='<div class="tempty">🗑️<br>La corbeille est vide.</div>';return;}
+  body.innerHTML=G.trashItems.map((t,i)=>
+    `<div class="litem" data-idx="${i}"><span class="ico">${t.ico}</span><span class="ln">${t.name}</span><span class="ls">Supprimé</span></div>`
+  ).join('');
+  body.querySelectorAll('.litem').forEach(r=>{
+    r.addEventListener('mousedown',ev=>{ev.stopPropagation();body.querySelectorAll('.litem').forEach(x=>x.classList.remove('selected'));r.classList.add('selected');});
+  });
+}
+updateTrash();
+
+// ══════════ BLOC-NOTES ══════════
+npA.addEventListener('keyup',()=>{
+  const v=npA.value,p=npA.selectionStart,lines=v.slice(0,p).split('\n');
+  D('np-pos').textContent=`Ln ${lines.length}, Col ${lines[lines.length-1].length+1}`;
+  if(!D('np-ttl').textContent.startsWith('*')) D('np-ttl').textContent='*'+D('np-ttl').textContent;
+});
+npA.addEventListener('mousedown',ev=>ev.stopPropagation());
+npA.addEventListener('focus',()=>{setExp('type');tip('⌨️ Tapez du texte !');});
+
+// ══════════ ICÔNES BUREAU DRAGGABLES ══════════
+document.querySelectorAll('.dicon').forEach(icon=>{
+  // Drag icône
+  icon.addEventListener('mousedown',ev=>{
+    if(ev.button!==0)return;
+    ev.stopPropagation();
+    const now=Date.now(),id=icon.id;
+    document.querySelectorAll('.dicon').forEach(i=>i.classList.remove('selected'));
+    icon.classList.add('selected');
+
+    // Double-clic → ouvrir
+    if(now-(G.iconClicks[id]||0)<400){
+      openWin(icon.dataset.win);G.iconClicks[id]=0;return;
+    }
+    G.iconClicks[id]=now;
+
+    // Préparer drag
+    G.dragIcon=icon;G.diMoved=false;
+    G.diStartX=G.mx;G.diStartY=G.my;
+    G.diOX=G.mx-icon.offsetLeft;G.diOY=G.my-icon.offsetTop;
+    tip('👆 Double-cliquez pour ouvrir');setExp('dbl');
+  });
+
+  icon.addEventListener('mouseenter',()=>{setExp('dbl');tip('👁️ '+icon.querySelector('.dicon-lbl')?.textContent);});
+});
+
+// Renommer icône : double-clic sur le label
+document.querySelectorAll('.dicon').forEach(icon=>{
+  const lbl=icon.querySelector('.dicon-lbl');
+  lbl.addEventListener('dblclick',ev=>{
+    ev.stopPropagation();
+    const old=lbl.textContent;
+    const inp=document.createElement('input');
+    inp.className='icon-rename-input';inp.value=old;
+    lbl.replaceWith(inp);inp.focus();inp.select();
+    function finishRename(){
+      const newLbl=document.createElement('span');
+      newLbl.className='dicon-lbl';
+      newLbl.textContent=inp.value||old;
+      inp.replaceWith(newLbl);
+      tip('✏️ Renommé en "'+newLbl.textContent+'"');
+    }
+    inp.addEventListener('blur',finishRename);
+    inp.addEventListener('keydown',ev=>{if(ev.key==='Enter')finishRename();if(ev.key==='Escape'){inp.value=old;finishRename();}ev.stopPropagation();});
+    inp.addEventListener('mousedown',ev=>ev.stopPropagation());
+  });
+});
+
+// ══════════ EXPLORATEUR — FICHIERS ══════════
+function getSelFiles(){return[...document.querySelectorAll('#exp-main .fitem.selected,#exp-main .litem.selected')];}
+function updateExpStatus(){
+  const s=getSelFiles();D('exp-sel-st').textContent=s.length?s.length+' sélectionné(s)':'';
+}
+function selectAllFiles(){document.querySelectorAll('#exp-main .fitem,#exp-main .litem').forEach(f=>f.classList.add('selected'));updateExpStatus();}
+function copySelected(){const s=getSelFiles();if(!s.length){tip('Rien à copier');return;}G.clipboard=s.map(f=>f.dataset.name||f.querySelector('.ln')?.textContent||'').join(', ');clipNotif('📋 Copié : '+G.clipboard);setExp('select');}
+function cutSelected(){copySelected();tip('✂️ Coupé');}
+function doPaste(){if(!G.clipboard){tip('Presse-papiers vide');return;}clipNotif('📌 Collé : '+G.clipboard);}
+function deleteSelected(){
+  const s=getSelFiles();if(!s.length){tip('Rien à supprimer');return;}
+  s.forEach(f=>{G.trashItems.push({name:f.dataset.name||f.querySelector('.ln')?.textContent||'?',ico:f.dataset.ico||'📄'});f.remove();});
+  updateTrash();updateExpStatus();tip('🗑️ Supprimé(s)');
+}
+function setView(v){
+  const main=D('exp-main');
+  const SIZES={docx:'14 Ko',jpg:'2,4 Mo',mp3:'4,1 Mo',xlsx:'8 Ko',txt:'1 Ko',mp4:'52 Mo',zip:'820 Ko',url:'1 Ko'};
+  if(v==='icons'){
+    main.className='file-grid';
+    main.querySelectorAll('.litem').forEach(el=>{
+      const name=el.dataset.name,ico=el.dataset.ico||'📄';
+      el.className='fitem';el.innerHTML=`<div class="ico">${ico}</div>${name}`;
+    });
+  } else {
+    main.className='file-list';
+    main.querySelectorAll('.fitem').forEach(el=>{
+      const name=el.dataset.name,ico=el.dataset.ico||'📄',ext=name.split('.').pop();
+      el.className='litem';el.innerHTML=`<span class="ico">${ico}</span><span class="ln">${name}</span><span class="ls">${SIZES[ext]||'–'}</span>`;
+    });
+  }
+  bindExpFiles();tip('Vue : '+v);
+}
+function bindExpFiles(){
+  document.querySelectorAll('#exp-main .fitem,#exp-main .litem').forEach(f=>{
+    f.removeEventListener('mousedown',f._mdh);
+    f._mdh=ev=>{
+      ev.stopPropagation();
+      const name=f.dataset.name||f.querySelector('.ln')?.textContent||f.textContent.trim();
+      if(!ev.ctrlKey)document.querySelectorAll('#exp-main .fitem,#exp-main .litem').forEach(x=>x.classList.remove('selected'));
+      f.classList.add('selected');updateExpStatus();
+      const now=Date.now();
+      if(now-(G.fileClicks[name]||0)<400){
+        // Ouvrir dans visionneuse si image
+        if(name.match(/\.(jpg|png|gif|jpeg)$/i)){openWin('win-viewer');const idx=G.vwImages.findIndex(i=>i.name===name);if(idx>=0)vwLoad(idx);}
+        else if(name.match(/\.txt$/i)){openWin('win-np');npA.value+='['+name+']\n';}
+        else tip('📂 Ouverture de '+name+'…');
+        setExp('dbl');G.fileClicks[name]=0;
+      } else {
+        G.fileClicks[name]=now;tip('📄 '+name);setExp('left');
+        // Préparer drag fichier
+        G.dragFile=f;dgh.innerHTML=(f.dataset.ico||'📄')+' '+name;dgh.style.left=G.mx+'px';dgh.style.top=G.my+'px';
+      }
+    };
+    f.addEventListener('mousedown',f._mdh);
+  });
+}
+bindExpFiles();
+
+document.querySelectorAll('.trow').forEach(r=>{
+  r.addEventListener('mousedown',ev=>{ev.stopPropagation();document.querySelectorAll('.trow').forEach(x=>x.classList.remove('active'));r.classList.add('active');D('exp-path').textContent=r.dataset.path||'';tip('📁 '+r.textContent.trim());});
+});
+
+// ══════════ ACTIONS ══════════
+function doAction(act,wId){
+  if(!act||act==='noop'){tip('⚙️ Action');return;}
+  switch(act){
+    case 'close-win':   closeWin(wId);break;
+    case 'exp-back':    tip('◀ Précédent');break;
+    case 'exp-up':      tip('⬆ Dossier parent');break;
+    case 'view-icons':  setView('icons');break;
+    case 'view-list':   setView('list');break;
+    case 'select-all':  selectAllFiles();break;
+    case 'copy':        copySelected();break;
+    case 'cut':         cutSelected();break;
+    case 'paste':       doPaste();break;
+    case 'delete':      deleteSelected();break;
+    case 'np-new':      npA.value='';D('np-ttl').textContent='Sans titre – Bloc-notes';tip('📝 Nouveau');break;
+    case 'np-save':     D('np-ttl').textContent=D('np-ttl').textContent.replace(/^\*/,'');tip('💾 Enregistré !');break;
+    case 'np-undo':     document.execCommand('undo');tip('↩ Annulé');break;
+    case 'np-cut':      {const s=npA.selectionStart,e=npA.selectionEnd;if(s===e)return;G.clipboard=npA.value.slice(s,e);npA.value=npA.value.slice(0,s)+npA.value.slice(e);clipNotif('✂️ Coupé : "'+G.clipboard.slice(0,20)+'"');}break;
+    case 'np-copy':     {const s=npA.selectionStart,e=npA.selectionEnd;G.clipboard=e>s?npA.value.slice(s,e):npA.value;clipNotif('📋 Copié : "'+G.clipboard.slice(0,20)+'"');}break;
+    case 'np-paste':    {const s=npA.selectionStart,e=npA.selectionEnd;npA.value=npA.value.slice(0,s)+G.clipboard+npA.value.slice(e);clipNotif('📌 Collé');}break;
+    case 'np-selall':   npA.select();setExp('select');break;
+    case 'np-time':     npA.value+=new Date().toLocaleString('fr-FR');tip('📅 Date insérée');break;
+    case 'np-wrap':     npA.style.whiteSpace=npA.style.whiteSpace==='nowrap'?'pre-wrap':'nowrap';break;
+    case 'pt-new':      ptClear();tip('📄 Nouveau');break;
+    case 'pt-save':     tip('💾 Enregistré !');break;
+    case 'pt-undo':     ptUndo();break;
+    case 'pt-clear':    ptClear();break;
+    case 'pt-flip-h':   ptFlip('h');break;
+    case 'pt-flip-v':   ptFlip('v');break;
+    case 'calc-copy':   G.clipboard=D('ca-d').textContent;clipNotif('📋 Copié : '+G.clipboard);break;
+    case 'calc-paste':  if(!isNaN(parseFloat(G.clipboard)))cs(G.clipboard);break;
+    case 'tr-empty':    G.trashItems=[];updateTrash();tip('🗑️ Corbeille vidée');break;
+    case 'tr-restore-all':G.trashItems=[];updateTrash();tip('↩ Tout restauré');break;
+    case 'tr-restore-sel':{const s=D('trash-body').querySelector('.litem.selected');if(!s){tip('Rien de sélectionné');return;}G.trashItems.splice(parseInt(s.dataset.idx),1);updateTrash();tip('↩ Restauré');}break;
+    case 'br-reload':   brNavigate(G.brHistory[G.brIdx]);break;
+    case 'br-fav-add':  tip('⭐ Ajouté aux favoris !');break;
+    case 'vw-prev':     vwLoad((G.vwCurrent-1+G.vwImages.length)%G.vwImages.length);break;
+    case 'vw-next':     vwLoad((G.vwCurrent+1)%G.vwImages.length);break;
+    case 'vw-zin':      G.vwZoom=Math.min(4,G.vwZoom*1.25);vwRender();tip('🔍 Zoom '+Math.round(G.vwZoom*100)+'%');break;
+    case 'vw-zout':     G.vwZoom=Math.max(.25,G.vwZoom/1.25);vwRender();tip('🔍 Zoom '+Math.round(G.vwZoom*100)+'%');break;
+    case 'vw-fit':      G.vwZoom=1;G.vwRot=0;vwRender();tip('⊡ Ajusté');break;
+    case 'vw-rot':      G.vwRot=(G.vwRot+90)%360;vwRender();tip('↻ Rotation '+G.vwRot+'°');break;
+    case 'vw-flip':     G.vwZoom*=-1;vwRender();break;
+    case 'vw-print':    tip('🖨️ Impression…');break;
+    default:            tip('✅ '+act);
+  }
+}
+
+// ══════════ MENU CONTEXTUEL DYNAMIQUE ══════════
+function showCtx(x,y,items){
+  dynCtx.innerHTML='';
+  items.forEach(item=>{
+    if(item.sep){const d=document.createElement('div');d.className='ctx-sep2';dynCtx.appendChild(d);return;}
+    const row=document.createElement('div');row.className='ctx-r'+(item.dis?' dis':'');
+    row.innerHTML=`<span class="ci">${item.ico||''}</span>${item.label}${item.sc?`<span class="cs">${item.sc}</span>`:''}`;
+    row.addEventListener('mousedown',ev=>{ev.stopPropagation();hideCtx();if(item.fn)item.fn();});
+    dynCtx.appendChild(row);
+  });
+  dynCtx.style.left='0';dynCtx.style.top='0';dynCtx.classList.add('open');
+  const w2=dynCtx.offsetWidth,h2=dynCtx.offsetHeight;
+  let mx=x,my=y;
+  if(mx+w2>window.innerWidth)mx=x-w2;
+  if(my+h2>window.innerHeight)my=y-h2;
+  dynCtx.style.left=mx+'px';dynCtx.style.top=my+'px';
+}
+function hideCtx(){dynCtx.classList.remove('open');}
+function ctxDesktop(x,y){showCtx(x,y,[{ico:'🖼️',label:'Affichage'},{ico:'↕️',label:'Réorganiser les icônes',fn:()=>tip('Icônes réorganisées')},{sep:true},{ico:'📌',label:'Coller',sc:'Ctrl+V',fn:doPaste},{sep:true},{ico:'📄',label:'Nouveau',fn:()=>tip('📄 Nouveau')},{sep:true},{ico:'⚙️',label:'Propriétés du bureau',fn:()=>tip('⚙️ Propriétés')}]);}
+function ctxIcon(x,y,icon){const winId=icon.dataset.win,name=icon.querySelector('.dicon-lbl')?.textContent||'';
+showCtx(x,y,[{ico:'📂',label:'Ouvrir',fn:()=>openWin(winId)},{ico:'🔍',label:'Explorer',fn:()=>openWin(winId)},{sep:true},{ico:'✂️',label:'Couper',fn:()=>{G.clipboard=name;clipNotif('✂️ Coupé');}},{ico:'📋',label:'Copier',fn:()=>{G.clipboard=name;clipNotif('📋 Copié : '+name);}},{sep:true},{ico:'🗑️',label:'Supprimer',fn:()=>{G.trashItems.push({name,ico:'🖥️'});updateTrash();tip('🗑️ Supprimé');}},{ico:'✏️',label:'Renommer',fn:()=>{const lbl=icon.querySelector('.dicon-lbl');lbl.dispatchEvent(new Event('dblclick'));}},{sep:true},{ico:'⚙️',label:'Propriétés',fn:()=>tip('⚙️ Propriétés de '+name)}]);}
+function ctxFile(x,y,el){const name=el.dataset.name||el.querySelector('.ln')?.textContent||'?',ico=el.dataset.ico||'📄';
+showCtx(x,y,[{ico:'📂',label:'Ouvrir',fn:()=>{if(name.match(/\.(jpg|png|jpeg)$/i)){openWin('win-viewer');}else if(name.match(/\.txt$/i)){openWin('win-np');npA.value+='['+name+']\n';}else tip('📂 Ouverture de '+name+'…');}},{ico:'✏️',label:'Modifier (Bloc-notes)',fn:()=>{openWin('win-np');npA.value+='['+name+']\n';}},{sep:true},{ico:'✂️',label:'Couper',sc:'Ctrl+X',fn:()=>{G.clipboard=name;clipNotif('✂️ Coupé : '+name);el.style.opacity='.4';}},{ico:'📋',label:'Copier',sc:'Ctrl+C',fn:()=>{G.clipboard=name;clipNotif('📋 Copié : '+name);}},{ico:'📌',label:'Coller',sc:'Ctrl+V',fn:doPaste},{sep:true},{ico:'🗑️',label:'Supprimer',sc:'Suppr',fn:()=>{G.trashItems.push({name,ico});el.remove();updateTrash();updateExpStatus();tip('🗑️ Supprimé');}},{ico:'✏️',label:'Renommer',fn:()=>tip('✏️ Renommer…')},{sep:true},{ico:'⚙️',label:'Propriétés',fn:()=>tip('⚙️ '+name+' – '+el.querySelector('.ls')?.textContent)}]);}
+function ctxNotepad(x,y){showCtx(x,y,[{ico:'↩',label:'Annuler',sc:'Ctrl+Z',fn:()=>doAction('np-undo')},{sep:true},{ico:'✂️',label:'Couper',sc:'Ctrl+X',fn:()=>doAction('np-cut')},{ico:'📋',label:'Copier',sc:'Ctrl+C',fn:()=>doAction('np-copy')},{ico:'📌',label:'Coller',sc:'Ctrl+V',fn:()=>doAction('np-paste')},{sep:true},{ico:'🔲',label:'Sélectionner tout',sc:'Ctrl+A',fn:()=>{npA.select();setExp('select');}},{sep:true},{ico:'📅',label:'Date/Heure',sc:'F5',fn:()=>doAction('np-time')}]);}
+function ctxPaint(x,y){showCtx(x,y,[{ico:'↩',label:'Annuler',sc:'Ctrl+Z',fn:ptUndo},{sep:true},{ico:'🗑️',label:'Effacer tout',fn:ptClear},{sep:true},{ico:'↔️',label:'Retourner H',fn:()=>ptFlip('h')},{ico:'↕️',label:'Retourner V',fn:()=>ptFlip('v')},{sep:true},{ico:'📐',label:'Propriétés',fn:()=>tip('📐 '+canvas.width+'×'+canvas.height+' px')}]);}
+function ctxTrashItem(x,y,idx){showCtx(x,y,[{ico:'↩',label:'Restaurer',fn:()=>{G.trashItems.splice(idx,1);updateTrash();tip('↩ Restauré');}},{sep:true},{ico:'❌',label:'Supprimer définitivement',fn:()=>{G.trashItems.splice(idx,1);updateTrash();tip('❌ Supprimé définitivement');}},{sep:true},{ico:'⚙️',label:'Propriétés',fn:()=>tip('⚙️ Propriétés')}]);}
+function ctxBrowser(x,y){showCtx(x,y,[{ico:'🔄',label:'Actualiser',fn:()=>doAction('br-reload')},{ico:'⬅️',label:'Précédent',fn:()=>{if(G.brIdx>0){G.brIdx--;brNavigate(G.brHistory[G.brIdx]);}}},{sep:true},{ico:'⭐',label:'Ajouter aux favoris',fn:()=>doAction('br-fav-add')},{sep:true},{ico:'🔍',label:'Zoom +',fn:()=>doAction('br-zoom-in')},{ico:'🔍',label:'Zoom −',fn:()=>doAction('br-zoom-out')}]);}
+function ctxViewer(x,y){showCtx(x,y,[{ico:'◀',label:'Image précédente',fn:()=>doAction('vw-prev')},{ico:'▶',label:'Image suivante',fn:()=>doAction('vw-next')},{sep:true},{ico:'🔍',label:'Zoom +',fn:()=>doAction('vw-zin')},{ico:'🔍',label:'Zoom −',fn:()=>doAction('vw-zout')},{ico:'⊡',label:'Ajuster',fn:()=>doAction('vw-fit')},{sep:true},{ico:'↻',label:'Rotation 90°',fn:()=>doAction('vw-rot')},{ico:'🖨️',label:'Imprimer',fn:()=>tip('🖨️ Impression…')}]);}
+
+// ══════════ MENU DÉMARRER ══════════
+window.toggleStart=function(){startMenu.classList.toggle('open');};
+function closeStart(){startMenu.classList.remove('open');}
+
+// ══════════ TRAY (volume/réseau) ══════════
+let trayTimer=null;
+function showTray(html){
+  trayBubble.innerHTML=html;trayBubble.style.display='block';
+  clearTimeout(trayTimer);trayTimer=setTimeout(()=>trayBubble.style.display='none',3000);
+}
+D('tb-vol').addEventListener('mousedown',ev=>{
+  ev.stopPropagation();
+  showTray(`<strong>🔊 Volume</strong><br><input type="range" min="0" max="100" value="75" style="width:140px;margin-top:6px;" oninput="this.previousSibling.previousSibling.textContent='🔊 Volume : '+this.value+'%'">`);
+  tip('🔊 Volume');
+});
+D('tb-net').addEventListener('mousedown',ev=>{
+  ev.stopPropagation();
+  showTray('<strong>📶 Réseau</strong><br><div style="margin-top:6px;font-size:11px;color:#444;">✅ Connecté au réseau local<br>📡 Mon_Réseau<br>🌐 192.168.1.10</div>');
+  tip('📶 Réseau');
+});
+
+// ══════════ CAPTURE EVENTS (souris virtuelle toujours active) ══════════
+document.addEventListener('mousemove',ev=>{
+  G.mx=ev.clientX;G.my=ev.clientY;
+  cxE.textContent=G.mx;cyE.textContent=G.my;
+  if(ttip.style.display==='block'){ttip.style.left=(G.mx+14)+'px';ttip.style.top=(G.my-24)+'px';}
+
+  const now=Date.now();
+  if(now-G.lastTrace>55){G.lastTrace=now;const d=document.createElement('div');d.className='trace';d.style.left=G.mx+'px';d.style.top=G.my+'px';document.body.appendChild(d);setTimeout(()=>d.remove(),500);}
+
+  // Drag fenêtre
+  if(G.dragWin&&G.btnL){
+    const db=desktop.getBoundingClientRect();
+    let nx=G.mx-G.dwOX-db.left,ny=G.my-G.dwOY-db.top;
+    nx=Math.max(0,Math.min(db.width-G.dragWin.offsetWidth,nx));
+    ny=Math.max(0,Math.min(db.height-36-G.dragWin.offsetHeight,ny));
+    G.dragWin.style.left=nx+'px';G.dragWin.style.top=ny+'px';setExp('drag');
+  }
+  // Resize
+  if(G.resWin&&G.btnL){G.resWin.style.width=Math.max(280,G.rwW+(G.mx-G.rwX))+'px';G.resWin.style.height=Math.max(180,G.rwH+(G.my-G.rwY))+'px';setExp('resize');}
+
+  // Drag icône bureau
+  if(G.dragIcon&&G.btnL){
+    const dx=Math.abs(G.mx-G.diStartX),dy=Math.abs(G.my-G.diStartY);
+    if(dx>4||dy>4){
+      G.diMoved=true;G.dragIcon.classList.add('dragging-icon');
+      const db=desktop.getBoundingClientRect();
+      let nx=G.mx-G.diOX-db.left,ny=G.my-G.diOY-db.top;
+      nx=Math.max(0,Math.min(db.width-80,nx));ny=Math.max(0,Math.min(db.height-90,ny));
+      G.dragIcon.style.left=nx+'px';G.dragIcon.style.top=ny+'px';
+      setExp('drag');mbL.classList.add('mb-drag');
+    }
+  }
+
+  // Drag fichier
+  if(G.dragFile&&G.btnL){
+    dgh.style.display='flex';dgh.style.left=(G.mx+10)+'px';dgh.style.top=(G.my-10)+'px';
+    mbL.classList.add('mb-drag');
+    document.querySelectorAll('.win').forEach(w=>w.style.outline='');
+    const el2=document.elementFromPoint(G.mx,G.my);
+    const hw=el2?.closest('.win');if(hw)hw.style.outline='2px dashed #316ac5';
+    setExp('drag');
+  }
+
+  // Sélection rect bureau
+  if(G.selActive&&G.btnL){
+    const db=desktop.getBoundingClientRect();
+    const x=Math.min(G.selX0,G.mx)-db.left,y=Math.min(G.selY0,G.my)-db.top;
+    const w2=Math.abs(G.mx-G.selX0),h2=Math.abs(G.my-G.selY0);
+    selBox.style.left=x+'px';selBox.style.top=y+'px';selBox.style.width=w2+'px';selBox.style.height=h2+'px';
+    selBox.style.display=w2>5||h2>5?'block':'none';
+  }
+  if(!G.dragWin&&!G.resWin&&!G.dragFile&&!G.dragIcon&&!G.selActive)setExp('move');
+},true);
+
+document.addEventListener('mousedown',ev=>{
+  if(ev.button===0){G.btnL=true;mbL.classList.add('mb-on');}
+  if(ev.button===2){G.btnR=true;mbR.classList.add('mb-on');}
+  closeAllDD();hideCtx();closeStart();trayBubble.style.display='none';
+
+  if(ev.button===2){
+    ev.preventDefault();
+    const trItem=ev.target.closest('#trash-body .litem');
+    const fileItem=ev.target.closest('#exp-main .fitem,#exp-main .litem');
+    const dicon2=ev.target.closest('.dicon');
+    const inNp=ev.target.closest('#win-np');
+    const inPaint=ev.target.closest('#win-paint')&&!ev.target.closest('.pside')&&!ev.target.closest('.pcolors');
+    const inBr=ev.target.closest('#win-browser')&&!ev.target.closest('.browser-bar')&&!ev.target.closest('.menubar')&&!ev.target.closest('.fav-bar');
+    const inVw=ev.target.closest('#win-viewer')&&!ev.target.closest('.toolbar')&&!ev.target.closest('.menubar');
+    if(trItem)ctxTrashItem(G.mx,G.my,parseInt(trItem.dataset.idx));
+    else if(fileItem)ctxFile(G.mx,G.my,fileItem);
+    else if(dicon2)ctxIcon(G.mx,G.my,dicon2);
+    else if(inNp)ctxNotepad(G.mx,G.my);
+    else if(inPaint)ctxPaint(G.mx,G.my);
+    else if(inBr)ctxBrowser(G.mx,G.my);
+    else if(inVw)ctxViewer(G.mx,G.my);
+    else if(!ev.target.closest('#taskbar')&&!ev.target.closest('#st-menu'))ctxDesktop(G.mx,G.my);
+    setExp('right');
+  }
+  if(ev.button===0){
+    const win=ev.target.closest('.win');if(win)bringTop(win.id);
+    if(ev.target===desktop||ev.target===selBox){
+      G.selActive=true;G.selX0=G.mx;G.selY0=G.my;
+      document.querySelectorAll('.dicon').forEach(i=>i.classList.remove('selected'));
+    }
+    if(!ev.target.closest('.win')&&!ev.target.closest('.dicon')&&!ev.target.closest('#taskbar')&&!ev.target.closest('#st-menu')){setExp('left');tip('🟢 Clic gauche');}
+  }
+},true);
+
+document.addEventListener('mouseup',ev=>{
+  if(ev.button===0){
+    G.btnL=false;mbL.classList.remove('mb-on','mb-drag');
+    if(G.selActive){G.selActive=false;selBox.style.display='none';}
+    if(G.dragWin)G.dragWin=null;
+    if(G.resWin){G.resWin=null;tip('↔️ Redimensionné');}
+
+    // Fin drag icône
+    if(G.dragIcon){
+      G.dragIcon.classList.remove('dragging-icon');
+      if(!G.diMoved){}// simple clic, déjà géré
+      else tip('🖱️ Icône déplacée');
+      G.dragIcon=null;G.diMoved=false;
+    }
+
+    // Fin drag fichier
+    if(G.dragFile){
+      dgh.style.display='none';
+      document.querySelectorAll('.win').forEach(w=>w.style.outline='');
+      const el2=document.elementFromPoint(G.mx,G.my);
+      const dropTrash=el2?.closest('#win-trash');
+      const dropNp=el2?.closest('#win-np');
+      const name=G.dragFile.dataset.name||G.dragFile.querySelector('.ln')?.textContent||'?';
+      const ico=G.dragFile.dataset.ico||'📄';
+      if(dropTrash){G.trashItems.push({name,ico});G.dragFile.remove();updateTrash();tip('🗑️ Déposé à la corbeille!');setExp('drop');}
+      else if(dropNp){npA.value+='\n['+name+']';tip('📝 Inséré dans Bloc-notes');}
+      else tip('📄 '+name+' — déposé');
+      G.dragFile=null;
+    }
+    const now=Date.now();
+    const skip=ev.target.closest('.dicon,.fitem,.litem,.wbtn,.cb,.mi,.mbtn,.ptool,.sw,.trow,.tbtn,.tbtn2,.ddr,.ctx-r,.smr,.tb-ico-btn,.br-nav,.br-go,.vnav-btn,.vz-btn');
+    if(!skip){if(now-G.lastClick<370){tip('⚡ Double-clic !');setExp('dbl');G.lastClick=0;}else G.lastClick=now;}
+  }
+  if(ev.button===2){G.btnR=false;mbR.classList.remove('mb-on');}
+},true);
+
+document.addEventListener('wheel',ev=>{
+  const dir=ev.deltaY<0?'↑ Haut':'↓ Bas';
+  mwi.classList.add('mw-on');mwi.style.transform=ev.deltaY<0?'translateY(-3px)':'translateY(3px)';
+  tip(dir+' (molette)');setExp('scroll');
+  setTimeout(()=>{mwi.classList.remove('mw-on');mwi.style.transform='';},220);
+},{passive:true,capture:true});
+
+document.addEventListener('contextmenu',ev=>ev.preventDefault(),true);
+
+// ══════════ RACCOURCIS CLAVIER ══════════
+document.addEventListener('keydown',ev=>{
+  if(document.activeElement===npA||document.activeElement===D('br-url'))return;
+  if(ev.ctrlKey){
+    if(ev.key==='c'){copySelected();ev.preventDefault();}
+    else if(ev.key==='x'){cutSelected();ev.preventDefault();}
+    else if(ev.key==='v'){doPaste();ev.preventDefault();}
+    else if(ev.key==='a'){selectAllFiles();ev.preventDefault();}
+    else if(ev.key==='z'){ptUndo();ev.preventDefault();}
+    else if(ev.key==='n'){doAction('np-new');ev.preventDefault();}
+    else if(ev.key==='s'){doAction('np-save');ev.preventDefault();}
+  }
+  if(ev.key==='Delete')deleteSelected();
+  if(ev.key==='F5'){doAction('np-time');ev.preventDefault();}
+  if(ev.key==='Escape'){hideCtx();closeAllDD();closeStart();}
+});
+
+// ══════════ HORLOGE ══════════
+function updateClock(){
+  const d=new Date(),h=String(d.getHours()).padStart(2,'0'),m=String(d.getMinutes()).padStart(2,'0');
+  const dd=String(d.getDate()).padStart(2,'0'),mo=String(d.getMonth()+1).padStart(2,'0');
+  D('tb-clk').innerHTML=`${h}:${m}<br><span style="font-size:9px;color:#aad;">${dd}/${mo}</span>`;
+}
+updateClock();setInterval(updateClock,15000);
+
+// ══════════ TOOLTIP & EXPLICATION ══════════
+let tipTmr=null;
+function tip(txt){
+  ttip.textContent=txt;ttip.style.left=(G.mx+14)+'px';ttip.style.top=(G.my-24)+'px';ttip.style.display='block';
+  clearTimeout(tipTmr);tipTmr=setTimeout(()=>ttip.style.display='none',1400);
+}
+const EXPS={move:'👆 Déplacez la souris sur le bureau.',left:'🟢 Clic gauche : sélectionne un élément.',right:'🟡 Clic droit : ouvre le menu contextuel.',dbl:'⚡ Double-clic : ouvre un fichier ou programme.',drag:'🎯 Glisser : maintenez le clic et déplacez.',drop:'📥 Relâchez pour déposer l\'élément.',resize:'↔️ Glissez le coin pour redimensionner.',scroll:'🔵 Molette : fait défiler le contenu.',select:'✂️ Sélection active.',type:'⌨️ Tapez votre texte !'};
+function setExp(k){expT.textContent=EXPS[k]||'';}
+
+let clipTmr=null;
+function clipNotif(msg){clipN.textContent=msg;clipN.style.display='block';clearTimeout(clipTmr);clipTmr=setTimeout(()=>clipN.style.display='none',2200);}
+
+// ══════════ RECOMMENCER ══════════
+window.doReset=function(){
+  Object.keys(wins).forEach(id=>{ const w=wins[id];w.el.classList.remove('open','minimized','opening','closing','minimizing','focused');w.min=false;w.maxed=false; });
+  G.trashItems=[];updateTrash();
+  npA.value='';D('np-ttl').textContent='Sans titre – Bloc-notes';
+  ctx.clearRect(0,0,canvas.width,canvas.height);ptHist=[];
+  cd='0';cp='';co='';cn=true;cu();
+  G.clipboard='';
+  document.querySelectorAll('.dicon,.fitem,.litem').forEach(el=>el.classList.remove('selected'));
+  closeAllDD();hideCtx();closeStart();tbWins.innerHTML='';
+  setExp('move');tip('🔄 Bureau réinitialisé !');
+};
+
+// Init navigateur
+brNavigate('monordinateur://accueil');
+// Init visionneuse
+vwLoad(0);
+setExp('move');
+})();
+</script>
+</body>
+</html>

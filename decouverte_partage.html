@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="fr-CH">
+<head>
+  <meta charset="UTF-8">
+  <title>Découverte du cours – Autoévaluation initiale</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bleu: #003a8f;
+      --bleu-clair: #e8eef8;
+      --vert: #1f7a3d;
+      --vert-clair: #e8f5ec;
+      --neutre: #f7f9fc;
+      --neutre-2: #eef2f8;
+      --texte: #111;
+      --texte-doux: #3a3a3a;
+      --accent: #0b66d4;
+      --ombre: 0 10px 25px rgba(0,0,0,0.08);
+      --ombre-forte: 0 14px 30px rgba(0,0,0,0.12);
+    }
+
+    body {
+      font-family: 'Open Sans', Arial, sans-serif;
+      margin: 0;
+      background: linear-gradient(180deg, #eaf0f8, var(--neutre));
+      color: var(--texte);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--bleu), var(--accent));
+      color: #fff;
+      padding: 28px 60px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(32px, 2.8vw, 44px);
+    }
+
+    header p {
+      margin: 8px 0 0;
+      font-size: clamp(18px, 1.5vw, 22px);
+      opacity: 0.95;
+    }
+
+    main {
+      flex: 1;
+      padding: 40px 60px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      background: radial-gradient(circle at top right, rgba(0,80,200,0.06), transparent 45%),
+                  radial-gradient(circle at bottom left, rgba(31,122,61,0.06), transparent 45%);
+    }
+
+    .carte {
+      background: #fff;
+      border-radius: 18px;
+      padding: 32px;
+      box-shadow: var(--ombre);
+      border: 1px solid #dfe6f2;
+      border-left: 6px solid var(--bleu);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .carte:nth-of-type(even) {
+      border-left-color: var(--vert);
+    }
+
+    .carte::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--bleu-clair), var(--vert-clair));
+    }
+
+    .carte h2 {
+      margin: 0 0 15px 0;
+      font-size: clamp(24px, 2.2vw, 34px);
+      color: var(--bleu);
+      border-left: 6px solid var(--vert);
+      padding-left: 14px;
+    }
+
+    .carte ul {
+      font-size: clamp(18px, 1.6vw, 26px);
+      line-height: 1.6;
+      padding-left: 24px;
+    }
+
+    .ajout-mots {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .ajout-mots input {
+      flex: 1;
+      padding: 12px 16px;
+      font-size: clamp(16px, 1.4vw, 22px);
+      border-radius: 12px;
+      border: 2px solid var(--bleu-clair);
+      outline: none;
+      background: #fff;
+    }
+
+    .ajout-mots button {
+      font-size: clamp(16px, 1.3vw, 20px);
+      padding: 12px 18px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(135deg, var(--bleu), var(--accent));
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .ajout-mots button:hover {
+      transform: scale(1.05);
+      box-shadow: var(--ombre-forte);
+    }
+
+    .mots-affiches {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .mot {
+      background: var(--vert-clair);
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-size: clamp(16px, 1.4vw, 22px);
+      border: 2px solid var(--vert);
+      animation: pop 0.3s ease;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.7); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .question {
+      font-size: clamp(20px, 1.7vw, 28px);
+      font-weight: bold;
+      background: linear-gradient(90deg, var(--vert-clair), var(--bleu-clair));
+      padding: 24px;
+      border-radius: 14px;
+      border-left: 6px solid var(--vert);
+      margin-bottom: 30px;
+    }
+
+    .votes {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .vote-card {
+      background: var(--neutre);
+      padding: 24px;
+      border-radius: 16px;
+      font-size: clamp(18px, 1.5vw, 24px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .vote-card:hover {
+      transform: translateY(-4px);
+      background: var(--bleu-clair);
+    }
+
+    .count {
+      font-size: clamp(18px, 1.5vw, 26px);
+      font-weight: bold;
+      background: linear-gradient(135deg, var(--vert), #2a9b55);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 20px;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    footer {
+      padding: 18px 40px;
+      background: var(--neutre-2);
+      border-top: 1px solid #e3e8f1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      color: var(--texte-doux);
+      flex-wrap: wrap;
+    }
+
+    @media print {
+      body { background:#fff; }
+      header, footer a, button { display:none; }
+      main { padding:20px; }
+      .carte { box-shadow:none; }
+    }
+
+    button {
+      font-size: clamp(14px, 1.1vw, 18px);
+      padding: 12px 22px;
+      border-radius: 30px;
+      border: none;
+      background: linear-gradient(135deg, var(--bleu), var(--accent));
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--ombre-forte);
+    }
+
+    .nav-btn {
+      text-decoration: none;
+      background: linear-gradient(135deg, var(--bleu), var(--accent));
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 30px;
+      font-size: clamp(14px, 1.1vw, 18px);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: inline-block;
+    }
+
+    .nav-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--ombre-forte);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 1000px) {
+      main { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Découverte du cours</h1>
+  <p>Autoévaluation initiale – Mise en route</p>
+</header>
+
+<main>
+
+  <section class="carte">
+    <h2>🗣️ Partage de mots</h2>
+    <div class="question">
+      🧠 Quels mots connaissez-vous liés à la souris ?
+    </div>
+    <div class="ajout-mots">
+      <input type="text" id="motInput" placeholder="Écrire un mot…">
+      <button onclick="ajouterMot()">Ajouter</button>
+    </div>
+    <div class="mots-affiches" id="motsAffiches"></div>
+  </section>
+
+  <section class="carte">
+    <h2>📊 Autoévaluation initiale</h2>
+    <div class="question">
+      🎯 Quel est votre niveau avec la souris ?
+    </div>
+
+    <div class="votes">
+      <div class="vote-card" onclick="vote(0)">
+        😕 Très peu
+        <div class="count" id="c0">0</div>
+      </div>
+
+      <div class="vote-card" onclick="vote(1)">
+        🙂 Un peu
+        <div class="count" id="c1">0</div>
+      </div>
+
+      <div class="vote-card" onclick="vote(2)">
+        À l’aise
+        <div class="count" id="c2">0</div>
+      </div>
+
+      <div class="vote-card" onclick="vote(3)">
+        🚀 Avancé
+        <div class="count" id="c3">0</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div>Autoévaluation collective · Pas de bonne ou mauvaise réponse</div>
+  <div class="nav-links">
+    <button class="btn-pdf" onclick="window.print()">Télécharger en PDF</button>
+    <a class="nav-btn" href="index.html">⬅ Retour</a>
+    <a class="nav-btn" href="debriefing.html">Suivant ➜</a>
+  </div>
+</footer>
+
+<script>
+  const counts = [0,0,0,0];
+
+  function vote(index) {
+    counts[index]++;
+    document.getElementById('c'+index).textContent = counts[index];
+  }
+  function ajouterMot() {
+    const input = document.getElementById('motInput');
+    const valeur = input.value.trim();
+    if (valeur === '') return;
+
+    const span = document.createElement('div');
+    span.className = 'mot';
+    span.textContent = valeur;
+
+    document.getElementById('motsAffiches').appendChild(span);
+    input.value = '';
+    input.focus();
+  }
+</script>
+
+</body>
+</html>
