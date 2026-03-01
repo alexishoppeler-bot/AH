@@ -24,7 +24,7 @@ Plateforme web locale pour entrainer les competences numeriques via des exercice
 - `js/exercise-utils.js`: helpers communs.
 - `js/data/`: jeux de donnees par exercice.
 - `css/`: theme, layout, composants, utilitaires.
-- `cours-du-jour.html`: page "Cours du jour" (cours modele).
+- `pages/`: pages de cours et supports (cours du jour, debriefing, conclusion, atelier, souris virtuelle).
 
 ## Progression
 

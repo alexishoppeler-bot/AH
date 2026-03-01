@@ -29,11 +29,11 @@ const SIDEBAR_HTML = `
         <span class="chev" aria-hidden="true">▾</span>
       </button>
     <div class="sidebar-group-body">
-        <a href="../cours-du-jour.html" class="sidebar-link">Cours du jour</a>
-        <a href="../decouverte_partage.html" class="sidebar-link">Decouverte partage</a>
-        <a href="../debriefing.html" class="sidebar-link">Debriefing</a>
-        <a href="../conclusion.html" class="sidebar-link">Conclusion</a>
-        <a href="../atelier_recherche_demploi.html" class="sidebar-link">Atelier recherche d emploi</a>
+        <a href="../pages/cours-du-jour.html" class="sidebar-link">Cours du jour</a>
+        <a href="../pages/decouverte-partage.html" class="sidebar-link">Decouverte partage</a>
+        <a href="../pages/debriefing.html" class="sidebar-link">Debriefing</a>
+        <a href="../pages/conclusion.html" class="sidebar-link">Conclusion</a>
+        <a href="../pages/atelier-recherche-emploi.html" class="sidebar-link">Atelier recherche d emploi</a>
       </div>
     </div>
     <div class="sidebar-group">
@@ -42,7 +42,7 @@ const SIDEBAR_HTML = `
         <span class="chev" aria-hidden="true">▾</span>
       </button>
       <div class="sidebar-group-body">
-        <a href="../souris_virtuelle_v13.html" class="sidebar-link">Souris virtuelle v13</a>
+        <a href="../pages/souris-virtuelle.html" class="sidebar-link">Souris virtuelle v13</a>
       </div>
     </div>
   </div>
