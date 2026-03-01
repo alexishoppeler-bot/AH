@@ -14,6 +14,9 @@
       display: flex; align-items: center; gap: 14px;
       margin-bottom: 18px; flex-wrap: wrap;
     }
+    .parcours-header .btn {
+      margin-left: auto;
+    }
     .step-indicator {
       display: flex; gap: 6px;
     }
@@ -155,6 +158,155 @@
     /* ── Transition entre étapes ── */
     .step-card { animation: fadein 0.3s ease; }
     @keyframes fadein { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
+
+    /* ── Fenêtre entraînement ── */
+    .train-modal {
+      width: min(920px, 96vw);
+      text-align: left;
+    }
+    .train-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .train-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text1);
+    }
+    .train-instruction {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 12px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .train-kpis {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .train-kpi {
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 5px 11px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+    }
+    .train-board {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .train-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 12px;
+      min-height: 120px;
+    }
+    .train-box h4 {
+      margin: 0 0 8px;
+      font-size: 12px;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .train-target {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      border: none;
+      font-size: 30px;
+      cursor: pointer;
+      color: #fff;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      box-shadow: var(--shadow-accent);
+    }
+    .train-target:active { transform: scale(0.98); }
+    .train-dd {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .train-drag {
+      user-select: none;
+      cursor: grab;
+      border-radius: 10px;
+      padding: 8px 10px;
+      text-align: center;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .train-drop {
+      min-height: 44px;
+      border-radius: 10px;
+      border: 2px dashed var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text2);
+      font-size: 13px;
+      background: color-mix(in srgb, var(--accent) 8%, var(--bg2));
+    }
+    .train-select-text {
+      margin: 0;
+      line-height: 1.9;
+      user-select: text;
+      cursor: text;
+    }
+    .train-note {
+      width: 100%;
+      min-height: 98px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text1);
+      padding: 10px;
+      resize: vertical;
+      font: inherit;
+      font-size: 14px;
+    }
+    .train-feedback {
+      margin-top: 10px;
+      min-height: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--success);
+    }
+    .train-menu {
+      position: absolute;
+      z-index: 20;
+      min-width: 140px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: var(--shadow-lg);
+      display: none;
+      overflow: hidden;
+    }
+    .train-menu button {
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      padding: 9px 10px;
+      background: transparent;
+      color: var(--text1);
+      text-align: left;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .train-menu button:last-child { border-bottom: none; }
+    .train-menu button:hover { background: var(--bg2); }
   </style>
 </head>
 <body>
@@ -191,6 +343,7 @@
         <div class="parcours-header fade-up delay-2">
           <div class="step-indicator" id="step-dots"></div>
           <span style="font-size:13px;color:var(--text2);" id="step-label">Étape 1/5</span>
+          <button class="btn btn-secondary" id="btn-training-quick">🧪 Fenêtre entraînement</button>
         </div>
 
         <!-- Zone de l'étape courante -->
@@ -224,6 +377,57 @@
         <button class="btn btn-primary"   id="btn-restart-parcours">🔄 Recommencer le parcours</button>
         <button class="btn btn-secondary" id="btnNextExercise">Exercice suivant</button>
         <a href="cliquer.html" class="btn btn-secondary">&larr; Retour</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fenêtre entraînement libre -->
+  <div class="modal-overlay" id="modal-train">
+    <div class="modal train-modal">
+      <div class="train-head">
+        <h3 class="train-title">Mode entraînement infini aléatoire</h3>
+        <button class="btn btn-secondary" id="btn-train-close">Fermer</button>
+      </div>
+      <div class="train-instruction" id="train-instruction">Consigne...</div>
+      <div class="train-kpis">
+        <span class="train-kpi">✅ Réussites: <span id="train-ok">0</span></span>
+        <span class="train-kpi">🔥 Série: <span id="train-streak">0</span></span>
+        <span class="train-kpi">📋 Presse-papiers: <span id="train-clip">vide</span></span>
+      </div>
+
+      <div class="train-board" id="train-board">
+        <div class="train-box">
+          <h4>Actions souris</h4>
+          <button class="train-target" id="train-target">🎯</button>
+        </div>
+
+        <div class="train-box">
+          <h4>Glisser-déposer</h4>
+          <div class="train-dd">
+            <div class="train-drag" id="train-drag" draggable="true">📄 Fichier</div>
+            <div class="train-drop" id="train-drop">Dépose ici</div>
+          </div>
+        </div>
+
+        <div class="train-box">
+          <h4>Sélection de texte</h4>
+          <p class="train-select-text" id="train-select-text">La souris permet de cliquer, sélectionner et glisser des éléments.</p>
+        </div>
+
+        <div class="train-box">
+          <h4>Bloc-notes (clic droit pour menu)</h4>
+          <textarea class="train-note" id="train-note">Texte exemple: cliquer copier coller.</textarea>
+        </div>
+
+        <div class="train-menu" id="train-menu">
+          <button type="button" data-action="copy">📄 Copier</button>
+          <button type="button" data-action="paste">📋 Coller</button>
+        </div>
+      </div>
+
+      <div class="train-feedback" id="train-feedback"></div>
+      <div style="margin-top:12px;display:flex;gap:10px;justify-content:flex-end;">
+        <button class="btn btn-secondary" id="btn-train-skip">Consigne suivante</button>
       </div>
     </div>
   </div>
@@ -642,7 +846,7 @@
               Clique et glisse pour sélectionner du texte. Suis les consignes.
             </p>
             <div class="sel-actions">
-              <button class="btn btn-secondary" id="sel-training-btn">🎯 Entraînement aléatoire</button>
+              <button class="btn btn-secondary" id="sel-training-btn">🎯 Entraînement infini aléatoire</button>
             </div>
             <div class="sel-consigne" id="sel-badge">
               <span class="badge" id="sel-num">1</span>
@@ -667,11 +871,18 @@
             const stepPill = document.getElementById('sel-step-pill');
             const trainingBtn = document.getElementById('sel-training-btn');
 
-            step = 0; okCount = 0; cooldown = false; trainingMode = false;
+            step = 0; okCount = 0; cooldown = false;
+            trainingMode = forceSelectionTraining === true;
+            forceSelectionTraining = false;
             currentTask = TASKS[0];
             lastTaskIndex = -1;
             okEl.textContent = 0;
             promoteExerciseStatus(PAGE_ID, 'in_progress');
+
+            if (trainingMode) {
+              trainingBtn.textContent = '↩ Revenir au parcours';
+              fbEl.textContent = 'Mode entraînement infini activé.';
+            }
 
             function pickRandomTask() {
               if (TASKS.length === 1) return TASKS[0];
@@ -757,9 +968,9 @@
               step = 0;
               if (trainingMode) {
                 trainingBtn.textContent = '↩ Revenir au parcours';
-                fbEl.textContent = 'Mode entraînement activé.';
+                fbEl.textContent = 'Mode entraînement infini activé.';
               } else {
-                trainingBtn.textContent = '🎯 Entraînement aléatoire';
+                trainingBtn.textContent = '🎯 Entraînement infini aléatoire';
                 fbEl.textContent = 'Mode parcours réactivé.';
               }
               showTask();
@@ -784,12 +995,39 @@
   ══════════════════════════════════════════════════════ */
   let currentStep = 0;
   let currentStepObj = null; // { html, start }
+  let forceSelectionTraining = false;
+  const TRAIN_TASKS = [
+    { id: 'left', label: 'Clique sur la cible 🎯' },
+    { id: 'double', label: 'Double-clique sur la cible 🎯' },
+    { id: 'right', label: 'Fais un clic droit sur la cible 🎯' },
+    { id: 'drag', label: 'Glisse le fichier 📄 dans la zone "Dépose ici"' },
+    { id: 'select', label: 'Sélectionne le mot « sélectionner » dans le texte' },
+    { id: 'menu-copy', label: 'Clic droit dans le bloc-notes puis clique sur « Copier »' },
+    { id: 'menu-paste', label: 'Clic droit dans le bloc-notes puis clique sur « Coller »' },
+  ];
 
   const stepZone  = document.getElementById('step-zone');
   const dotsEl    = document.getElementById('step-dots');
   const labelEl   = document.getElementById('step-label');
+  const btnTrainingQuick = document.getElementById('btn-training-quick');
   const modalStep = document.getElementById('modal-step');
   const modalFin  = document.getElementById('modal-fin');
+  const modalTrain = document.getElementById('modal-train');
+  const btnTrainClose = document.getElementById('btn-train-close');
+  const btnTrainSkip = document.getElementById('btn-train-skip');
+  const trainInstructionEl = document.getElementById('train-instruction');
+  const trainOkEl = document.getElementById('train-ok');
+  const trainStreakEl = document.getElementById('train-streak');
+  const trainClipEl = document.getElementById('train-clip');
+  const trainFeedbackEl = document.getElementById('train-feedback');
+  const trainBoard = document.getElementById('train-board');
+  const trainTarget = document.getElementById('train-target');
+  const trainDrag = document.getElementById('train-drag');
+  const trainDrop = document.getElementById('train-drop');
+  const trainText = document.getElementById('train-select-text');
+  const trainNote = document.getElementById('train-note');
+  const trainMenu = document.getElementById('train-menu');
+  let trainState = { current: null, last: null, ok: 0, streak: 0, clipboard: '', menuSource: '' };
 
   // Construire les dots une seule fois
   STEPS.forEach((_, i) => {
@@ -836,6 +1074,55 @@
     launchConfetti();
   }
 
+  function pickRandomTrainingTask() {
+    if (TRAIN_TASKS.length === 1) return TRAIN_TASKS[0];
+    let idx = Math.floor(Math.random() * TRAIN_TASKS.length);
+    if (TRAIN_TASKS[idx].id === trainState.last) idx = (idx + 1) % TRAIN_TASKS.length;
+    return TRAIN_TASKS[idx];
+  }
+
+  function hideTrainingMenu() {
+    trainMenu.style.display = 'none';
+    trainState.menuSource = '';
+  }
+
+  function showTrainingMenu(x, y, source) {
+    trainState.menuSource = source;
+    const box = trainBoard.getBoundingClientRect();
+    trainMenu.style.left = Math.max(8, x - box.left) + 'px';
+    trainMenu.style.top = Math.max(8, y - box.top) + 'px';
+    trainMenu.style.display = 'block';
+  }
+
+  function markTrainingSuccess(message) {
+    trainState.ok++;
+    trainState.streak++;
+    trainOkEl.textContent = String(trainState.ok);
+    trainStreakEl.textContent = String(trainState.streak);
+    trainFeedbackEl.textContent = '✅ ' + message;
+    addGlobalScore(1, 0, 1);
+    setTimeout(() => nextTrainingTask(), 700);
+  }
+
+  function nextTrainingTask() {
+    hideTrainingMenu();
+    const t = pickRandomTrainingTask();
+    trainState.current = t;
+    trainState.last = t.id;
+    trainInstructionEl.textContent = t.label;
+    trainFeedbackEl.textContent = '';
+    trainClipEl.textContent = trainState.clipboard ? '"' + trainState.clipboard.slice(0, 18) + '"' : 'vide';
+    if (t.id === 'menu-paste' && !trainState.clipboard) {
+      trainState.clipboard = 'texte copié';
+      trainClipEl.textContent = '"' + trainState.clipboard + '"';
+    }
+    if (t.id === 'drag') {
+      trainDrag.textContent = '📄 Fichier';
+      trainDrop.textContent = 'Dépose ici';
+    }
+    window.getSelection().removeAllRanges();
+  }
+
   // Bouton "Étape suivante"
   document.getElementById('btn-next-step').addEventListener('click', () => {
     modalStep.classList.remove('show');
@@ -858,6 +1145,101 @@
     document.getElementById('sc-miss').textContent = 0;
     document.getElementById('sc-xp').textContent   = '0 XP';
     loadStep(0);
+  });
+
+  // Ouvrir la fenêtre d'entraînement libre
+  btnTrainingQuick.addEventListener('click', () => {
+    modalStep.classList.remove('show');
+    modalFin.classList.remove('show');
+    modalTrain.classList.add('show');
+    if (!trainState.current) nextTrainingTask();
+  });
+
+  btnTrainClose.addEventListener('click', () => {
+    modalTrain.classList.remove('show');
+    hideTrainingMenu();
+  });
+  btnTrainSkip.addEventListener('click', () => {
+    trainState.streak = 0;
+    trainStreakEl.textContent = '0';
+    nextTrainingTask();
+  });
+
+  // Actions entraînement
+  trainTarget.addEventListener('click', () => {
+    if (!trainState.current) return;
+    if (trainState.current.id === 'left') markTrainingSuccess('Clic gauche validé.');
+  });
+  trainTarget.addEventListener('dblclick', () => {
+    if (!trainState.current) return;
+    if (trainState.current.id === 'double') markTrainingSuccess('Double-clic validé.');
+  });
+  trainTarget.addEventListener('contextmenu', e => {
+    e.preventDefault();
+    if (trainState.current && trainState.current.id === 'right') {
+      markTrainingSuccess('Clic droit validé.');
+      return;
+    }
+    showTrainingMenu(e.clientX, e.clientY, 'target');
+  });
+
+  trainDrag.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('text/plain', 'train-file');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  trainDrop.addEventListener('dragover', e => e.preventDefault());
+  trainDrop.addEventListener('drop', e => {
+    e.preventDefault();
+    trainDrop.textContent = '✅ Déposé';
+    if (trainState.current && trainState.current.id === 'drag') {
+      markTrainingSuccess('Glisser-déposer validé.');
+    }
+  });
+
+  trainText.addEventListener('mouseup', () => {
+    if (!trainState.current || trainState.current.id !== 'select') return;
+    const sel = window.getSelection();
+    if (!sel || !sel.toString()) return;
+    const range = sel.rangeCount ? sel.getRangeAt(0) : null;
+    if (!range || !trainText.contains(range.commonAncestorContainer)) return;
+    if (sel.toString().trim().toLowerCase() === 'sélectionner' || sel.toString().trim().toLowerCase() === 'selectionner') {
+      markTrainingSuccess('Sélection validée.');
+    }
+  });
+
+  trainNote.addEventListener('contextmenu', e => {
+    e.preventDefault();
+    showTrainingMenu(e.clientX, e.clientY, 'note');
+  });
+  trainMenu.addEventListener('click', e => {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    const action = btn.dataset.action;
+    if (action === 'copy') {
+      const start = trainNote.selectionStart || 0;
+      const end = trainNote.selectionEnd || 0;
+      const selected = trainNote.value.slice(start, end).trim();
+      if (selected) trainState.clipboard = selected;
+      trainClipEl.textContent = trainState.clipboard ? '"' + trainState.clipboard.slice(0, 18) + '"' : 'vide';
+      if (trainState.current && trainState.current.id === 'menu-copy') {
+        markTrainingSuccess('Copier validé.');
+      }
+    }
+    if (action === 'paste') {
+      const txt = trainState.clipboard || 'texte copié';
+      const start = trainNote.selectionStart || trainNote.value.length;
+      const end = trainNote.selectionEnd || trainNote.value.length;
+      trainNote.setRangeText(txt, start, end, 'end');
+      trainClipEl.textContent = '"' + txt.slice(0, 18) + '"';
+      if (trainState.current && trainState.current.id === 'menu-paste') {
+        markTrainingSuccess('Coller validé.');
+      }
+    }
+    hideTrainingMenu();
+  });
+
+  document.addEventListener('click', e => {
+    if (!trainMenu.contains(e.target)) hideTrainingMenu();
   });
 
   // Bouton "Exercice suivant"
