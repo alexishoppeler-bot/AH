@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr-CH">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dossiers Windows - AH</title>
+  <link rel="stylesheet" href="../css/theme.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <link rel="stylesheet" href="../css/dossiers-explorateur.css">
+</head>
+<body>
+  <div id="header-slot"></div>
+  <div id="sidebar-slot"></div>
+
+  <div class="layout">
+    <main class="main">
+      <div class="container">
+        <div class="page-header fade-up">
+          <div class="page-icon">&#128193;</div>
+          <h1>Dossiers Windows (Explorateur)</h1>
+          <p>Entrainez-vous a creer, organiser et nettoyer des dossiers.</p>
+        </div>
+
+        <div class="kpi-grid fade-up delay-1">
+          <div class="kpi-card">
+            <div class="kpi-value" id="kpiDone">0/0</div>
+            <div class="kpi-label">Missions</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" id="kpiErrors">0</div>
+            <div class="kpi-label">Erreurs</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" id="kpiXp">0</div>
+            <div class="kpi-label">Points</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" id="kpiProgress">0%</div>
+            <div class="kpi-label">Progression</div>
+          </div>
+        </div>
+
+        <div class="mission-box fade-up delay-2">
+          <div class="mission-title" id="missionTitle"></div>
+          <div class="mission-text" id="missionText"></div>
+        </div>
+
+        <div class="toolbar fade-up delay-2" role="toolbar" aria-label="Barre d outils">
+          <div class="tool-group">
+            <button class="btn btn-secondary btn-sm" id="btnUp">Monter</button>
+            <button class="btn btn-secondary btn-sm" id="btnNewFolder">Nouveau dossier</button>
+            <button class="btn btn-secondary btn-sm" id="btnRename">Renommer</button>
+            <div class="tool-label">Fichier</div>
+          </div>
+          <div class="tool-group">
+            <button class="btn btn-secondary btn-sm" id="btnCopy">Copier</button>
+            <button class="btn btn-secondary btn-sm" id="btnCut">Couper</button>
+            <button class="btn btn-secondary btn-sm" id="btnPaste">Coller</button>
+            <div class="tool-label">Organiser</div>
+          </div>
+          <div class="tool-group">
+            <button class="btn btn-secondary btn-sm" id="btnDelete">Supprimer</button>
+            <button class="btn btn-secondary btn-sm" id="btnRestore">Restaurer</button>
+            <button class="btn btn-secondary btn-sm" id="btnEmptyRecycle">Vider corbeille</button>
+            <div class="tool-label">Corbeille</div>
+          </div>
+          <div class="tool-group">
+            <button class="btn btn-primary btn-sm" id="btnValidate">Verifier mission</button>
+            <button class="btn btn-ghost btn-sm" id="btnHelp">Aide</button>
+            <button class="btn btn-ghost btn-sm" id="btnReset">Reinitialiser</button>
+            <div class="tool-label">Mission</div>
+          </div>
+        </div>
+
+        <div class="path-box fade-up delay-2" id="pathBox" aria-label="Chemin courant">
+          <span class="address-label">Adresse</span>
+          <div id="breadcrumb"></div>
+        </div>
+        <div class="path-box fade-up delay-2" id="clipboardInfo"></div>
+
+        <div class="explorer-wrap fade-up delay-3">
+          <section class="panel" aria-label="Arborescence">
+            <div class="panel-head">Panneau gauche: arborescence</div>
+            <div class="tree-body" id="treeBody"></div>
+          </section>
+
+          <section class="panel" aria-label="Contenu du dossier">
+            <div class="panel-head">Panneau droit: contenu</div>
+            <div class="list-head">
+              <span aria-hidden="true"></span>
+              <button type="button" class="head-btn" id="headName">Nom</button>
+              <button type="button" class="head-btn" id="headType">Type</button>
+              <button type="button" class="head-btn" id="headPath">Emplacement</button>
+            </div>
+            <div class="list-body" id="listBody"></div>
+          </section>
+        </div>
+
+        <div class="feedback fade-up delay-3" id="feedback"></div>
+        <div class="path-box fade-up delay-3" id="statusBar"></div>
+
+        <div class="help-box fade-up delay-3" id="helpBox">
+          <strong>Rappels rapides:</strong><br>
+          Copier + Coller: duplique un element (original garde).<br>
+          Couper + Coller: deplace un element (original quitte le dossier).<br>
+          Drag and drop: glisser un element vers un dossier cible.<br>
+          Corbeille: supprimer envoie dans Corbeille. Restaurer remet dans son dossier d origine.
+        </div>
+
+        <div class="mt-16 fade-up delay-3" style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primary btn-lg" id="btnNextExercise" style="display:none;">Exercice suivant</button>
+          <a href="accueil.html" class="btn btn-secondary btn-lg">&larr; Accueil</a>
+        </div>
+      </div>
+    </main>
+    <div id="footer-slot"></div>
+  </div>
+
+  <script src="../js/score.js"></script>
+  <script src="../js/exercises-config.js"></script>
+  <script src="../js/stages.js"></script>
+  <script src="../js/exercise-utils.js"></script>
+  <script src="../js/shared.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/data/dossiers-explorateur-data.js"></script>
+  <script src="../js/dossiers-explorateur.js"></script>
+
+  <div class="context-menu" id="contextMenu">
+    <button class="context-item" id="ctxOpen">Ouvrir</button>
+    <button class="context-item" id="ctxRename">Renommer</button>
+    <button class="context-item" id="ctxCopy">Copier</button>
+    <button class="context-item" id="ctxCut">Couper</button>
+    <button class="context-item" id="ctxDelete">Supprimer</button>
+    <button class="context-item" id="ctxRestore">Restaurer</button>
+  </div>
+</body>
+</html>
+

@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="fr-CH">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Texte &agrave; trous - AH</title>
+  <link rel="stylesheet" href="../css/theme.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <style>
+    /* === COMPLETER SPECIFIQUE === */
+    .completer-zone {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 32px;
+    }
+
+    .quiz-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .quiz-progress-label { font-size: 13px; color: var(--text2); }
+    .quiz-progress-label strong { color: var(--text); }
+
+    .series-progress { margin-bottom: 24px; }
+
+    /* Phrase à trous */
+    .phrase-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 24px 28px;
+      font-family: var(--font-head);
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 2.2;
+      text-align: center;
+      margin-bottom: 28px;
+      color: var(--text);
+    }
+
+    /* Trou inline */
+    .blank {
+      display: inline-block;
+      min-width: 140px;
+      border-bottom: 3px solid var(--accent);
+      margin: 0 6px;
+      padding: 2px 8px;
+      text-align: center;
+      vertical-align: middle;
+      position: relative;
+      cursor: default;
+    }
+    .blank.correct { border-color: var(--success); }
+    .blank.wrong   { border-color: var(--danger); }
+
+    /* Choix multiples (mode QCM) */
+    .choices-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .choice-btn {
+      padding: 12px 16px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: var(--r-md);
+      font-family: var(--font-head);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+      user-select: none;
+    }
+    .choice-btn:hover:not(:disabled) {
+      background: rgba(79,142,247,0.1);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .choice-btn.selected {
+      background: rgba(79,142,247,0.15);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .choice-btn.correct {
+      background: rgba(52,211,153,0.15);
+      border-color: var(--success);
+      color: var(--success);
+    }
+    .choice-btn.wrong {
+      background: rgba(248,113,113,0.15);
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+    .choice-btn:disabled { cursor: default; }
+
+    /* Feedback */
+    .feedback-row {
+      min-height: 28px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .feedback-msg {
+      font-family: var(--font-head);
+      font-size: 15px;
+      font-weight: 700;
+    }
+    .feedback-msg.ok  { color: var(--success); }
+    .feedback-msg.err { color: var(--danger); }
+
+    .action-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Résultats */
+    .result-zone { display: none; }
+    .result-zone.show { display: block; }
+    .game-zone.hidden { display: none; }
+
+    /* Indice */
+    .hint-box {
+      display: none;
+      margin-bottom: 16px;
+      padding: 10px 16px;
+      background: rgba(245,158,11,0.08);
+      border: 1px solid rgba(245,158,11,0.25);
+      border-radius: var(--r-md);
+      font-size: 13px;
+      color: var(--warning);
+      text-align: center;
+    }
+    .hint-box.show { display: block; }
+  </style>
+</head>
+<body>
+  <div id="header-slot"></div>
+  <div id="sidebar-slot"></div>
+
+  <div class="layout">
+    <main class="main">
+      <div class="container">
+
+        <div class="page-header fade-up">
+          <div class="page-icon">&#129513;</div>
+          <h1>Texte &agrave; trous</h1>
+          <p>Compl&egrave;te les phrases avec le bon mot.</p>
+        </div>
+
+        <!-- Zone de jeu -->
+        <div class="game-zone fade-up delay-2" id="gameZone">
+          <div class="completer-zone">
+
+            <div class="quiz-top">
+              <div class="quiz-progress-label">Progression <strong id="roundNum">1</strong> / <strong id="roundTotal">12</strong></div>
+              <span id="roundCategory" class="badge badge-blue"></span>
+            </div>
+
+            <div class="series-progress">
+              <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+            </div>
+
+            <!-- Phrase -->
+            <div class="phrase-box" id="phraseBox"></div>
+
+            <!-- Indice -->
+            <div class="hint-box" id="hintBox"></div>
+
+            <!-- Choix (mode QCM) -->
+            <div class="choices-grid" id="choicesGrid"></div>
+
+            <!-- Feedback -->
+            <div class="feedback-row">
+              <span class="feedback-msg" id="feedbackMsg"></span>
+            </div>
+
+            <div class="action-row">
+              <button class="btn btn-ghost btn-sm" id="btnHint">Indice</button>
+              <button class="btn btn-primary" id="btnValidate">Valider ?</button>
+              <button class="btn btn-secondary" id="btnNext" style="display:none;">Suivant ?</button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Resultats finaux -->
+        <div class="result-zone fade-up" id="resultZone">
+          <div class="card card-accent card-lg" style="text-align:center;">
+            <div style="font-size:56px;margin-bottom:16px;" id="resEmoji">&#x2705;</div>
+            <h2 style="font-family:var(--font-head);font-size:24px;font-weight:800;margin-bottom:8px;" id="resTitle">Exercice termin&eacute; !</h2>
+            <p style="color:var(--text2);margin-bottom:28px;" id="resSubtitle">Voici tes r&eacute;sultats pour cette session.</p>
+            <div class="kpi-grid" style="margin-bottom:28px;">
+              <div class="kpi-card">
+                <div class="kpi-value" id="resCorrect">0</div>
+                <div class="kpi-label">Corrects</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-value" id="resErrors">0</div>
+                <div class="kpi-label">Erreurs</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-value" id="resXP">0</div>
+                <div class="kpi-label">XP</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-value" id="resAccuracy">-</div>
+                <div class="kpi-label">Pr&eacute;cision</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+              <a href="#" class="btn btn-primary btn-lg" id="btnNextExercise">Exercice suivant</a>
+              <button class="btn btn-secondary btn-lg" id="btnRestart">Recommencer</button>
+              <a href="accueil.html" class="btn btn-secondary btn-lg">&larr; Accueil</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+    <div id="footer-slot"></div>
+  </div>
+
+  <script src="../js/score.js"></script>
+  <script src="../js/exercises-config.js"></script>
+  <script src="../js/stages.js"></script>
+  <script src="../js/exercise-utils.js"></script>
+  <script src="../js/shared.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/data/completer-data.js"></script>
+  <script>
+  'use strict';
+
+  /*
+   * Format des phrases :
+   *   text   : phrase avec ___ à la place du mot manquant
+   *   answer : réponse correcte (insensible à la casse)
+   *   choices: 4 choix pour le mode QCM (la bonne réponse doit y figurer)
+   *   hint   : indice affiché sur demande
+   *   category
+   */
+  const QUESTIONS = window.COMPLETER_DATA || [];
+
+  const PAGE_ID = 'completer';
+  const TOTAL   = QUESTIONS.length;
+  const AUTOSAVE_KEY = 'completer_autosave_v1';
+
+  let session = {
+    questions: [],
+    questionOrder: [],
+    index:     0,
+    correct:   0,
+    errors:    0,
+    xp:        0,
+    typed:     0,
+    answered:  false,
+    hintUsed:  false,
+    selectedChoice: null,
+    roundState: null, // { index, choiceOrder, selectedChoice, answered, hintUsed, wasCorrect }
+  };
+
+  let xpRulesShown = false;
+
+  /* ===== UTILITAIRES ===== */
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  /* ===== AUTOSAVE ===== */
+  function loadAutoSave() {
+    try {
+      const raw = localStorage.getItem(AUTOSAVE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function clearAutoSave() {
+    try { localStorage.removeItem(AUTOSAVE_KEY); } catch (e) {}
+  }
+
+  function saveAutoSave() {
+    try {
+      const data = {
+        v: 1,
+        page: PAGE_ID,
+        savedAt: Date.now(),
+        questionOrder: session.questionOrder,
+        index: session.index,
+        correct: session.correct,
+        errors: session.errors,
+        xp: session.xp,
+        typed: session.typed,
+        roundState: session.roundState
+      };
+      localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(data));
+    } catch (e) {}
+  }
+
+  function tryRestoreAutoSave() {
+    const data = loadAutoSave();
+    if (!data || data.page !== PAGE_ID || data.v !== 1) return false;
+    if (!Array.isArray(data.questionOrder) || data.questionOrder.length !== TOTAL) return false;
+    if (typeof data.index !== 'number' || data.index < 0 || data.index >= TOTAL) return false;
+
+    session.questionOrder = data.questionOrder.slice();
+    session.questions = session.questionOrder.map(i => QUESTIONS[i]).filter(Boolean);
+    if (session.questions.length !== TOTAL) return false;
+
+    session.index = data.index;
+    session.correct = data.correct || 0;
+    session.errors = data.errors || 0;
+    session.xp = data.xp || 0;
+    session.typed = data.typed || 0;
+    session.roundState = data.roundState || null;
+    return true;
+  }
+
+  function normalize(s) {
+    return s.trim().toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
+  /* ===== INIT ===== */
+  function startSession() {
+    if (!QUESTIONS.length) {
+      showToast('Aucune donnée trouvée pour Compléter.', 'error');
+      return;
+    }
+    session.questionOrder = shuffle(QUESTIONS.map((_, i) => i));
+    session.questions = session.questionOrder.map(i => QUESTIONS[i]);
+    session.index     = 0;
+    session.correct   = 0;
+    session.errors    = 0;
+    session.xp        = 0;
+    session.typed     = 0;
+    session.answered  = false;
+    session.hintUsed  = false;
+    session.roundState = null;
+
+    document.getElementById('resultZone').classList.remove('show');
+    document.getElementById('gameZone').classList.remove('hidden');
+
+    // Afficher les règles XP seulement à la première session
+    if (!xpRulesShown) {
+      xpRulesShown = true;
+      showXPRules('Compléter');
+    }
+
+    loadRound();
+  }
+
+  /* ===== CHARGER UNE QUESTION ===== */
+  function loadRound() {
+    const restoreState = session.roundState && session.roundState.index === session.index
+      ? session.roundState
+      : null;
+    session.answered       = restoreState ? !!restoreState.answered : false;
+    session.hintUsed       = restoreState ? !!restoreState.hintUsed : false;
+    session.selectedChoice = restoreState ? restoreState.selectedChoice : null;
+
+    const q = session.questions[session.index];
+
+    document.getElementById('roundNum').textContent      = session.index + 1;
+    document.getElementById('roundTotal').textContent    = TOTAL;
+    document.getElementById('roundCategory').textContent = q.category;
+    document.getElementById('feedbackMsg').textContent   = '';
+    document.getElementById('feedbackMsg').className     = 'feedback-msg';
+    document.getElementById('hintBox').classList.remove('show');
+    document.getElementById('hintBox').textContent       = '';
+    document.getElementById('btnNext').style.display     = 'none';
+    document.getElementById('btnValidate').style.display = 'inline-flex';
+    document.getElementById('btnValidate').disabled      = false;
+    document.getElementById('btnHint').disabled          = false;
+    document.getElementById('btnHint').textContent       = 'Indice';
+
+    const pct = Math.round((session.index / TOTAL) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+
+    session.roundState = {
+      index: session.index,
+      choiceOrder: restoreState && Array.isArray(restoreState.choiceOrder) ? restoreState.choiceOrder.slice() : null,
+      selectedChoice: session.selectedChoice || null,
+      answered: session.answered,
+      hintUsed: session.hintUsed,
+      wasCorrect: restoreState ? restoreState.wasCorrect : null
+    };
+
+    renderPhrase(q);
+    renderChoices(q);
+
+    if (session.selectedChoice) {
+      applySelectionUI(session.selectedChoice);
+    }
+
+    if (session.hintUsed) {
+      const hintBox = document.getElementById('hintBox');
+      hintBox.textContent = 'Indice: ' + q.hint;
+      hintBox.classList.add('show');
+      document.getElementById('btnHint').disabled    = true;
+      document.getElementById('btnHint').textContent = 'Indice utilise';
+    }
+
+    if (session.answered) {
+      applyAnsweredState(q, restoreState && restoreState.wasCorrect);
+    }
+
+    saveAutoSave();
+  }
+
+  /* ===== PHRASE À TROUS ===== */
+  function renderPhrase(q) {
+    const box   = document.getElementById('phraseBox');
+    const parts = q.text.split('___');
+
+    box.innerHTML = '';
+    parts.forEach((part, i) => {
+      box.appendChild(document.createTextNode(part));
+      if (i < parts.length - 1) {
+        const blank = document.createElement('span');
+        blank.className = 'blank';
+        blank.id = 'blank-' + i;
+
+        const placeholder = document.createElement('span');
+        placeholder.style.color      = 'var(--text3)';
+        placeholder.style.fontWeight = '400';
+        placeholder.style.fontSize   = '14px';
+        placeholder.textContent      = '?';
+        placeholder.id = 'blank-placeholder-' + i;
+        blank.appendChild(placeholder);
+
+        box.appendChild(blank);
+      }
+    });
+  }
+
+  /* ===== CHOIX (QCM) ===== */
+  function renderChoices(q) {
+    const grid = document.getElementById('choicesGrid');
+    grid.innerHTML = '';
+    const restoreState = session.roundState && session.roundState.index === session.index
+      ? session.roundState
+      : null;
+    const choices = restoreState && Array.isArray(restoreState.choiceOrder) && restoreState.choiceOrder.length === q.choices.length
+      ? restoreState.choiceOrder
+      : shuffle(q.choices);
+    choices.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className   = 'choice-btn';
+      btn.textContent = c;
+      btn.addEventListener('click', () => selectChoice(btn, c));
+      grid.appendChild(btn);
+    });
+    if (session.roundState) {
+      session.roundState.choiceOrder = choices.slice();
+    }
+  }
+
+  function applySelectionUI(value) {
+    const placeholder = document.getElementById('blank-placeholder-0');
+    if (placeholder) {
+      placeholder.textContent = value;
+      placeholder.style.color = 'var(--accent)';
+      placeholder.style.fontWeight = '700';
+      placeholder.style.fontSize   = '17px';
+    }
+    document.querySelectorAll('.choice-btn').forEach(b => {
+      b.classList.toggle('selected', b.textContent === value);
+    });
+  }
+
+  function applyAnsweredState(q, knownCorrect) {
+    const isOk = typeof knownCorrect === 'boolean'
+      ? knownCorrect
+      : normalize(session.selectedChoice) === normalize(q.answer);
+
+    document.getElementById('btnValidate').style.display = 'none';
+    document.getElementById('btnHint').disabled          = true;
+    document.getElementById('btnNext').style.display     = 'inline-flex';
+    document.getElementById('btnNext').textContent       =
+      session.index < TOTAL - 1 ? 'Suivant ?' : 'Terminer';
+
+    const fb = document.getElementById('feedbackMsg');
+
+    if (isOk) {
+      fb.textContent = '? Correct !';
+      fb.className   = 'feedback-msg ok';
+      document.querySelectorAll('.choice-btn').forEach(b => {
+        if (b.textContent === session.selectedChoice) b.classList.add('correct');
+        b.disabled = true;
+      });
+      const ph = document.getElementById('blank-placeholder-0');
+      if (ph) ph.style.color = 'var(--success)';
+    } else {
+      fb.textContent = '? Incorrect. La réponse était : ' + q.answer;
+      fb.className   = 'feedback-msg err';
+      document.querySelectorAll('.choice-btn').forEach(b => {
+        if (normalize(b.textContent) === normalize(q.answer)) b.classList.add('correct');
+        else if (b.textContent === session.selectedChoice) b.classList.add('wrong');
+        b.disabled = true;
+      });
+      const ph = document.getElementById('blank-placeholder-0');
+      if (ph) ph.style.color = 'var(--danger)';
+    }
+  }
+
+  /* ===== SÉLECTIONNER UN CHOIX (QCM) ===== */
+  function selectChoice(btn, value) {
+    if (session.answered) return;
+    session.selectedChoice = value;
+
+    // Mettre à jour l'affichage dans le trou
+    applySelectionUI(value);
+    if (session.roundState) {
+      session.roundState.selectedChoice = value;
+    }
+    saveAutoSave();
+  }
+
+  /* ===== VALIDER ===== */
+  function validate() {
+    if (session.answered) return;
+
+    const q = session.questions[session.index];
+
+    if (!session.selectedChoice) {
+      showToast('Choisis une réponse !', 'info');
+      return;
+    }
+
+    session.answered = true;
+    session.typed++;
+
+    const isOk = normalize(session.selectedChoice) === normalize(q.answer);
+
+    document.getElementById('btnValidate').style.display = 'none';
+    document.getElementById('btnHint').disabled          = true;
+    document.getElementById('btnNext').style.display     = 'inline-flex';
+    document.getElementById('btnNext').textContent       =
+      session.index < TOTAL - 1 ? 'Suivant ?' : 'Terminer';
+
+    const fb = document.getElementById('feedbackMsg');
+
+    if (isOk) {
+      session.correct++;
+      const xp = session.hintUsed ? 1 : 3;
+      session.xp += xp;
+      fb.textContent = '? Correct ! +' + xp + ' XP';
+      fb.className   = 'feedback-msg ok';
+      showToast('Bonne réponse ! +' + xp + ' XP', 'success');
+      recordExerciseProgress(PAGE_ID, { correct: 1, typed: 1, errors: 0, xp });
+
+      document.querySelectorAll('.choice-btn').forEach(b => {
+        if (b.textContent === session.selectedChoice) b.classList.add('correct');
+        b.disabled = true;
+      });
+      const ph = document.getElementById('blank-placeholder-0');
+      if (ph) ph.style.color = 'var(--success)';
+    } else {
+      session.errors++;
+      fb.textContent = '? Incorrect. La réponse était : ' + q.answer;
+      fb.className   = 'feedback-msg err';
+      recordExerciseProgress(PAGE_ID, { correct: 0, typed: 1, errors: 1, xp: 0 });
+
+      document.querySelectorAll('.choice-btn').forEach(b => {
+        if (normalize(b.textContent) === normalize(q.answer)) b.classList.add('correct');
+        else if (b.textContent === session.selectedChoice) b.classList.add('wrong');
+        b.disabled = true;
+      });
+      const ph = document.getElementById('blank-placeholder-0');
+      if (ph) ph.style.color = 'var(--danger)';
+    }
+
+    if (session.roundState) {
+      session.roundState.answered = true;
+      session.roundState.hintUsed = session.hintUsed;
+      session.roundState.selectedChoice = session.selectedChoice;
+      session.roundState.wasCorrect = isOk;
+    }
+    saveAutoSave();
+  }
+
+  /* ===== INDICE ===== */
+  function giveHint() {
+    if (session.answered || session.hintUsed) return;
+    session.hintUsed = true;
+    const q = session.questions[session.index];
+    const hintBox = document.getElementById('hintBox');
+    hintBox.textContent = 'Indice: ' + q.hint;
+    hintBox.classList.add('show');
+    document.getElementById('btnHint').disabled    = true;
+    document.getElementById('btnHint').textContent = 'Indice utilise';
+    if (session.roundState) {
+      session.roundState.hintUsed = true;
+    }
+    saveAutoSave();
+  }
+
+  /* ===== SUIVANT ===== */
+  function nextRound() {
+    session.index++;
+    if (session.index >= TOTAL) {
+      finishSession();
+    } else {
+      session.roundState = null;
+      loadRound();
+    }
+  }
+
+  /* ===== FIN ===== */
+  function finishSession() {
+    promoteExerciseStatus(PAGE_ID, 'completed');
+    clearAutoSave();
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('gameZone').classList.add('hidden');
+    document.getElementById('resultZone').classList.add('show');
+
+    const accuracy = calcAccuracy(session.correct, session.typed);
+    document.getElementById('resCorrect').textContent  = session.correct;
+    document.getElementById('resErrors').textContent   = session.errors;
+    document.getElementById('resXP').textContent       = session.xp;
+    document.getElementById('resAccuracy').textContent = accuracy + '%';
+
+    if (accuracy >= 80) launchConfetti();
+  }
+
+  /* ===== EVENTS ===== */
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('btnValidate').addEventListener('click', validate);
+    document.getElementById('btnNext').addEventListener('click', nextRound);
+    document.getElementById('btnHint').addEventListener('click', giveHint);
+    document.getElementById('btnRestart').addEventListener('click', () => {
+      clearAutoSave();
+      startSession();
+    });
+
+    // Bouton "Exercice suivant recommandé"
+    const btnNextEx = document.getElementById('btnNextExercise');
+    const nextEx = getNextExercise(PAGE_ID);
+    if (nextEx && nextEx.name && nextEx.href) {
+      btnNextEx.addEventListener('click', () => {
+        window.location.href = nextEx.href;
+      });
+      btnNextEx.textContent = 'Exercice suivant : ' + nextEx.name;
+    } else {
+      btnNextEx.style.display = 'none';
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && session.answered) nextRound();
+    });
+
+    const restored = tryRestoreAutoSave();
+    if (restored) {
+      loadRound();
+      showToast('Session restaurée automatiquement.', 'info');
+    } else {
+      startSession();
+    }
+  });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

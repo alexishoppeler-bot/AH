@@ -1,0 +1,345 @@
+.explorer-wrap {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .explorer-wrap {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mission-box {
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  margin-bottom: 14px;
+}
+
+.mission-title {
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.mission-text {
+  color: var(--text2);
+  font-size: 14px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: linear-gradient(180deg, var(--surface) 0%, var(--bg2) 100%);
+  padding: 8px;
+}
+
+.tool-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 6px 10px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  position: relative;
+}
+
+.tool-label {
+  width: 100%;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text3);
+  text-align: center;
+}
+
+.toolbar .btn {
+  min-width: 110px;
+}
+
+.panel {
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  min-height: 420px;
+  overflow: hidden;
+}
+
+.panel-head {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+.list-head {
+  display: grid;
+  grid-template-columns: 30px 1fr 120px 140px;
+  gap: 8px;
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  align-items: center;
+}
+
+.head-btn {
+  border: none;
+  background: transparent;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  padding: 0;
+}
+
+.head-btn:hover {
+  color: var(--text);
+}
+
+.tree-body,
+.list-body {
+  padding: 8px;
+}
+
+.tree-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--r-md);
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: 3px;
+  font-size: 14px;
+}
+
+.tree-item:hover {
+  background: var(--bg2);
+}
+
+.tree-item.active {
+  background: rgba(79, 142, 247, 0.15);
+  border: 1px solid rgba(79, 142, 247, 0.45);
+}
+
+.tree-item.drop-target {
+  outline: 2px dashed var(--accent);
+}
+
+.tree-indent {
+  width: 16px;
+  flex-shrink: 0;
+}
+
+.list-row {
+  display: grid;
+  grid-template-columns: 30px 1fr 120px 140px;
+  gap: 8px;
+  align-items: center;
+  padding: 8px;
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
+  margin-bottom: 4px;
+  cursor: pointer;
+  user-select: none;
+}
+
+@media (max-width: 760px) {
+  .list-row {
+    grid-template-columns: 30px 1fr;
+  }
+  .list-type,
+  .list-path {
+    display: none;
+  }
+}
+
+.list-row:hover {
+  background: var(--bg2);
+}
+
+.list-row.selected {
+  background: rgba(79, 142, 247, 0.14);
+  border-color: rgba(79, 142, 247, 0.5);
+}
+
+.tree-item:focus-visible,
+.list-row:focus-visible,
+.crumb:focus-visible,
+.head-btn:focus-visible,
+.toolbar .btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.list-row.drop-target {
+  outline: 2px dashed var(--accent);
+}
+
+.row-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.row-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-type,
+.list-path {
+  font-size: 12px;
+  color: var(--text3);
+}
+
+.path-box {
+  margin: 10px 0 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--bg2);
+  padding: 9px 11px;
+  font-size: 13px;
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.address-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text3);
+  padding: 3px 10px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+#breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.crumb {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text2);
+  font-size: 12px;
+  padding: 4px 10px;
+  cursor: pointer;
+}
+
+.crumb:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.crumb.sep {
+  border: none;
+  background: transparent;
+  padding: 0 2px;
+  cursor: default;
+}
+
+.feedback {
+  margin-top: 14px;
+  border-radius: var(--r-md);
+  padding: 10px 12px;
+  min-height: 44px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.feedback.ok {
+  background: rgba(52, 211, 153, 0.1);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  color: var(--text);
+}
+
+.feedback.err {
+  background: rgba(248, 113, 113, 0.1);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  color: var(--text);
+}
+
+.help-box {
+  display: none;
+  margin-top: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  padding: 12px;
+  color: var(--text2);
+  font-size: 13px;
+}
+
+.help-box.show {
+  display: block;
+}
+
+.context-menu {
+  position: fixed;
+  z-index: 9999;
+  min-width: 170px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  box-shadow: var(--shadow-md);
+  padding: 6px;
+  display: none;
+}
+
+.context-menu.show {
+  display: block;
+}
+
+.context-item {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-size: 13px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.context-item:hover {
+  background: var(--bg2);
+}
+
+.context-item:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}

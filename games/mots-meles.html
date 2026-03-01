@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="fr-CH">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mots mêlés - AH</title>
+  <link rel="stylesheet" href="../css/theme.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <style>
+    /* === MOTS MÊLÉS === */
+    .mm-layout {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 860px) {
+      .mm-layout { grid-template-columns: 1fr; }
+    }
+
+    /* --- Grille --- */
+    .mm-grid-wrap {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 20px;
+      display: inline-block;
+      touch-action: none;
+    }
+
+    .mm-grid {
+      display: grid;
+      gap: 3px;
+      user-select: none;
+    }
+
+    .mm-cell {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-head);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.1s, color 0.1s, border-color 0.1s;
+      text-transform: uppercase;
+    }
+    .mm-cell:hover { background: var(--surface2); }
+    .mm-cell.selecting {
+      background: rgba(79,142,247,0.25);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .mm-cell.found-0  { background: rgba(52,211,153,0.25); border-color: #34d399; color: #34d399; }
+    .mm-cell.found-1  { background: rgba(124,95,245,0.22); border-color: #7c5ff5; color: #7c5ff5; }
+    .mm-cell.found-2  { background: rgba(245,158,11,0.22); border-color: #f59e0b; color: #c07a00; }
+    .mm-cell.found-3  { background: rgba(248,113,113,0.20); border-color: #f87171; color: #dc2626; }
+    .mm-cell.found-4  { background: rgba(20,184,166,0.22); border-color: #14b8a6; color: #0f766e; }
+    .mm-cell.found-5  { background: rgba(251,146,60,0.22); border-color: #fb923c; color: #c2410c; }
+    .mm-cell.found-6  { background: rgba(99,102,241,0.22); border-color: #6366f1; color: #4338ca; }
+    .mm-cell.found-7  { background: rgba(236,72,153,0.22); border-color: #ec4899; color: #be185d; }
+
+    /* Multi-couleur : une cellule peut appartenir à plusieurs mots */
+    .mm-cell.found { cursor: default; }
+
+    /* --- Liste des mots à trouver --- */
+    .words-panel {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 20px 22px;
+    }
+    .words-panel-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text3);
+      margin-bottom: 14px;
+    }
+    .word-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .word-tag {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-md);
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.5px;
+      transition: all 0.2s;
+    }
+    .word-tag.found {
+      text-decoration: line-through;
+      opacity: 0.5;
+    }
+    .word-tag .check { font-size: 14px; }
+
+    /* --- KPI compact --- */
+    .mm-kpi-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .mm-kpi {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 10px 18px;
+      text-align: center;
+      flex: 1;
+      min-width: 70px;
+    }
+    .mm-kpi .val {
+      font-family: var(--font-head);
+      font-size: 22px;
+      font-weight: 800;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .mm-kpi .lbl {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--text3);
+      margin-top: 2px;
+    }
+
+    /* Feedback */
+    .mm-feedback {
+      font-family: var(--font-head);
+      font-size: 14px;
+      font-weight: 700;
+      min-height: 22px;
+      text-align: center;
+      margin-top: 12px;
+    }
+    .mm-feedback.ok  { color: var(--success); }
+    .mm-feedback.err { color: var(--danger); }
+
+    /* Sélecteur de grille */
+    .grid-selector {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .grid-btn {
+      padding: 7px 16px;
+      border-radius: var(--r-md);
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      color: var(--text2);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-body);
+    }
+    .grid-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .grid-btn.active { background: var(--accent); border-color: var(--accent); color: white; }
+
+    /* Résultats */
+    .result-zone { display: none; }
+    .result-zone.show { display: block; }
+    .game-zone.hidden { display: none; }
+
+    /* Timer */
+    .mm-timer {
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text2);
+    }
+
+    .controls-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .quiz-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .quiz-progress-label { font-size: 13px; color: var(--text2); }
+    .quiz-progress-label strong { color: var(--text); }
+    .quiz-timer {
+      font-family: var(--font-head);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text2);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 4px 12px;
+      transition: color 0.3s, border-color 0.3s;
+    }
+    .series-progress { margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <div id="header-slot"></div>
+  <div id="sidebar-slot"></div>
+
+  <div class="layout">
+    <main class="main">
+      <div class="container">
+
+        <div class="page-header fade-up">
+          <div class="page-icon">🔍</div>
+          <h1>Mots mêlés</h1>
+          <p>Trouve les mots cachés dans la grille.</p>
+        </div>
+
+        <!-- KPIs -->
+        <div class="mm-kpi-row fade-up delay-1">
+          <div class="mm-kpi"><div class="val" id="kpiFound">0</div><div class="lbl">Trouvés</div></div>
+          <div class="mm-kpi"><div class="val" id="kpiTotal">0</div><div class="lbl">Total</div></div>
+          <div class="mm-kpi"><div class="val" id="kpiXP">0</div><div class="lbl">XP</div></div>
+          <div class="mm-kpi"><div class="val mm-timer" id="kpiTimer">0:00</div><div class="lbl">Temps</div></div>
+        </div>
+
+        <!-- Zone de jeu -->
+        <div class="game-zone fade-up delay-2" id="gameZone">
+
+          <div class="grid-selector" id="gridSelector"></div>
+          <div class="quiz-top">
+            <div class="quiz-progress-label" id="mmSessionProgress">Progression 0/0</div>
+            <div class="quiz-timer" id="prog-pct">0%</div>
+          </div>
+          <div class="series-progress">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+          </div>
+
+          <div class="mm-layout">
+            <!-- Grille -->
+            <div>
+              <div class="mm-grid-wrap">
+                <div class="mm-grid" id="mmGrid"></div>
+              </div>
+              <div class="mm-feedback" id="mmFeedback"></div>
+              <div class="controls-bar">
+                <button class="btn btn-ghost btn-sm" id="btnHint">💡 Indice</button>
+                <button class="btn btn-ghost btn-sm" id="btnReveal">👁 Tout révéler</button>
+                <button class="btn btn-primary btn-sm" id="btnFinish">Terminer</button>
+              </div>
+            </div>
+
+            <!-- Liste des mots -->
+            <div class="words-panel">
+              <div class="words-panel-title">Mots à trouver</div>
+              <div class="word-list" id="wordList"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Résultats finaux -->
+        <div class="result-zone fade-up" id="resultZone">
+          <div class="card card-accent card-lg" style="text-align:center;">
+            <div style="font-size:56px;margin-bottom:16px;" id="resEmoji">🔍</div>
+            <h2 style="font-family:var(--font-head);font-size:24px;font-weight:800;margin-bottom:8px;" id="resTitle">Grille terminée !</h2>
+            <p style="color:var(--text2);margin-bottom:28px;" id="resSubtitle">Voici tes résultats.</p>
+            <div class="kpi-grid" style="margin-bottom:28px;">
+              <div class="kpi-card"><div class="kpi-value" id="resFound">0</div><div class="kpi-label">Mots trouvés</div></div>
+              <div class="kpi-card"><div class="kpi-value" id="resTime">—</div><div class="kpi-label">Temps</div></div>
+              <div class="kpi-card"><div class="kpi-value" id="resXP">0</div><div class="kpi-label">XP</div></div>
+              <div class="kpi-card"><div class="kpi-value" id="resAccuracy">—</div><div class="kpi-label">Précision</div></div>
+            </div>
+            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+              <button class="btn btn-primary btn-lg" id="btnNextExercise">Exercice suivant</button>
+              <button class="btn btn-secondary btn-lg" id="btnRestart">Autre grille</button>
+              <a href="accueil.html" class="btn btn-secondary btn-lg">← Accueil</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+    <div id="footer-slot"></div>
+  </div>
+
+  <script src="../js/data/mots-meles-data.js"></script>
+  <script src="../js/score.js"></script>
+  <script src="../js/exercises-config.js"></script>
+  <script src="../js/stages.js"></script>
+  <script src="../js/exercise-utils.js"></script>
+  <script src="../js/shared.js"></script>
+  <script src="../js/ui.js"></script>
+  <script>
+  'use strict';
+
+  /* =========================================================
+     PUZZLES — grilles 12×12, mots placés manuellement
+     Directions : H=horizontal, V=vertical, D=diagonal ↘,
+                  HR=horizontal inversé, VR=vertical inversé
+  ========================================================= */
+  const PUZZLES = window.MOTS_MELES_DATA;
+
+  const COLORS = ['found-0','found-1','found-2','found-3','found-4','found-5','found-6','found-7'];
+  const PAGE_ID = 'mots-meles';
+
+  /* =========================================================
+     ÉTAT
+  ========================================================= */
+  let state = {
+    puzzle:      null,
+    grid:        [],    // grid[r][c] = lettre
+    placed:      [],    // [{word, r, c, dir, cells:[{r,c}], colorIdx, found}]
+    selecting:   false,
+    selStart:    null,  // {r,c}
+    selCurrent:  null,  // {r,c}
+    selCells:    [],    // [{r,c}] sélection en cours
+    found:       0,
+    xp:          0,
+    errors:      0,
+    timerSec:    0,
+    timerHandle: null,
+    startTime:   null,
+  };
+  let sessionIdx = 0;
+  let sessionFound = 0;
+  let sessionXP = 0;
+  let sessionErrors = 0;
+  let sessionTimeSec = 0;
+  let sessionTotalWords = 0;
+
+  let xpRulesShown = false;
+
+  function updateProgressUI(done, total) {
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    document.getElementById('prog-pct').textContent = pct + '%';
+    document.getElementById('progressFill').style.width = pct + '%';
+  }
+
+  /* =========================================================
+     DIRECTIONS
+  ========================================================= */
+  const DIR_DELTA = {
+    H:  { dr: 0, dc: 1  },
+    HR: { dr: 0, dc: -1 },
+    V:  { dr: 1, dc: 0  },
+    VR: { dr: -1, dc: 0 },
+    D:  { dr: 1, dc: 1  },
+    DR: { dr: 1, dc: -1 },
+  };
+
+  /* =========================================================
+     CONSTRUCTION DE LA GRILLE
+  ========================================================= */
+  function buildGrid(puzzle) {
+    const S = puzzle.size;
+    // Grille vide
+    const grid = [];
+    for (let r = 0; r < S; r++) {
+      grid[r] = [];
+      for (let c = 0; c < S; c++) grid[r][c] = '';
+    }
+
+    // Placer les mots
+    const placed = [];
+    puzzle.words.forEach((w, idx) => {
+      const { dr, dc } = DIR_DELTA[w.dir];
+      const cells = [];
+      let ok = true;
+      for (let i = 0; i < w.word.length; i++) {
+        const r = w.r + dr * i;
+        const c = w.c + dc * i;
+        if (r < 0 || r >= S || c < 0 || c >= S) { ok = false; break; }
+        if (grid[r][c] !== '' && grid[r][c] !== w.word[i]) { ok = false; break; }
+        cells.push({ r, c });
+      }
+      if (!ok) return;
+      cells.forEach((pos, i) => { grid[pos.r][pos.c] = w.word[i]; });
+      placed.push({ word: w.word, r: w.r, c: w.c, dir: w.dir, cells, colorIdx: idx % COLORS.length, found: false });
+    });
+
+    // Remplir les cases vides avec des lettres aléatoires
+    const ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    for (let r = 0; r < S; r++) {
+      for (let c = 0; c < S; c++) {
+        if (!grid[r][c]) grid[r][c] = ALPHA[Math.floor(Math.random() * ALPHA.length)];
+      }
+    }
+
+    return { grid, placed };
+  }
+
+  /* =========================================================
+     RENDU
+  ========================================================= */
+  function renderGrid() {
+    const S    = state.puzzle.size;
+    const el   = document.getElementById('mmGrid');
+    el.style.gridTemplateColumns = `repeat(${S}, 36px)`;
+    el.innerHTML = '';
+
+    for (let r = 0; r < S; r++) {
+      for (let c = 0; c < S; c++) {
+        const cell = document.createElement('div');
+        cell.className       = 'mm-cell';
+        cell.id              = `mc-${r}-${c}`;
+        cell.textContent     = state.grid[r][c];
+        cell.dataset.r       = r;
+        cell.dataset.c       = c;
+
+        cell.addEventListener('pointerdown', onPointerDown);
+        el.appendChild(cell);
+      }
+    }
+
+    el.addEventListener('pointermove',  onPointerMove);
+    el.addEventListener('pointerup',    onPointerUp);
+    el.addEventListener('pointerleave', onPointerUp);
+
+    refreshFoundColors();
+  }
+
+  function renderWordList() {
+    const list = document.getElementById('wordList');
+    list.innerHTML = '';
+    state.placed.forEach(p => {
+      const tag = document.createElement('div');
+      tag.className   = 'word-tag' + (p.found ? ' found' : '');
+      tag.id          = 'wtag-' + p.word;
+      if (p.found) {
+        tag.innerHTML = `<span class="check">✅</span>${p.word}`;
+        tag.style.borderColor = getColorHex(p.colorIdx);
+      } else {
+        tag.textContent = p.word;
+      }
+      list.appendChild(tag);
+    });
+  }
+
+  function getColorHex(idx) {
+    const colors = ['#34d399','#7c5ff5','#f59e0b','#f87171','#14b8a6','#fb923c','#6366f1','#ec4899'];
+    return colors[idx % colors.length];
+  }
+
+  function refreshFoundColors() {
+    state.placed.forEach(p => {
+      if (!p.found) return;
+      p.cells.forEach(pos => {
+        const el = document.getElementById(`mc-${pos.r}-${pos.c}`);
+        if (el) {
+          el.className = 'mm-cell found ' + COLORS[p.colorIdx];
+        }
+      });
+    });
+  }
+
+  /* =========================================================
+     SÉLECTION — pointermove sur la grille + elementFromPoint
+  ========================================================= */
+  function cellAt(r, c) { return document.getElementById(`mc-${r}-${c}`); }
+
+  function getCellFromPoint(x, y) {
+    // Temporairement masquer l'élément sous le curseur pour trouver la cellule
+    const el = document.elementFromPoint(x, y);
+    if (!el) return null;
+    // Cherche la cellule dans la hiérarchie (la cellule elle-même ou son parent)
+    const cell = el.closest('.mm-cell');
+    if (!cell) return null;
+    const r = parseInt(cell.dataset.r);
+    const c = parseInt(cell.dataset.c);
+    if (isNaN(r) || isNaN(c)) return null;
+    return { r, c };
+  }
+
+  function onPointerDown(e) {
+    e.preventDefault();
+    const pos = getCellFromPoint(e.clientX, e.clientY);
+    if (!pos) return;
+
+    state.selecting  = true;
+    state.selStart   = pos;
+    state.selCurrent = pos;
+    state.selCells   = [pos];
+    updateSelectionVisual();
+  }
+
+  function onPointerMove(e) {
+    if (!state.selecting) return;
+    e.preventDefault();
+    const pos = getCellFromPoint(e.clientX, e.clientY);
+    if (!pos) return;
+    if (pos.r === state.selCurrent.r && pos.c === state.selCurrent.c) return;
+    state.selCurrent = pos;
+    state.selCells   = computeSelCells();
+    updateSelectionVisual();
+  }
+
+  function onPointerUp(e) {
+    if (!state.selecting) return;
+    state.selecting = false;
+    validateSelection();
+    clearSelectionVisual();
+    state.selCells   = [];
+    state.selStart   = null;
+    state.selCurrent = null;
+  }
+
+  /* Calcule les cases sur la ligne entre start et current (8 directions) */
+  function computeSelCells() {
+    const { r: r0, c: c0 } = state.selStart;
+    const { r: r1, c: c1 } = state.selCurrent;
+    const dr = r1 - r0, dc = c1 - c0;
+    const len = Math.max(Math.abs(dr), Math.abs(dc));
+    if (len === 0) return [{ r: r0, c: c0 }];
+
+    // N'autoriser que les directions à 45° ou droites
+    const normDR = dr === 0 ? 0 : dr / Math.abs(dr);
+    const normDC = dc === 0 ? 0 : dc / Math.abs(dc);
+
+    // Vérifier alignement (horizontal, vertical, diagonal)
+    if (Math.abs(dr) !== 0 && Math.abs(dc) !== 0 && Math.abs(dr) !== Math.abs(dc)) {
+      // Non aligné : on prend la direction dominante
+      if (Math.abs(dr) >= Math.abs(dc)) {
+        // vertical
+        return computeLine(r0, c0, normDR, 0, Math.abs(dr));
+      } else {
+        return computeLine(r0, c0, 0, normDC, Math.abs(dc));
+      }
+    }
+
+    return computeLine(r0, c0, normDR, normDC, len);
+  }
+
+  function computeLine(r0, c0, dr, dc, len) {
+    const cells = [];
+    for (let i = 0; i <= len; i++) {
+      cells.push({ r: r0 + dr * i, c: c0 + dc * i });
+    }
+    return cells;
+  }
+
+  function updateSelectionVisual() {
+    // Remettre toutes les cases à leur état normal (sauf found)
+    const S = state.puzzle.size;
+    for (let r = 0; r < S; r++) {
+      for (let c = 0; c < S; c++) {
+        const el = document.getElementById(`mc-${r}-${c}`);
+        if (!el) continue;
+        // Vérifier si cette case est "found"
+        const isFound = state.placed.some(p => p.found && p.cells.some(pos => pos.r === r && pos.c === c));
+        if (!isFound) {
+          el.className = 'mm-cell';
+        }
+      }
+    }
+    refreshFoundColors();
+
+    // Surligner la sélection courante
+    state.selCells.forEach(pos => {
+      const el = document.getElementById(`mc-${pos.r}-${pos.c}`);
+      if (el && !el.classList.contains('found')) el.classList.add('selecting');
+    });
+  }
+
+  function clearSelectionVisual() {
+    state.selCells.forEach(pos => {
+      const el = document.getElementById(`mc-${pos.r}-${pos.c}`);
+      if (el) el.classList.remove('selecting');
+    });
+    refreshFoundColors();
+  }
+
+  /* =========================================================
+     VALIDATION DE LA SÉLECTION
+  ========================================================= */
+  function validateSelection() {
+    const selected = state.selCells.map(pos => state.grid[pos.r][pos.c]).join('');
+    const reversed = selected.split('').reverse().join('');
+
+    const match = state.placed.find(p => {
+      if (p.found) return false;
+      if (p.word !== selected && p.word !== reversed) return false;
+      // Vérifier que les cellules sélectionnées correspondent exactement
+      if (p.cells.length !== state.selCells.length) return false;
+      const fwd = p.cells.every((c, i) => c.r === state.selCells[i].r && c.c === state.selCells[i].c);
+      const bwd = p.cells.every((c, i) => {
+        const j = state.selCells.length - 1 - i;
+        return c.r === state.selCells[j].r && c.c === state.selCells[j].c;
+      });
+      return fwd || bwd;
+    });
+
+    if (match) {
+      match.found = true;
+      state.found++;
+      const xp = 3;
+      state.xp += xp;
+
+      refreshFoundColors();
+      updateWordTag(match);
+      updateKPIs();
+
+      recordExerciseProgress(PAGE_ID, { correct: 1, typed: 1, errors: 0, xp });
+      showFeedback('✅ ' + match.word + ' trouvé ! +' + xp + ' XP', 'ok');
+      showToast('+' + xp + ' XP — ' + match.word, 'success');
+
+      if (state.found === state.placed.length) {
+        setTimeout(finishPuzzle, 700);
+      }
+    }
+  }
+
+  function updateWordTag(p) {
+    const tag = document.getElementById('wtag-' + p.word);
+    if (!tag) return;
+    tag.className = 'word-tag found';
+    tag.innerHTML = `<span class="check">✅</span>${p.word}`;
+    tag.style.borderColor = getColorHex(p.colorIdx);
+  }
+
+  function showFeedback(msg, type) {
+    const el = document.getElementById('mmFeedback');
+    el.textContent = msg;
+    el.className   = 'mm-feedback ' + type;
+    clearTimeout(el._t);
+    el._t = setTimeout(() => { el.textContent = ''; }, 2500);
+  }
+
+  /* =========================================================
+     INDICE — révèle une cellule d'un mot non trouvé
+  ========================================================= */
+  function giveHint() {
+    const unfound = state.placed.filter(p => !p.found);
+    if (!unfound.length) return;
+    const p    = unfound[Math.floor(Math.random() * unfound.length)];
+    const pos  = p.cells[0];
+    const el   = document.getElementById(`mc-${pos.r}-${pos.c}`);
+    if (el) {
+      el.style.boxShadow = '0 0 0 3px var(--warning)';
+      setTimeout(() => { el.style.boxShadow = ''; }, 2000);
+    }
+    showFeedback('💡 Cherche autour de la case surlignée…', 'ok');
+  }
+
+  /* Révèle tous les mots restants */
+  function revealAll() {
+    state.placed.forEach(p => {
+      if (p.found) return;
+      p.found = true;
+      state.found++;
+      state.errors += 2;
+      updateWordTag(p);
+    });
+    refreshFoundColors();
+    updateKPIs();
+    setTimeout(finishPuzzle, 500);
+  }
+
+  /* =========================================================
+     TIMER
+  ========================================================= */
+  function startTimer() {
+    const baseSec = sessionTimeSec;
+    state.startTime  = Date.now();
+    state.timerSec   = 0;
+    document.getElementById('kpiTimer').textContent = formatTime(baseSec);
+    clearInterval(state.timerHandle);
+    state.timerHandle = setInterval(() => {
+      state.timerSec = Math.floor((Date.now() - state.startTime) / 1000);
+      document.getElementById('kpiTimer').textContent = formatTime(baseSec + state.timerSec);
+    }, 1000);
+  }
+
+  function formatTime(s) {
+    return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  }
+
+  /* =========================================================
+     SÉLECTEUR DE GRILLE
+  ========================================================= */
+  function buildGridSelector() {
+    const container = document.getElementById('gridSelector');
+    container.innerHTML = '';
+    PUZZLES.forEach((p, i) => {
+      const btn = document.createElement('button');
+      btn.className   = 'grid-btn' + (i === 0 ? ' active' : '');
+      btn.textContent = p.name;
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.grid-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        loadPuzzle(i);
+      });
+      container.appendChild(btn);
+    });
+  }
+
+  /* =========================================================
+     INIT PUZZLE
+  ========================================================= */
+  function loadPuzzle(idx) {
+    clearInterval(state.timerHandle);
+
+    sessionIdx = idx;
+    const puzzle       = PUZZLES[idx];
+    state.puzzle       = puzzle;
+    const { grid, placed } = buildGrid(puzzle);
+    state.grid         = grid;
+    state.placed       = placed;
+    state.selecting    = false;
+    state.selStart     = null;
+    state.selCurrent   = null;
+    state.selCells     = [];
+    state.found        = 0;
+    state.xp           = 0;
+    state.errors       = 0;
+
+    document.getElementById('resultZone').classList.remove('show');
+    document.getElementById('gameZone').classList.remove('hidden');
+    document.getElementById('mmFeedback').textContent = '';
+    document.getElementById('mmSessionProgress').textContent = 'Progression ' + (idx + 1) + '/' + PUZZLES.length;
+    updateProgressUI(idx, PUZZLES.length);
+
+    updateKPIs();
+
+    // Afficher les règles XP seulement à la première session (premier puzzle)
+    if (idx === 0 && !xpRulesShown) {
+      xpRulesShown = true;
+      showXPRules('Mots Mêlés');
+    }
+
+    renderGrid();
+    renderWordList();
+    startTimer();
+  }
+
+  /* =========================================================
+     FIN DE PUZZLE
+  ========================================================= */
+  function finishPuzzle() {
+    clearInterval(state.timerHandle);
+    sessionFound += state.found;
+    sessionXP += state.xp;
+    sessionErrors += state.errors;
+    sessionTimeSec += state.timerSec;
+
+    const isLast = sessionIdx >= PUZZLES.length - 1;
+    if (!isLast) {
+      loadPuzzle(sessionIdx + 1);
+      showToast('Grille suivante', 'info');
+      return;
+    }
+
+    promoteExerciseStatus(PAGE_ID, 'completed');
+    document.getElementById('gameZone').classList.add('hidden');
+    document.getElementById('resultZone').classList.add('show');
+
+    const accuracy = sessionErrors === 0 ? 100 : Math.round((sessionFound / (sessionFound + sessionErrors)) * 100);
+    document.getElementById('resFound').textContent    = sessionFound + ' / ' + sessionTotalWords;
+    document.getElementById('resTime').textContent     = formatTime(sessionTimeSec);
+    document.getElementById('resXP').textContent       = sessionXP;
+    document.getElementById('resAccuracy').textContent = accuracy + '%';
+    updateProgressUI(PUZZLES.length, PUZZLES.length);
+
+    if (sessionFound === sessionTotalWords && sessionErrors === 0) launchConfetti();
+  }
+
+  /* =========================================================
+     KPIs
+  ========================================================= */
+  function updateKPIs() {
+    document.getElementById('kpiFound').textContent = sessionFound + state.found;
+    document.getElementById('kpiTotal').textContent = sessionTotalWords;
+    document.getElementById('kpiXP').textContent    = sessionXP + state.xp;
+  }
+
+  function startSession() {
+    if (!Array.isArray(PUZZLES) || !PUZZLES.length) {
+      showToast('Aucune grille disponible dans les donnees.', 'error');
+      return;
+    }
+    sessionIdx = 0;
+    sessionFound = 0;
+    sessionXP = 0;
+    sessionErrors = 0;
+    sessionTimeSec = 0;
+    sessionTotalWords = (PUZZLES || []).reduce((sum, p) => sum + ((p.words || []).length), 0);
+    document.getElementById('kpiTimer').textContent = formatTime(0);
+    updateProgressUI(0, PUZZLES.length);
+    loadPuzzle(0);
+  }
+
+  /* =========================================================
+     EVENTS
+  ========================================================= */
+  document.addEventListener('DOMContentLoaded', () => {
+    // Bouton "Exercice suivant recommandé"
+        const btnNextEx = document.getElementById('btnNextExercise');
+        const nextEx = getNextExercise(PAGE_ID);
+        if (nextEx && nextEx.name && nextEx.href) {
+          btnNextEx.addEventListener('click', () => {
+            window.location.href = nextEx.href;
+          });
+          btnNextEx.textContent = 'Exercice suivant : ' + nextEx.name;
+        } else {
+          btnNextEx.style.display = 'none';
+        }
+        
+    document.getElementById('gridSelector').style.display = 'none';
+    startSession();
+
+    document.getElementById('btnHint').addEventListener('click', giveHint);
+    document.getElementById('btnReveal').addEventListener('click', revealAll);
+    document.getElementById('btnFinish').addEventListener('click', finishPuzzle);
+    document.getElementById('btnRestart').addEventListener('click', () => {
+      startSession();
+      document.getElementById('resultZone').classList.remove('show');
+      document.getElementById('gameZone').classList.remove('hidden');
+    });
+  });
+  </script>
+</body>
+</html>
+
+
+

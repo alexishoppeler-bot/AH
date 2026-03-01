@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="fr-CH">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compréhension orale - AH</title>
+  <link rel="stylesheet" href="../css/theme.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <style>
+
+    /* ── Sélecteur d'épisode ── */
+    .ep-select-wrap {
+      display: flex; align-items: center; gap: 10px;
+      flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .ep-select-wrap select {
+      flex: 1; min-width: 200px; max-width: 400px;
+      padding: 10px 14px;
+      border-radius: var(--r-md);
+      border: 2px solid var(--border);
+      background: var(--surface);
+      color: var(--text1);
+      font-size: 14px; font-weight: 600;
+      cursor: pointer;
+    }
+    .ep-select-wrap select:focus { border-color: var(--accent); outline: none; }
+
+    /* ── Carte épisode (une seule page) ── */
+    .episode-panel {
+      background: var(--bg2);
+      border: 2px solid var(--border);
+      border-radius: var(--r-xl);
+      overflow: hidden;
+    }
+
+    /* En-tête épisode */
+    .ep-header {
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    .ep-icon { font-size: 28px; flex-shrink: 0; }
+    .ep-info { flex: 1; min-width: 0; }
+    .ep-title { font-size: 17px; font-weight: 800; font-family: var(--font-head); color: var(--text1); }
+    .ep-meta  { font-size: 12px; color: var(--text3); margin-top: 2px; }
+    .ep-type-badge {
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+      padding: 3px 10px; border-radius: 999px;
+    }
+    .ep-type-badge.histoire { background: rgba(124,95,245,0.15); color: #7c5ff5; }
+    .ep-type-badge.dialogue { background: rgba(79,142,247,0.15);  color: #4f8ef7; }
+
+    /* Zone écoute */
+    .listen-section {
+      padding: 24px 28px;
+      border-bottom: 1px solid var(--border);
+      display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;
+    }
+
+    .btn-play {
+      width: 72px; height: 72px; flex-shrink: 0;
+      border-radius: 50%;
+      background: var(--gradient);
+      border: none;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 18px rgba(79,142,247,0.4);
+      position: relative;
+    }
+    .btn-play:hover  { transform: scale(1.07); }
+    .btn-play:active { transform: scale(0.95); }
+    .btn-play.playing::before,
+    .btn-play.playing::after {
+      content: ''; position: absolute; border-radius: 50%;
+      border: 2px solid rgba(79,142,247,0.35);
+      animation: ripple 1.6s ease-out infinite;
+    }
+    .btn-play.playing::before { width: 90px;  height: 90px; }
+    .btn-play.playing::after  { width: 114px; height: 114px; animation-delay: 0.45s; }
+    @keyframes ripple {
+      0%   { transform: scale(0.8); opacity: 1; }
+      100% { transform: scale(1.4); opacity: 0; }
+    }
+
+    .listen-info { flex: 1; min-width: 180px; }
+    .listen-title {
+      font-size: 14px; font-weight: 700; color: var(--text1); margin-bottom: 4px;
+    }
+    .listen-sub {
+      font-size: 13px; color: var(--text2); margin-bottom: 8px;
+    }
+    .listen-count { font-size: 12px; color: var(--text3); min-height: 16px; }
+
+    .listen-controls { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+
+
+    /* Voix */
+    .voice-row {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      margin-top: 10px; font-size: 12px; color: var(--text3);
+    }
+    .voice-row select {
+      font-size: 12px; padding: 3px 8px;
+      border-radius: 6px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text2); max-width: 220px;
+    }
+    .voice-speed {
+      font-size: 12px; color: var(--text3); cursor: pointer;
+      border: 1px solid var(--border); border-radius: 6px;
+      padding: 3px 10px; background: var(--surface);
+    }
+    .voice-speed:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Zone questions ── */
+    .questions-section { padding: 24px 28px; }
+
+    .q-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 14px; flex-wrap: wrap; gap: 8px;
+    }
+    .q-title { font-size: 13px; font-weight: 700; color: var(--text2); }
+
+    /* Dots de score */
+    .score-dots { display: flex; gap: 5px; }
+    .s-dot {
+      width: 9px; height: 9px; border-radius: 50%;
+      background: var(--border); transition: background 0.25s;
+    }
+    .s-dot.ok  { background: var(--success); }
+    .s-dot.err { background: var(--danger); }
+    .s-dot.cur { background: var(--accent); }
+
+    /* Question individuelle */
+    .q-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 18px 20px;
+      margin-bottom: 14px;
+      transition: border-color 0.2s;
+    }
+    .q-item.answered-ok  { border-color: var(--success); }
+    .q-item.answered-err { border-color: var(--danger); }
+    .q-item.current      { border-color: var(--accent); }
+
+    .q-num {
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+      color: var(--text3); margin-bottom: 6px;
+    }
+    .q-text {
+      font-size: 15px; font-weight: 700; font-family: var(--font-head);
+      color: var(--text1); margin-bottom: 14px; line-height: 1.45;
+    }
+
+    .eq-choices {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    }
+    @media (max-width: 500px) { .eq-choices { grid-template-columns: 1fr; } }
+
+    .eq-choice {
+      display: flex; align-items: center; gap: 9px;
+      padding: 10px 14px;
+      background: var(--bg2); border: 2px solid var(--border);
+      border-radius: var(--r-md);
+      font-size: 13px; font-weight: 500; color: var(--text1);
+      cursor: pointer; transition: all 0.13s; text-align: left;
+    }
+    .eq-choice:hover:not(:disabled) { border-color: var(--accent); background: rgba(79,142,247,0.06); }
+    .eq-choice .cl {
+      min-width: 24px; height: 24px; border-radius: 50%;
+      background: var(--bg3); border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; color: var(--text3); flex-shrink: 0;
+    }
+    .eq-choice:hover:not(:disabled) .cl { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .eq-choice.correct { border-color: var(--success); background: rgba(52,211,153,0.09); }
+    .eq-choice.correct .cl { background: var(--success); border-color: var(--success); color: #fff; }
+    .eq-choice.wrong   { border-color: var(--danger);  background: rgba(248,113,113,0.07); opacity: 0.8; }
+    .eq-choice.wrong .cl { background: var(--danger);  border-color: var(--danger);  color: #fff; }
+    .eq-choice:disabled { cursor: default; }
+
+    .q-feedback {
+      font-size: 13px; font-weight: 700; margin-top: 10px; min-height: 18px;
+    }
+    .q-feedback.ok  { color: var(--success); }
+    .q-feedback.err { color: var(--danger); }
+
+    .q-explication {
+      display: none; margin-top: 8px; padding: 10px 14px;
+      border-radius: var(--r-md); font-size: 12px; color: var(--text2); line-height: 1.6;
+    }
+    .q-explication.ok  { display: block; background: rgba(52,211,153,0.07);  border: 1px solid rgba(52,211,153,0.2); }
+    .q-explication.err { display: block; background: rgba(248,113,113,0.07); border: 1px solid rgba(248,113,113,0.18); }
+
+    /* Questions suivantes — grisées si pas encore atteintes */
+    .q-item.locked { opacity: 0.4; pointer-events: none; }
+
+    /* ── Barre actions ── */
+    .bottom-bar {
+      padding: 16px 28px;
+      border-top: 1px solid var(--border);
+      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    }
+
+    /* ── Résultats inline ── */
+    .result-banner {
+      display: none;
+      margin: 16px 28px 0;
+      padding: 20px 24px;
+      border-radius: var(--r-lg);
+      text-align: center;
+    }
+    .result-banner.show { display: block; }
+    .result-banner.good { background: rgba(52,211,153,0.1); border: 2px solid var(--success); }
+    .result-banner.mid  { background: rgba(245,158,11,0.1);  border: 2px solid #f59e0b; }
+    .result-banner.bad  { background: rgba(248,113,113,0.1); border: 2px solid var(--danger); }
+    .result-banner .res-emoji { font-size: 38px; margin-bottom: 8px; }
+    .result-banner .res-title { font-size: 18px; font-weight: 800; font-family: var(--font-head); color: var(--text1); }
+    .result-banner .res-sub   { font-size: 13px; color: var(--text2); margin-top: 4px; }
+    .result-banner .res-xp    { font-size: 22px; font-weight: 800; color: var(--accent); margin-top: 8px; }
+
+    /* Raccourcis */
+    .key-hint { font-size: 11px; color: var(--text3); }
+    .key-hint kbd {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 4px; padding: 1px 6px; font-size: 10px;
+    }
+
+    /* ── Transcript dialogué ── */
+    .trs-line {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 6px 10px; border-radius: var(--r-md);
+      margin-bottom: 4px;
+      transition: background 0.2s;
+    }
+    .trs-line.trs-active {
+      background: color-mix(in srgb, var(--accent) 12%, var(--surface));
+      outline: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    }
+    .trs-speaker {
+      font-size: 12px; font-weight: 700; white-space: nowrap;
+      min-width: 80px; flex-shrink: 0; padding-top: 1px;
+    }
+    .trs-speaker.trs-f { color: #e879f9; }   /* violet/rose = femme */
+    .trs-speaker.trs-m { color: #38bdf8; }   /* bleu ciel = homme */
+    .trs-text { font-size: 13px; color: var(--text2); line-height: 1.7; }
+
+    /* ── Indicateur de voix actives ── */
+    .voice-badges {
+      display: flex; gap: 8px; flex-wrap: wrap;
+      margin-top: 8px; font-size: 12px;
+    }
+    .voice-badge {
+      display: flex; align-items: center; gap: 5px;
+      padding: 3px 10px; border-radius: 999px;
+      border: 1px solid var(--border); background: var(--surface);
+      font-size: 11px; font-weight: 600;
+    }
+    .voice-badge.f { border-color: #e879f9; color: #e879f9; }
+    .voice-badge.m { border-color: #38bdf8; color: #38bdf8; }
+
+    /* KPI mini */
+    .kpi-row {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;
+    }
+    .kpi-pill {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 16px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 999px; font-size: 13px; font-weight: 700;
+    }
+    .kpi-pill .kv { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div id="header-slot"></div>
+  <div id="sidebar-slot"></div>
+
+  <div class="layout">
+    <main class="main">
+      <div class="container">
+
+        <div class="page-header fade-up">
+          <div class="page-icon">🎧</div>
+          <h1>Compréhension orale</h1>
+          <p>Écoute l'histoire ou le dialogue, puis réponds aux questions.</p>
+        </div>
+
+        <!-- KPI globaux -->
+        <div class="kpi-row fade-up delay-1">
+          <div class="kpi-pill">✅ <span class="kv" id="kpiCorrect">0</span> corrects</div>
+          <div class="kpi-pill">❌ <span class="kv" id="kpiErrors">0</span> erreurs</div>
+          <div class="kpi-pill">⚡ <span class="kv" id="kpiXP">0</span> XP</div>
+          <div class="kpi-pill">📖 <span class="kv" id="kpiEp">0/0</span> épisodes</div>
+        </div>
+
+        <!-- Sélecteur d'épisode -->
+        <div class="ep-select-wrap fade-up delay-1">
+          <select id="epSelect"></select>
+          <button class="btn btn-ghost btn-sm" id="btnPrevEp">◀</button>
+          <button class="btn btn-ghost btn-sm" id="btnNextEp">▶</button>
+        </div>
+
+        <!-- Panneau épisode -->
+        <div class="episode-panel fade-up delay-2">
+
+          <!-- En-tête -->
+          <div class="ep-header">
+            <div class="ep-icon" id="epIcon">📖</div>
+            <div class="ep-info">
+              <div class="ep-title" id="epTitle">—</div>
+              <div class="ep-meta" id="epMeta">—</div>
+            </div>
+            <span class="ep-type-badge" id="epTypeBadge"></span>
+          </div>
+
+          <!-- Écoute -->
+          <div class="listen-section">
+            <button class="btn-play" id="btnPlay" title="Écouter">▶️</button>
+            <div class="listen-info">
+              <div class="listen-title" id="listenTitle">Appuie ▶️ pour écouter</div>
+              <div class="listen-sub" id="listenSub">Écoute bien avant de répondre aux questions.</div>
+              <div class="listen-count" id="listenCount"></div>
+              <div class="listen-controls">
+                <button class="btn btn-ghost btn-sm" id="btnStop" style="display:none;">⏹ Stop</button>
+                <button class="voice-speed" id="btnSpeed">🐢 × 0.85</button>
+              </div>
+              <div id="transcriptBox" style="display:none;"></div>
+              <div class="voice-row" id="voiceRow" style="display:none;">
+                Voix : <select id="voiceSelect"></select>
+              </div>
+              <div class="voice-badges" id="voiceBadges" style="display:none;">
+                <span class="voice-badge f">👩 <span id="badgeVoiceF">—</span></span>
+                <span class="voice-badge m">👨 <span id="badgeVoiceM">—</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Résultat inline -->
+          <div class="result-banner" id="resultBanner">
+            <div class="res-emoji" id="resEmoji"></div>
+            <div class="res-title" id="resTitle"></div>
+            <div class="res-sub"   id="resSub"></div>
+            <div class="res-xp"    id="resXP"></div>
+          </div>
+
+          <!-- Questions -->
+          <div class="questions-section">
+            <div class="q-header">
+              <div class="q-title">Questions de compréhension</div>
+              <div class="score-dots" id="scoreDots"></div>
+            </div>
+            <div id="questionsContainer"></div>
+          </div>
+
+          <!-- Barre actions -->
+          <div class="bottom-bar">
+            <button class="btn btn-primary" id="btnReplay" style="display:none;">↺ Réécouter</button>
+            <button class="btn btn-secondary btn-sm" id="btnReset">🔄 Recommencer cet épisode</button>
+            <span class="key-hint">
+              <kbd>Espace</kbd> écouter &nbsp;|&nbsp; <kbd>1</kbd>–<kbd>4</kbd> répondre &nbsp;|&nbsp; <kbd>R</kbd> réécouter
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+    <div id="footer-slot"></div>
+  </div>
+
+  <script src="../js/data/ecouter-data.js"></script>
+  <script src="../js/score.js"></script>
+  <script src="../js/exercises-config.js"></script>
+  <script src="../js/stages.js"></script>
+  <script src="../js/exercise-utils.js"></script>
+  <script src="../js/shared.js"></script>
+  <script src="../js/ui.js"></script>
+  <script>
+  'use strict';
+
+  const ALL_EP  = window.ECOUTER_DATA || [];
+  const PAGE_ID = 'ecouter';
+
+  /* ════════════════════════════════════════
+     TTS — voix Google FR uniquement
+     Histoire  : voix Google FR (féminine, pitch 1.0)
+     Dialogue  : même voix Google FR
+                 ♀ pitch 1.05 (féminin)
+                 ♂ pitch 0.75 (masculin, plus grave)
+  ════════════════════════════════════════ */
+  let ttsOk      = false;
+  let googleVoice = null;  // la voix Google FR retenue (unique base)
+  let speaking    = false;
+  let audioSpeed  = 0.85;
+
+  const SPEEDS = [0.75, 0.85, 1.0, 1.15];
+
+  // Pitch par genre pour les dialogues
+  const PITCH_F = 1.08;   // légèrement aigu → féminin
+  const PITCH_M = 0.72;   // grave → masculin
+  const PITCH_N = 1.0;    // neutre (histoires)
+
+  function initTTS() {
+    if (!window.speechSynthesis) return;
+    ttsOk = true;
+
+    function pick() {
+      const all = window.speechSynthesis.getVoices();
+
+      // 1. Voix Google fr-CH (idéale)
+      googleVoice = all.find(v => v.name.toLowerCase().includes('google') && v.lang === 'fr-CH')
+        // 2. Voix Google fr-FR
+        || all.find(v => v.name.toLowerCase().includes('google') && v.lang === 'fr-FR')
+        // 3. Toute voix Google française
+        || all.find(v => v.name.toLowerCase().includes('google') && v.lang.startsWith('fr'))
+        // 4. Fallback : meilleure voix FR disponible
+        || all.find(v => v.lang === 'fr-CH')
+        || all.find(v => v.lang === 'fr-FR')
+        || all.find(v => v.lang.startsWith('fr'))
+        || null;
+
+      buildVoiceSelect(all);
+      updateVoiceBadges();
+    }
+
+    pick();
+    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+      window.speechSynthesis.onvoiceschanged = pick;
+    }
+  }
+
+  function buildVoiceSelect(all) {
+    const sel = document.getElementById('voiceSelect');
+    const row = document.getElementById('voiceRow');
+    if (!sel) return;
+
+    // N'afficher que les voix Google FR (+ la voix retenue si pas Google)
+    const googleFR = all.filter(v =>
+      v.name.toLowerCase().includes('google') && v.lang.startsWith('fr')
+    );
+    const pool = googleFR.length ? googleFR : all.filter(v => v.lang.startsWith('fr'));
+
+    sel.innerHTML = '';
+    pool.forEach((v, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = v.name + (v.lang === 'fr-CH' ? ' 🇨🇭' : '');
+      if (v === googleVoice) opt.selected = true;
+      sel.appendChild(opt);
+    });
+
+    if (pool.length > 1) row.style.display = 'flex';
+
+    sel.addEventListener('change', () => {
+      googleVoice = pool[+sel.value] || googleVoice;
+      updateVoiceBadges();
+    });
+  }
+
+  /* Lire un utterance avec pitch contrôlé */
+  function speakOne(text, pitch, onEnd) {
+    if (!ttsOk) { if (onEnd) onEnd(); return; }
+    const utt   = new SpeechSynthesisUtterance(text);
+    utt.lang    = googleVoice ? googleVoice.lang : 'fr-CH';
+    utt.rate    = audioSpeed;
+    utt.pitch   = pitch;
+    utt.volume  = 1.0;
+    if (googleVoice) utt.voice = googleVoice;
+    utt.onend = utt.onerror = () => { if (onEnd) onEnd(); };
+    window.speechSynthesis.speak(utt);
+  }
+
+  /* UI : état bouton lecture */
+  function setPlayingUI(on) {
+    const btn = document.getElementById('btnPlay');
+    if (!btn) return;
+    btn.classList.toggle('playing', on);
+    btn.textContent = on ? '⏸' : '▶️';
+    document.getElementById('btnStop').style.display   = on ? '' : 'none';
+    document.getElementById('btnReplay').style.display = on ? 'none' : '';
+  }
+
+  /* Lire le transcript simple (histoires — voix neutre) */
+  function speakTranscript(text) {
+    window.speechSynthesis.cancel();
+    speaking = true;
+    setPlayingUI(true);
+    speakOne(text, PITCH_N, () => {
+      speaking = false;
+      setPlayingUI(false);
+    });
+  }
+
+  /* Lire les lignes d'un dialogue en chaîne — pitch H/F */
+  function speakDialogue(lines) {
+    window.speechSynthesis.cancel();
+    speaking = true;
+    setPlayingUI(true);
+    let i = 0;
+
+    function next() {
+      if (!speaking || i >= lines.length) {
+        speaking = false;
+        setPlayingUI(false);
+        highlightLine(-1);
+        return;
+      }
+      const line  = lines[i];
+      const pitch = line.gender === 'm' ? PITCH_M : PITCH_F;
+      highlightLine(i);
+      i++;
+      speakOne(line.text, pitch, next);
+    }
+
+    next();
+  }
+
+  /* Surligner la ligne lue */
+  function highlightLine(idx) {
+    document.querySelectorAll('.trs-line').forEach((el, i) => {
+      el.classList.toggle('trs-active', i === idx);
+    });
+  }
+
+  function stopSpeech() {
+    speaking = false;
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    setPlayingUI(false);
+    highlightLine(-1);
+  }
+
+  /* ════════════════════════════════════════
+     ÉTAT
+  ════════════════════════════════════════ */
+  let epIdx       = 0;
+  let listenCount = 0;
+  let qStates     = [];   // 'pending' | 'correct' | 'wrong'
+  let globalOk    = 0, globalErr = 0, globalXP = 0;
+  let epDone      = new Set();
+  let xpShown     = false;
+
+  /* ════════════════════════════════════════
+     SÉLECTEUR D'ÉPISODE
+  ════════════════════════════════════════ */
+  function buildSelect() {
+    const sel = document.getElementById('epSelect');
+    sel.innerHTML = '';
+    ALL_EP.forEach((ep, i) => {
+      const opt = document.createElement('option');
+      opt.value = i;
+      const done = epDone.has(ep.id) ? '✓ ' : '';
+      opt.textContent = done + (i + 1) + '. ' + ep.title + ' (' + ep.category + ')';
+      sel.appendChild(opt);
+    });
+    sel.value = epIdx;
+  }
+
+  /* ════════════════════════════════════════
+     CHARGER UN ÉPISODE
+  ════════════════════════════════════════ */
+  function loadEpisode(idx) {
+    epIdx = Math.max(0, Math.min(idx, ALL_EP.length - 1));
+    document.getElementById('epSelect').value = epIdx;
+    stopSpeech();
+
+    const ep = ALL_EP[epIdx];
+    listenCount = 0;
+    qStates     = ep.questions.map(() => 'pending');
+
+    // En-tête
+    document.getElementById('epIcon').textContent  = ep.type === 'dialogue' ? '💬' : '📖';
+    document.getElementById('epTitle').textContent = ep.title;
+    document.getElementById('epMeta').textContent  = ep.category + ' · ' + ep.questions.length + ' questions';
+    const tb = document.getElementById('epTypeBadge');
+    tb.textContent = ep.type === 'dialogue' ? '💬 Dialogue' : '📖 Histoire';
+    tb.className   = 'ep-type-badge ' + ep.type;
+
+    // Badges voix (visible seulement pour les dialogues)
+    const badges = document.getElementById('voiceBadges');
+    if (ep.type === 'dialogue') {
+      badges.style.display = 'flex';
+      updateVoiceBadges();
+    } else {
+      badges.style.display = 'none';
+    }
+
+    // Transcript (construit en arrière-plan pour le surlignage des dialogues)
+    buildTranscriptBox(ep);
+
+    // Écoute
+    document.getElementById('listenTitle').textContent = 'Appuie ▶️ pour écouter';
+    document.getElementById('listenSub').textContent   = 'Écoute bien avant de répondre aux questions.';
+    document.getElementById('listenCount').textContent = '';
+    document.getElementById('btnReplay').style.display = 'none';
+    document.getElementById('btnStop').style.display   = 'none';
+
+    // Résultat caché
+    document.getElementById('resultBanner').classList.remove('show', 'good', 'mid', 'bad');
+
+    // Questions
+    buildQuestions(ep);
+    buildDots(ep);
+
+    if (!xpShown) { xpShown = true; showXPRules('Écoute'); }
+    promoteExerciseStatus(PAGE_ID, 'in_progress');
+    updateGlobalKPIs();
+  }
+
+  /* ════════════════════════════════════════
+     CONSTRUIRE LES QUESTIONS
+  ════════════════════════════════════════ */
+  function buildQuestions(ep) {
+    const container = document.getElementById('questionsContainer');
+    container.innerHTML = '';
+    const letters = ['A', 'B', 'C', 'D'];
+
+    ep.questions.forEach((q, qi) => {
+      const item = document.createElement('div');
+      item.className = 'q-item' + (qi === 0 ? ' current' : ' locked');
+      item.id = 'q-item-' + qi;
+
+      const choicesHTML = q.choices.map((c, ci) =>
+        `<button class="eq-choice" data-qi="${qi}" data-ci="${ci}">
+           <span class="cl">${letters[ci]}</span><span>${c}</span>
+         </button>`
+      ).join('');
+
+      item.innerHTML = `
+        <div class="q-num">Question ${qi + 1} / ${ep.questions.length}</div>
+        <div class="q-text">${q.question}</div>
+        <div class="eq-choices" id="choices-${qi}">${choicesHTML}</div>
+        <div class="q-feedback"   id="fb-${qi}"></div>
+        <div class="q-explication" id="exp-${qi}"></div>`;
+
+      container.appendChild(item);
+    });
+
+    // Events sur les boutons
+    container.querySelectorAll('.eq-choice').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const qi = +btn.dataset.qi;
+        const ci = +btn.dataset.ci;
+        answerQuestion(qi, ci);
+      });
+    });
+  }
+
+  function buildDots(ep) {
+    const bar = document.getElementById('scoreDots');
+    bar.innerHTML = '';
+    ep.questions.forEach((_, i) => {
+      const d = document.createElement('div');
+      d.className = 's-dot' + (i === 0 ? ' cur' : '');
+      d.id = 'dot-' + i;
+      bar.appendChild(d);
+    });
+  }
+
+  /* ════════════════════════════════════════
+     RÉPONDRE
+  ════════════════════════════════════════ */
+  function answerQuestion(qi, ci) {
+    if (qStates[qi] !== 'pending') return;
+
+    const ep   = ALL_EP[epIdx];
+    const q    = ep.questions[qi];
+    const isOk = ci === q.answer;
+
+    qStates[qi] = isOk ? 'correct' : 'wrong';
+
+    // Désactiver les boutons de cette question
+    document.querySelectorAll(`[data-qi="${qi}"]`).forEach(b => { b.disabled = true; });
+
+    // Colorier
+    const choicesBtns = document.querySelectorAll(`[data-qi="${qi}"]`);
+    choicesBtns[ci].classList.add(isOk ? 'correct' : 'wrong');
+    if (!isOk) choicesBtns[q.answer].classList.add('correct');
+
+    // Feedback + explication
+    const fb  = document.getElementById('fb-'  + qi);
+    const exp = document.getElementById('exp-' + qi);
+    const xp  = isOk ? (listenCount <= 1 ? 4 : 3) : 0;
+
+    if (isOk) {
+      fb.textContent = '✅ Correct !' + (xp > 0 ? ' +' + xp + ' XP' : '');
+      fb.className   = 'q-feedback ok';
+      globalOk++;
+      globalXP += xp;
+      recordExerciseProgress(PAGE_ID, { correct: 1, typed: 1, errors: 0, xp });
+    } else {
+      fb.textContent = '❌ Incorrect';
+      fb.className   = 'q-feedback err';
+      globalErr++;
+      recordExerciseProgress(PAGE_ID, { correct: 0, typed: 1, errors: 1, xp: 0 });
+    }
+    exp.textContent = q.explication;
+    exp.className   = 'q-explication ' + (isOk ? 'ok' : 'err');
+
+    // Dot
+    const dot = document.getElementById('dot-' + qi);
+    dot.classList.remove('cur');
+    dot.classList.add(isOk ? 'ok' : 'err');
+
+    // Style de la carte
+    const item = document.getElementById('q-item-' + qi);
+    item.classList.remove('current', 'locked');
+    item.classList.add(isOk ? 'answered-ok' : 'answered-err');
+
+    // Débloquer la suivante ou terminer
+    const nextQi = qi + 1;
+    if (nextQi < ep.questions.length) {
+      const nextItem = document.getElementById('q-item-' + nextQi);
+      nextItem.classList.remove('locked');
+      nextItem.classList.add('current');
+      const nextDot = document.getElementById('dot-' + nextQi);
+      if (nextDot) nextDot.classList.add('cur');
+      // Scroll doux vers la suivante
+      setTimeout(() => nextItem.scrollIntoView({ behavior: 'smooth', block: 'center' }), 150);
+    } else {
+      finishEpisode();
+    }
+
+    updateGlobalKPIs();
+  }
+
+  /* ════════════════════════════════════════
+     FIN D'ÉPISODE
+  ════════════════════════════════════════ */
+  function finishEpisode() {
+    const ep      = ALL_EP[epIdx];
+    const total   = ep.questions.length;
+    const correct = qStates.filter(s => s === 'correct').length;
+    const xpTotal = qStates.reduce((acc, s, i) =>
+      acc + (s === 'correct' ? (listenCount <= 1 ? 4 : 3) : 0), 0);
+    const pct     = Math.round((correct / total) * 100);
+
+    epDone.add(ep.id);
+    promoteExerciseStatus(PAGE_ID, 'completed');
+    buildSelect();
+    updateGlobalKPIs();
+
+    let emoji = '📚', title = 'Continue à t\'entraîner !', cls = 'bad';
+    if (pct >= 90) { emoji = '🏆'; title = 'Excellent !';       cls = 'good'; }
+    else if (pct >= 70) { emoji = '🎉'; title = 'Très bien !';  cls = 'good'; }
+    else if (pct >= 50) { emoji = '👍'; title = 'Pas mal !';    cls = 'mid';  }
+
+    const banner = document.getElementById('resultBanner');
+    document.getElementById('resEmoji').textContent = emoji;
+    document.getElementById('resTitle').textContent = title;
+    document.getElementById('resSub').textContent   = correct + ' / ' + total + ' correctes · ' + pct + '%';
+    document.getElementById('resXP').textContent    = '+' + xpTotal + ' XP';
+    banner.classList.add('show', cls);
+    banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    if (pct >= 75) launchConfetti();
+
+    // TTS feedback
+    if (ttsOk) {
+      const msg = pct >= 70
+        ? 'Bravo ! ' + correct + ' bonnes réponses sur ' + total + '.'
+        : correct + ' bonnes réponses sur ' + total + '. Continue à t\'entraîner !';
+      setTimeout(() => speakOne(msg, PITCH_N, null), 600);
+    }
+  }
+
+  /* ════════════════════════════════════════
+     KPIs GLOBAUX
+  ════════════════════════════════════════ */
+  function updateGlobalKPIs() {
+    document.getElementById('kpiCorrect').textContent = globalOk;
+    document.getElementById('kpiErrors').textContent  = globalErr;
+    document.getElementById('kpiXP').textContent      = globalXP;
+    document.getElementById('kpiEp').textContent      = epDone.size + '/' + ALL_EP.length;
+  }
+
+  /* ════════════════════════════════════════
+     RACCOURCIS CLAVIER
+  ════════════════════════════════════════ */
+  function getCurrentQ() {
+    return qStates.findIndex(s => s === 'pending');
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+
+    if (e.key === ' ' || e.key === 'Spacebar') {
+      e.preventDefault();
+      if (speaking) stopSpeech(); else onPlay();
+      return;
+    }
+    if (e.key === 'r' || e.key === 'R') {
+      stopSpeech();
+      setTimeout(() => onPlay(), 100);
+      return;
+    }
+    const map = { '1': 0, '2': 1, '3': 2, '4': 3 };
+    if (map[e.key] !== undefined) {
+      const qi = getCurrentQ();
+      if (qi >= 0) answerQuestion(qi, map[e.key]);
+    }
+  });
+
+  function updateVoiceBadges() {
+    const name = googleVoice ? googleVoice.name.replace(/Microsoft |Google /, '') : '—';
+    const bF = document.getElementById('badgeVoiceF');
+    const bM = document.getElementById('badgeVoiceM');
+    // Même voix Google, pitch différent
+    if (bF) bF.textContent = name + ' · ♀ aigu';
+    if (bM) bM.textContent = name + ' · ♂ grave';
+  }
+
+  /* ════════════════════════════════════════
+     TRANSCRIPT VISUEL
+  ════════════════════════════════════════ */
+  function buildTranscriptBox(ep) {
+    const box = document.getElementById('transcriptBox');
+    box.innerHTML = '';
+
+    if (ep.type === 'dialogue' && Array.isArray(ep.lines)) {
+      ep.lines.forEach((line, i) => {
+        const row = document.createElement('div');
+        row.className = 'trs-line';
+        row.id = 'trs-' + i;
+        const icon = line.gender === 'm' ? '👨' : '👩';
+        row.innerHTML =
+          `<span class="trs-speaker trs-${line.gender}">${icon} ${line.speaker}</span>` +
+          `<span class="trs-text">${line.text}</span>`;
+        box.appendChild(row);
+      });
+    } else {
+      box.textContent = ep.transcript || '';
+    }
+  }
+
+  /* ════════════════════════════════════════
+     ÉCOUTER
+  ════════════════════════════════════════ */
+  function onPlay() {
+    const ep = ALL_EP[epIdx];
+    listenCount++;
+
+    document.getElementById('listenCount').textContent =
+      listenCount > 1 ? '🔁 Écouté ' + listenCount + ' fois' : '';
+    document.getElementById('listenTitle').textContent =
+      listenCount === 1 ? '🔊 Lecture en cours…' : '🔁 Réécoute en cours…';
+    document.getElementById('listenSub').textContent =
+      listenCount === 1 ? 'Écoute attentivement !' : 'Tu peux répondre pendant ou après l\'écoute.';
+
+    if (ep.type === 'dialogue' && Array.isArray(ep.lines)) {
+      speakDialogue(ep.lines);
+    } else {
+      speakTranscript(ep.transcript || '');
+    }
+  }
+
+  /* ════════════════════════════════════════
+     INIT
+  ════════════════════════════════════════ */
+  document.addEventListener('DOMContentLoaded', () => {
+    initTTS();
+    buildSelect();
+    loadEpisode(0);
+
+    document.getElementById('epSelect').addEventListener('change', e => {
+      loadEpisode(+e.target.value);
+    });
+    document.getElementById('btnPrevEp').addEventListener('click', () => loadEpisode(epIdx - 1));
+    document.getElementById('btnNextEp').addEventListener('click', () => loadEpisode(epIdx + 1));
+
+    document.getElementById('btnPlay').addEventListener('click', () => {
+      if (speaking) stopSpeech(); else onPlay();
+    });
+    document.getElementById('btnStop').addEventListener('click', stopSpeech);
+    document.getElementById('btnReplay').addEventListener('click', () => {
+      stopSpeech(); setTimeout(() => onPlay(), 80);
+    });
+    document.getElementById('btnReset').addEventListener('click', () => {
+      stopSpeech(); loadEpisode(epIdx);
+    });
+
+    document.getElementById('btnSpeed').addEventListener('click', () => {
+      const idx = SPEEDS.indexOf(audioSpeed);
+      audioSpeed = SPEEDS[(idx + 1) % SPEEDS.length];
+      const icons = ['🐢', '🐢', '🚶', '🏃'];
+      const iSpeed = SPEEDS.indexOf(audioSpeed);
+      document.getElementById('btnSpeed').textContent = icons[iSpeed] + ' × ' + audioSpeed;
+    });
+
+  });
+  </script>
+</body>
+</html>

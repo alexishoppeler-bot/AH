@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr-CH">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion fenetres internet - AH</title>
+  <link rel="stylesheet" href="../css/theme.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <link rel="stylesheet" href="../css/fenetres-web.css">
+</head>
+<body>
+  <div id="header-slot"></div>
+  <div id="sidebar-slot"></div>
+
+  <div class="layout">
+    <main class="main">
+      <div class="container">
+        <section class="fw-header fade-up">
+          <div class="page-icon">🪟</div>
+          <h1>Gestion des fenetres internet</h1>
+          <p>Entraine-toi a ouvrir, reduire, agrandir, restaurer et fermer des fenetres dans un navigateur.</p>
+        </section>
+
+        <section class="fw-grid fade-up delay-1">
+          <aside class="fw-panel">
+            <div class="card-title">Parcours guide</div>
+            <p id="fw-instruction" style="margin-top:10px;font-size:15px;line-height:1.5;"></p>
+            <p id="fw-progress" style="margin-top:10px;color:var(--text3);font-size:12px;"></p>
+            <div id="fw-feedback" style="min-height:20px;margin-top:10px;font-size:13px;color:var(--text2);"></div>
+            <div class="fw-kpi">
+              <div class="k">
+                <div class="v" id="fw-done">0</div>
+                <div class="l">Reussies</div>
+              </div>
+              <div class="k">
+                <div class="v" id="fw-errors" style="color:var(--danger);">0</div>
+                <div class="l">Erreurs</div>
+              </div>
+              <div class="k">
+                <div class="v" id="fw-xp">0 XP</div>
+                <div class="l">XP</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
+              <button id="fw-restart" class="btn btn-secondary">Recommencer</button>
+              <button id="btnNextExercise" class="btn btn-primary">Exercice suivant</button>
+            </div>
+            <div id="fw-result" class="fw-result fw-hidden"></div>
+          </aside>
+
+          <section id="fw-desktop" class="fw-desktop">
+            <div class="fw-dock">
+              <div id="fw-launchers" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+              <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;" id="fw-taskbar"></div>
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+    <div id="footer-slot"></div>
+  </div>
+
+  <script src="../js/data/fenetres-web-data.js"></script>
+  <script src="../js/score.js"></script>
+  <script src="../js/exercises-config.js"></script>
+  <script src="../js/stages.js"></script>
+  <script src="../js/exercise-utils.js"></script>
+  <script src="../js/shared.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/fenetres-web.js"></script>
+  <script>
+    (function initNextExerciseButton() {
+      const btn = document.getElementById('btnNextExercise');
+      const nextEx = getNextExercise('fenetres-web');
+      if (!btn) return;
+      if (nextEx && nextEx.name && nextEx.href) {
+        btn.textContent = 'Exercice suivant : ' + nextEx.name;
+        btn.addEventListener('click', () => {
+          window.location.href = nextEx.href;
+        });
+      } else {
+        btn.style.display = 'none';
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr-CH">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accueil - AH</title>
+  <link rel="stylesheet" href="../css/theme.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <style>
+    /* Hero Section */
+    .hero-section {
+      margin-bottom: 48px;
+      padding: 40px 0 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .hero-section h1 {
+      color: var(--text);
+      margin-bottom: 10px;
+      font-size: 36px;
+      font-weight: 800;
+    }
+
+    .hero-section p {
+      font-size: 17px;
+      color: var(--text2);
+      max-width: 560px;
+      line-height: 1.6;
+    }
+
+    /* Level Cards */
+    .level-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .level-card {
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      border-radius: var(--r-lg);
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      cursor: pointer;
+      transition: box-shadow 0.2s, border-color 0.2s;
+      text-decoration: none;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .level-card:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-md);
+    }
+
+    .level-card h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .level-card-desc {
+      font-size: 14px;
+      color: var(--text2);
+      margin-bottom: 18px;
+      line-height: 1.55;
+      flex-grow: 1;
+    }
+
+    .level-card-cta {
+      font-weight: 600;
+      color: var(--accent);
+      font-size: 14px;
+    }
+
+    /* Quick Access */
+    .quick-access { margin-bottom: 40px; }
+
+    .quick-links {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+    }
+
+    .quick-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: var(--r-md);
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      text-decoration: none;
+      color: var(--text);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .quick-link:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Section labels */
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text3);
+      letter-spacing: 0.8px;
+      margin-bottom: 14px;
+    }
+
+    /* Footer Info */
+    .footer-info {
+      margin-top: 60px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 600px) {
+      .level-cards { grid-template-columns: 1fr; }
+      .hero-section h1 { font-size: 26px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="header-slot"></div>
+  <div id="sidebar-slot"></div>
+
+  <div class="layout">
+    <main class="main">
+      <div class="container">
+
+        <!-- Hero Section -->
+        <div class="hero-section fade-up">
+          <h1>Bienvenue sur votre espace de formation</h1>
+          <p>Choisissez un jeu et progressez à votre rythme, des bases informatiques aux usages numériques professionnels.</p>
+        </div>
+
+        <!-- Level Selection Cards -->
+        <div class="fade-up delay-1">
+          <p class="section-label">Tous les jeux</p>
+          <div class="level-cards"></div>
+        </div>
+
+        <!-- Quick Access -->
+        <div class="quick-access fade-up delay-2">
+          <p class="section-label">Reprendre votre parcours</p>
+          <div class="quick-links">
+            <a href="evaluations.html" class="quick-link">
+              <span>Mes résultats</span>
+            </a>
+            <a href="donnees.html" class="quick-link">
+              <span>Mes données</span>
+            </a>
+            <a href="regles.html" class="quick-link">
+              <span>Règles XP</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Footer Info -->
+        <div class="footer-info fade-up delay-3">
+          <p style="font-size:13px;color:var(--text3);text-align:center;">
+            Données enregistrées uniquement sur cet appareil &nbsp;·&nbsp; Aucun compte requis &nbsp;·&nbsp; <a href="donnees.html" style="color:var(--text3);text-decoration:underline;">Confidentialité</a>
+          </p>
+        </div>
+
+      </div>
+    </main>
+    <div id="footer-slot"></div>
+  </div>
+
+  <script src="../js/score.js"></script>
+  <script src="../js/exercises-config.js"></script>
+  <script src="../js/stages.js"></script>
+  <script src="../js/exercise-utils.js"></script>
+  <script src="../js/shared.js"></script>
+  <script src="../js/ui.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderHomePageContent();
+    });
+
+    function renderHomePageContent() {
+      if (typeof StageManager === 'undefined') {
+        setTimeout(renderHomePageContent, 100);
+        return;
+      }
+
+      const config = window.EXERCISE_CONFIG || {};
+      const orderedPages = Array.isArray(config.orderedPages) ? config.orderedPages : [];
+      const nextExercise = StageManager.getNextRecommendedExercise();
+
+      const exerciseByPage = new Map();
+      for (const stage of StageManager.getStages()) {
+        for (const ex of stage.exercises) exerciseByPage.set(ex.page, ex);
+      }
+      for (const bonus of [...StageManager.getUnlockedBonuses(), ...StageManager.getLockedBonuses()]) {
+        exerciseByPage.set(bonus.page, bonus);
+      }
+      const exercises = orderedPages.map(page => exerciseByPage.get(page)).filter(Boolean);
+
+      let totalCompleted = 0;
+      for (const ex of exercises) {
+        const metrics = ScoreManager.readMetrics(ex.page);
+        if (metrics.status === 'completed') totalCompleted++;
+      }
+      const totalExercises = exercises.length;
+
+      const heroP = document.querySelector('.hero-section p');
+      if (heroP) {
+        if (totalCompleted === 0) {
+          heroP.textContent = `Choisissez un jeu et progressez à votre rythme, des bases informatiques aux usages numériques professionnels.`;
+        } else if (nextExercise) {
+          heroP.textContent = `Vous avez terminé ${totalCompleted} jeu${totalCompleted > 1 ? 'x' : ''} sur ${totalExercises}. Prochaine activité recommandée : « ${nextExercise.name} ».`;
+        } else {
+          heroP.textContent = `Félicitations — vous avez complété l'ensemble des ${totalExercises} jeux.`;
+        }
+      }
+
+      const cardsContainer = document.querySelector('.level-cards');
+      if (!cardsContainer) return;
+      cardsContainer.innerHTML = '';
+
+      for (const ex of exercises) {
+        const metrics = ScoreManager.readMetrics(ex.page);
+        const status = metrics.status;
+        const completionText = status === 'completed'
+          ? 'Fini'
+          : (status === 'in_progress' ? 'En cours' : 'Pas commencé');
+        const completionColor = status === 'completed'
+          ? 'var(--success)'
+          : (status === 'in_progress' ? 'var(--warning)' : 'var(--text3)');
+        const category = (config.meta && config.meta[ex.page] && config.meta[ex.page].cat) ? config.meta[ex.page].cat : 'Exercice';
+
+        const card = document.createElement('a');
+        card.href = `${ex.page}.html`;
+        card.className = 'level-card';
+        card.innerHTML = `
+          <h2>${ex.name}</h2>
+          <p class="level-card-desc">${category}</p>
+          <div style="font-size:12px;color:${completionColor};margin-bottom:12px;font-weight:500;">${completionText}</div>
+          <div class="level-card-cta">${status === 'completed' ? 'Revoir →' : 'Jouer →'}</div>
+        `;
+        cardsContainer.appendChild(card);
+      }
+    }
+
+    document.addEventListener('admin:unlock-changed', () => {
+      renderHomePageContent();
+    });
+  </script>
+</body>
+</html>

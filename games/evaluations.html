@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="fr-CH">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evaluations - AH</title>
+  <link rel="stylesheet" href="../css/theme.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <style>
+    /* ── Ring SVG ── */
+    .ring-svg { display: block; overflow: visible; transform: rotate(-90deg); }
+    .ring-bg   { fill: none; stroke: var(--border); stroke-width: 8; }
+    .ring-fill {
+      fill: none; stroke-width: 8; stroke-linecap: round;
+      transition: stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1);
+    }
+    .ring-label {
+      font-size: 17px; font-weight: 800;
+      fill: var(--text1);
+      transform-box: fill-box;
+    }
+
+    /* ── Ring card ── */
+    .eval-ring-card {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 24px 16px; text-align: center;
+    }
+    .ring-pct-label {
+      font-family: var(--font-head); font-size: 13px; font-weight: 700;
+      background: var(--gradient); -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; background-clip: text;
+      margin-top: 6px;
+    }
+    .ring-title { font-size: 11px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 10px; }
+
+    /* ── Level hero ── */
+    .level-hero { padding: 32px 24px; text-align: center; }
+    .level-number {
+      font-family: var(--font-head); font-size: 60px; font-weight: 900; line-height: 1;
+      background: var(--gradient); -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .badge-rank {
+      display: inline-block; padding: 7px 22px; border-radius: 999px;
+      font-size: 15px; font-weight: 700; border: 2px solid; margin-top: 10px;
+      letter-spacing: 0.3px;
+    }
+    .xp-next { font-size: 12px; color: var(--text3); margin-top: 14px; }
+
+    /* ── KPI grid ── */
+    .kpi-grid-7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-bottom: 24px; }
+    @media (max-width: 900px) { .kpi-grid-7 { grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width: 540px) { .kpi-grid-7 { grid-template-columns: repeat(2, 1fr); } }
+    .kpi-card2 { background: var(--surface); border-radius: var(--r-lg); padding: 16px 10px;
+                 text-align: center; border: 1px solid var(--border); }
+    .kpi-val2  { font-size: 20px; font-weight: 700; color: var(--accent); }
+    .kpi-lbl2  { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.6px; margin-top: 3px; }
+
+    /* ── Table ── */
+    .eval-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .eval-table th {
+      text-align: left; padding: 10px 14px;
+      font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px;
+      color: var(--text3); border-bottom: 1px solid var(--border); font-weight: 700;
+    }
+    .eval-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: middle; }
+    .eval-table tbody tr { transition: background 0.1s; }
+    .eval-table tbody tr:hover { background: color-mix(in srgb, var(--accent) 4%, transparent); }
+    .eval-table td:first-child { color: var(--text1); font-weight: 600; }
+
+    /* ── Mini progress ── */
+    .mini-bar { height: 5px; border-radius: 99px; background: var(--border); overflow: hidden; margin-top: 4px; width: 80px; }
+    .mini-bar-fill { height: 100%; border-radius: 99px; background: var(--gradient); transition: width 0.8s ease; }
+
+    /* ── Status dot ── */
+    .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+    .dot-green  { background: var(--success); }
+    .dot-yellow { background: var(--warning); }
+    .dot-gray   { background: var(--text3); }
+
+    /* ── Filter tabs ── */
+    .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+    .filter-tab  { padding: 5px 14px; border-radius: 999px; border: 1.5px solid var(--border);
+                   background: var(--surface); color: var(--text2); font-size: 12px; font-weight: 600;
+                   cursor: pointer; transition: all 0.15s; }
+    .filter-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+    /* ── Sparkline ── */
+    .sparkline-wrap { overflow-x: auto; }
+    .sparkline-bar-row { display: flex; align-items: flex-end; gap: 6px; height: 80px; padding: 0 4px; }
+    .sparkline-bar { flex: 1; min-width: 28px; border-radius: 4px 4px 0 0;
+                     background: var(--gradient); opacity: 0.85;
+                     transition: height 0.8s ease, opacity 0.2s; cursor: pointer; }
+    .sparkline-bar:hover { opacity: 1; }
+    .sparkline-labels { display: flex; gap: 6px; padding: 4px 4px 0; }
+    .sparkline-lbl { flex: 1; min-width: 28px; font-size: 9px; color: var(--text3); text-align: center;
+                     overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* ── Link cell ── */
+    .link-cell { color: var(--accent); text-decoration: none; font-size: 11px; font-weight: 600;
+                 padding: 3px 10px; border-radius: 999px; border: 1.5px solid var(--accent);
+                 white-space: nowrap; transition: background 0.15s; }
+    .link-cell:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); }
+
+    /* ── Medals ── */
+    .medal { font-size: 18px; }
+
+    /* ── Grid 3 ── */
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    @media (max-width: 700px) { .grid-3 { grid-template-columns: 1fr; } }
+
+    /* ── Collapsible sections ── */
+    .detail-section { display: none; }
+    .detail-section.show { display: block; }
+    .btn-toggle-details { margin: 16px 0; }
+  </style>
+</head>
+<body>
+  <div id="header-slot"></div>
+  <div id="sidebar-slot"></div>
+
+  <div class="layout">
+    <main class="main">
+      <div class="container">
+
+        <div class="page-header fade-up">
+          <div class="page-icon">📈</div>
+          <h1>Espace Évaluations</h1>
+          <p>Tableau de bord de ta progression globale. Les données sont mises à jour en temps réel depuis tes exercices.</p>
+        </div>
+        <div class="mb-24 fade-up delay-1" style="display:flex;gap:8px;flex-wrap:wrap;">
+          <a href="accueil.html" class="btn btn-secondary btn-sm">Accueil</a>
+          <a href="evaluations.html" class="btn btn-secondary btn-sm">Evaluations</a>
+          <a href="donnees.html" class="btn btn-secondary btn-sm">Donnees</a>
+          <a href="regles.html" class="btn btn-secondary btn-sm">Regles XP</a>
+        </div>
+
+        <!-- ═══════════════════════════
+             HÉRO — Niveau + Badge
+        ═══════════════════════════ -->
+        <div class="card card-accent mb-24 fade-up delay-1">
+          <div class="level-hero">
+            <div style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-weight:600;margin-bottom:6px;">Ton niveau</div>
+            <div class="level-number" id="eval-level">1</div>
+            <div id="eval-badge" class="badge-rank">🌱 Début</div>
+            <div class="xp-next" id="xp-bar-label">0/100 XP vers niveau 2</div>
+            <div style="max-width:320px;margin:10px auto 0;">
+              <div class="progress-bar progress-lg" style="height:10px;">
+                <div class="progress-fill" id="xp-bar" style="width:0%;transition:width 1s ease;"></div>
+              </div>
+            </div>
+            <div style="margin-top:14px;font-size:13px;color:var(--text2);">
+              <span id="eval-xp-hero" style="font-weight:700;color:var(--accent);">0 XP</span> accumulés au total
+            </div>
+          </div>
+        </div>
+
+        <!-- Toggle Details Button -->
+        <div class="text-center mb-24 fade-up delay-2">
+          <button class="btn btn-secondary btn-sm" id="btn-toggle-details">Voir les détails complets</button>
+        </div>
+
+        <!-- ═══════════════════════════
+             DETAIL SECTIONS (hidden by default)
+        ═══════════════════════════ -->
+        <div class="detail-section mb-24" id="detail-section">
+
+        <!-- 3 RINGS -->
+        <div class="grid-3 mb-24 fade-up delay-2">
+
+          <div class="card eval-ring-card">
+            <div class="ring-title">Précision globale</div>
+            <svg id="ring-global" width="120" height="120" viewBox="0 0 120 120" class="ring-svg" style="margin:8px 0;">
+              <defs></defs>
+              <circle class="ring-bg"   cx="60" cy="60" r="50"/>
+              <circle class="ring-fill" cx="60" cy="60" r="50" stroke-dasharray="314" stroke-dashoffset="314"/>
+              <text class="ring-label" x="60" y="60" text-anchor="middle" dominant-baseline="central"
+                    style="transform:rotate(90deg);transform-origin:60px 60px;" id="ring-global-pct">0%</text>
+            </svg>
+            <div class="ring-pct-label">Toutes réponses correctes</div>
+          </div>
+
+          <div class="card eval-ring-card">
+            <div class="ring-title">Exercices terminés</div>
+            <svg id="ring-closed" width="120" height="120" viewBox="0 0 120 120" class="ring-svg" style="margin:8px 0;">
+              <defs></defs>
+              <circle class="ring-bg"   cx="60" cy="60" r="50"/>
+              <circle class="ring-fill" cx="60" cy="60" r="50" stroke-dasharray="314" stroke-dashoffset="314"/>
+              <text class="ring-label" x="60" y="60" text-anchor="middle" dominant-baseline="central"
+                    style="transform:rotate(90deg);transform-origin:60px 60px;" id="ring-closed-pct">0%</text>
+            </svg>
+            <div class="ring-pct-label">Sur <span id="ring-total-count">15</span> exercices</div>
+          </div>
+
+          <div class="card eval-ring-card">
+            <div class="ring-title">XP moyen / exercice</div>
+            <svg id="ring-open" width="120" height="120" viewBox="0 0 120 120" class="ring-svg" style="margin:8px 0;">
+              <defs></defs>
+              <circle class="ring-bg"   cx="60" cy="60" r="50"/>
+              <circle class="ring-fill" cx="60" cy="60" r="50" stroke-dasharray="314" stroke-dashoffset="314"/>
+              <text class="ring-label" x="60" y="60" text-anchor="middle" dominant-baseline="central"
+                    style="transform:rotate(90deg);transform-origin:60px 60px;" id="ring-open-pct">0</text>
+            </svg>
+            <div class="ring-pct-label">Moyenne XP par exercice joué</div>
+          </div>
+
+        </div>
+
+        <!-- ═══════════════════════════
+             KPI 7 compteurs
+        ═══════════════════════════ -->
+        <div class="kpi-grid-7 mb-24 fade-up delay-2">
+          <div class="kpi-card2">
+            <div class="kpi-val2" style="color:var(--success)" id="eval-correct">0</div>
+            <div class="kpi-lbl2">Correctes</div>
+          </div>
+          <div class="kpi-card2">
+            <div class="kpi-val2" id="eval-typed">0</div>
+            <div class="kpi-lbl2">Tentatives</div>
+          </div>
+          <div class="kpi-card2">
+            <div class="kpi-val2" style="color:var(--danger)" id="eval-errors">0</div>
+            <div class="kpi-lbl2">Erreurs</div>
+          </div>
+          <div class="kpi-card2">
+            <div class="kpi-val2" id="eval-accuracy">0%</div>
+            <div class="kpi-lbl2">Précision</div>
+          </div>
+          <div class="kpi-card2">
+            <div class="kpi-val2" id="eval-xp">0</div>
+            <div class="kpi-lbl2">XP Total</div>
+          </div>
+          <div class="kpi-card2">
+            <div class="kpi-val2" style="color:var(--success)" id="eval-completed">0</div>
+            <div class="kpi-lbl2">Terminés</div>
+          </div>
+          <div class="kpi-card2">
+            <div class="kpi-val2" style="color:var(--warning)" id="eval-inprogress">0</div>
+            <div class="kpi-lbl2">En cours</div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════
+             GRAPHIQUE XP PAR EXERCICE
+        ═══════════════════════════ -->
+        <div class="card mb-24 fade-up delay-3">
+          <div class="card-title mb-4">📊 XP par exercice</div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:14px;">Survole une barre pour voir les détails.</div>
+          <div class="sparkline-wrap">
+            <div class="sparkline-bar-row" id="sparkline-bars"></div>
+            <div class="sparkline-labels"  id="sparkline-labels"></div>
+          </div>
+          <div id="sparkline-tooltip" style="font-size:12px;color:var(--text2);margin-top:8px;min-height:18px;text-align:center;"></div>
+        </div>
+
+        <!-- ═══════════════════════════
+             TABLEAU DÉTAIL
+        ═══════════════════════════ -->
+        <div class="card fade-up delay-3">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+            <div class="card-title" style="margin:0;">📋 Détail par exercice</div>
+            <div class="filter-tabs" id="filter-tabs">
+              <button class="filter-tab active" data-filter="all">Tous</button>
+              <button class="filter-tab" data-filter="completed">✅ Terminés</button>
+              <button class="filter-tab" data-filter="in_progress">🔄 En cours</button>
+              <button class="filter-tab" data-filter="not_started">⬜ Non démarrés</button>
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="eval-table">
+              <thead>
+                <tr>
+                  <th>Exercice</th>
+                  <th>Correctes</th>
+                  <th>Erreurs</th>
+                  <th>Précision</th>
+                  <th>Progrès</th>
+                  <th>XP</th>
+                  <th>Statut</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="exercise-tbody">
+                <tr><td colspan="8" style="text-align:center;padding:28px;color:var(--text3);">Aucune donnée. Commence un exercice !</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- Résumé ligne -->
+          <div id="table-summary" style="padding:10px 14px;font-size:12px;color:var(--text3);border-top:1px solid var(--border);display:none;">
+            <span id="summary-shown">0</span> exercice(s) affiché(s)
+          </div>
+        </div>
+
+        </div>
+        <!-- End of detail-section -->
+
+        <!-- Reset -->
+        <div class="mt-24 mb-32 text-center fade-up delay-4">
+          <button class="btn btn-danger btn-sm" id="btn-reset-scores">🗑️ Réinitialiser toutes les données</button>
+        </div>
+
+      </div>
+    </main>
+    <div id="footer-slot"></div>
+  </div>
+
+  <script src="../js/score.js"></script>
+  <script src="../js/exercises-config.js"></script>
+  <script src="../js/stages.js"></script>
+  <script src="../js/exercise-utils.js"></script>
+  <script src="../js/shared.js"></script>
+  <script src="../js/ui.js"></script>
+  <script>
+  'use strict';
+
+  /* ═══════════════════════════════════════════
+     CONFIG
+  ═══════════════════════════════════════════ */
+  const CONFIG = window.EXERCISE_CONFIG || {};
+  const ALL_PAGES = CONFIG.orderedPages || [];
+  const PAGE_META = CONFIG.meta || {};
+
+  const BADGE_LEVELS = [
+    { min: 0,    label: '🌱 Débutant',       color: '#8b95ab' },
+    { min: 50,   label: '📈 En progression', color: '#4f8ef7' },
+    { min: 150,  label: '💪 Solide',         color: '#7c5ff5' },
+    { min: 300,  label: '⭐ Avancé',          color: '#f59e0b' },
+    { min: 500,  label: '🏆 Expert',          color: '#f87171' },
+  ];
+
+  const STATUS_META = {
+    completed:   { label: 'Terminé',       dot: 'dot-green',  badge: 'badge-green'  },
+    in_progress: { label: 'En cours',      dot: 'dot-yellow', badge: 'badge-yellow' },
+    not_started: { label: 'Non démarré',   dot: 'dot-gray',   badge: 'badge-gray'   },
+  };
+
+  /* ═══════════════════════════════════════════
+     HELPERS
+  ═══════════════════════════════════════════ */
+  function getBadge(xp) {
+    let b = BADGE_LEVELS[0];
+    BADGE_LEVELS.forEach(l => { if (xp >= l.min) b = l; });
+    return b;
+  }
+
+  function setText(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  }
+
+  function renderRing(svgId, pct, c1, c2) {
+    const svg = document.getElementById(svgId);
+    if (!svg) return;
+    const R = 50, C = 2 * Math.PI * R;
+    const fill = svg.querySelector('.ring-fill');
+    const defs = svg.querySelector('defs');
+    if (defs) defs.innerHTML = `
+      <linearGradient id="${svgId}-g" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%"   stop-color="${c1}"/>
+        <stop offset="100%" stop-color="${c2}"/>
+      </linearGradient>`;
+    if (fill) {
+      fill.setAttribute('stroke-dasharray',  String(C));
+      fill.setAttribute('stroke-dashoffset', String(C - (pct / 100) * C));
+      fill.style.stroke = `url(#${svgId}-g)`;
+    }
+  }
+
+  /* ═══════════════════════════════════════════
+     RENDER PRINCIPAL
+  ═══════════════════════════════════════════ */
+  function renderEvaluation() {
+    const allData = ScoreManager.getAllData();
+
+    /* ── Résumé ── */
+    const global = ScoreManager.getGlobalSummary(ALL_PAGES);
+    const badge  = getBadge(global.totalXp);
+
+    /* ── Héro niveau ── */
+    setText('eval-level', global.level);
+    setText('eval-xp-hero', global.totalXp + ' XP');
+
+    const badgeEl = document.getElementById('eval-badge');
+    if (badgeEl) {
+      badgeEl.textContent       = badge.label;
+      badgeEl.style.color       = badge.color;
+      badgeEl.style.borderColor = badge.color + '55';
+      badgeEl.style.background  = badge.color + '18';
+    }
+
+    /* Barre XP vers prochain niveau */
+    const xpInLevel = global.totalXp % 100;
+    const xpBar     = document.getElementById('xp-bar');
+    if (xpBar) xpBar.style.width = xpInLevel + '%';
+    setText('xp-bar-label', `${xpInLevel}/100 XP vers niveau ${global.level + 1}`);
+
+    /* ── KPI ── */
+    setText('eval-correct',    global.totalCorrect);
+    setText('eval-typed',      global.totalTyped);
+    setText('eval-errors',     global.totalErrors);
+    setText('eval-accuracy',   global.accuracy + '%');
+    setText('eval-xp',         global.totalXp + ' XP');
+    setText('eval-completed',  global.completed);
+    setText('eval-inprogress', global.inProgress);
+
+    /* ── Rings ── */
+    // Anneau 1 : précision globale
+    renderRing('ring-global', Math.min(global.accuracy, 100), '#4f8ef7', '#7c5ff5');
+    setText('ring-global-pct', global.accuracy + '%');
+
+    // Anneau 2 : % d'exercices terminés
+    const completedPct = Math.round((global.completed / ALL_PAGES.length) * 100);
+    renderRing('ring-closed', completedPct, '#34d399', '#4f8ef7');
+    setText('ring-closed-pct', completedPct + '%');
+    setText('ring-total-count', ALL_PAGES.length);
+
+    // Anneau 3 : XP moyen par exercice joué (cap 200 XP pour l'anneau)
+    const playedCount = global.completed + global.inProgress;
+    const avgXP       = playedCount > 0 ? Math.round(global.totalXp / playedCount) : 0;
+    const avgXPPct    = Math.min(Math.round(avgXP / 2), 100); // 200 XP max → 100%
+    renderRing('ring-open', avgXPPct, '#f59e0b', '#f87171');
+    setText('ring-open-pct', avgXP);
+
+    /* ── Sparkline ── */
+    renderSparkline(allData);
+
+    /* ── Table ── */
+    renderTable(allData, currentFilter);
+  }
+
+  /* ═══════════════════════════════════════════
+     SPARKLINE
+  ═══════════════════════════════════════════ */
+  function renderSparkline(allData) {
+    const barsEl   = document.getElementById('sparkline-bars');
+    const labelsEl = document.getElementById('sparkline-labels');
+    const tooltip  = document.getElementById('sparkline-tooltip');
+    if (!barsEl || !labelsEl) return;
+
+    const values = ALL_PAGES.map(p => (allData[p] || {}).xp || 0);
+    const maxVal = Math.max(...values, 1);
+
+    barsEl.innerHTML   = '';
+    labelsEl.innerHTML = '';
+
+    ALL_PAGES.forEach((page, i) => {
+      const xp  = values[i];
+      const pct = Math.max(4, Math.round((xp / maxVal) * 100));
+      const meta = PAGE_META[page] || { name: page };
+
+      const bar = document.createElement('div');
+      bar.className = 'sparkline-bar';
+      bar.style.height = '4px'; // start low, animate
+      bar.title = `${meta.name} : ${xp} XP`;
+      barsEl.appendChild(bar);
+
+      const lbl = document.createElement('div');
+      lbl.className   = 'sparkline-lbl';
+      lbl.textContent = (meta.name || page).replace(/^[^\s]+\s/, ''); // strip emoji
+      labelsEl.appendChild(lbl);
+
+      bar.addEventListener('mouseenter', () => {
+        const d = ScoreManager.getAllData()[page] || {};
+        tooltip.textContent = `${meta.name} — ${xp} XP · ${d.correct || 0} correctes · ${d.errors || 0} erreurs`;
+      });
+      bar.addEventListener('mouseleave', () => { tooltip.textContent = ''; });
+
+      setTimeout(() => { bar.style.height = pct + '%'; }, 50 + i * 40);
+    });
+  }
+
+  /* ═══════════════════════════════════════════
+     TABLE
+  ═══════════════════════════════════════════ */
+  let currentFilter = 'all';
+
+  function renderTable(allData, filter) {
+    const tbody = document.getElementById('exercise-tbody');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    let shown = 0;
+
+    ALL_PAGES.forEach((page, idx) => {
+      const d      = allData[page] || { correct: 0, typed: 0, errors: 0, xp: 0, status: 'not_started' };
+      const status = d.status || 'not_started';
+      if (filter !== 'all' && status !== filter) return;
+
+      const acc    = d.typed > 0 ? Math.round((d.correct / d.typed) * 100) : 0;
+      const meta   = PAGE_META[page] || { name: page, href: '#', cat: '' };
+      const sm     = STATUS_META[status];
+      const rank   = idx + 1;
+      const medal  = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
+
+      const tr = document.createElement('tr');
+      tr.dataset.status = status;
+      tr.innerHTML = `
+        <td>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="status-dot ${sm.dot}"></span>
+            <div>
+              <div>${meta.name}</div>
+              <div style="font-size:10px;color:var(--text3);font-weight:400;">${meta.cat || ''}</div>
+            </div>
+          </div>
+        </td>
+        <td style="font-weight:600;color:var(--success);">${d.correct || 0}</td>
+        <td style="color:var(--danger);">${d.errors || 0}</td>
+        <td>
+          <div>${acc}%</div>
+        </td>
+        <td>
+          <div class="mini-bar">
+            <div class="mini-bar-fill" style="width:${acc}%;"></div>
+          </div>
+        </td>
+        <td style="font-weight:700;color:var(--accent);">${d.xp || 0} XP</td>
+        <td><span class="badge ${sm.badge}">${sm.label}</span></td>
+        <td><a href="${meta.href}" class="link-cell">▶ Jouer</a></td>
+      `;
+      tbody.appendChild(tr);
+      shown++;
+    });
+
+    if (shown === 0) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td colspan="8" style="text-align:center;padding:28px;color:var(--text3);">Aucun exercice dans cette catégorie.</td>`;
+      tbody.appendChild(tr);
+    }
+
+    const summary = document.getElementById('table-summary');
+    const summaryShown = document.getElementById('summary-shown');
+    if (summary && summaryShown) {
+      summary.style.display = 'block';
+      summaryShown.textContent = shown;
+    }
+  }
+
+  /* ═══════════════════════════════════════════
+     FILTER TABS
+  ═══════════════════════════════════════════ */
+  document.querySelectorAll('.filter-tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentFilter = btn.dataset.filter;
+      renderTable(ScoreManager.getAllData(), currentFilter);
+    });
+  });
+
+  /* ═══════════════════════════════════════════
+     RESET
+  ═══════════════════════════════════════════ */
+  document.getElementById('btn-reset-scores').addEventListener('click', () => {
+    if (confirm('⚠️ Effacer toutes les données de progression ? Cette action est irréversible.')) {
+      ScoreManager.reset();
+      renderEvaluation();
+      showToast('Données réinitialisées.', 'info');
+    }
+  });
+
+  /* ═══════════════════════════════════════════
+     TOGGLE DETAILS
+  ═══════════════════════════════════════════ */
+  function toggleDetails() {
+    const section = document.getElementById('detail-section');
+    const btn = document.getElementById('btn-toggle-details');
+    const isShown = section.classList.toggle('show');
+    btn.textContent = isShown ? 'Masquer les détails' : 'Voir les détails complets';
+  }
+
+  /* ═══════════════════════════════════════════
+     BOOT
+  ═══════════════════════════════════════════ */
+  document.addEventListener('DOMContentLoaded', () => {
+    renderEvaluation();
+    document.addEventListener('score:updated', renderEvaluation);
+    document.getElementById('btn-toggle-details').addEventListener('click', toggleDetails);
+  });
+  </script>
+</body>
+</html>
+
+

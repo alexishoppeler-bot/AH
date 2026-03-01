@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="fr-CH">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jeu des paires - AH</title>
+  <link rel="stylesheet" href="../css/theme.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <style>
+    /* === PAIRE OU PAS === */
+    .paire-zone {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 32px;
+      text-align: center;
+    }
+
+    .quiz-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .quiz-progress-label { font-size: 13px; color: var(--text2); }
+    .quiz-progress-label strong { color: var(--text); }
+
+    .series-progress { margin-bottom: 28px; }
+
+    /* === Cartes retournées === */
+    .cards-area {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+    }
+
+    .flip-card {
+      width: 160px;
+      height: 190px;
+      perspective: 800px;
+      cursor: default;
+    }
+
+    .flip-card-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
+    }
+
+    .flip-card.flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flip-card-front,
+    .flip-card-back {
+      position: absolute;
+      inset: 0;
+      border-radius: var(--r-xl);
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      border: 2px solid var(--border);
+    }
+
+    .flip-card-front {
+      background: var(--surface2);
+      font-size: 48px;
+    }
+
+    .flip-card-back {
+      background: var(--surface);
+      transform: rotateY(180deg);
+      border-color: var(--accent);
+    }
+
+    .flip-card-back .card-emoji {
+      font-size: 36px;
+      margin-bottom: 10px;
+    }
+
+    .flip-card-back .card-text {
+      font-family: var(--font-head);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    /* États après réponse */
+    .flip-card.match .flip-card-back {
+      border-color: var(--success);
+      background: rgba(52,211,153,0.1);
+    }
+    .flip-card.no-match .flip-card-back {
+      border-color: var(--danger);
+      background: rgba(248,113,113,0.08);
+    }
+
+    /* Question */
+    .paire-question {
+      font-family: var(--font-head);
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .paire-sub {
+      font-size: 13px;
+      color: var(--text2);
+      margin-bottom: 28px;
+    }
+
+    /* Boutons Oui/Non */
+    .answer-btns {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    .btn-oui {
+      background: linear-gradient(135deg, #34d399, #059669);
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 14px 36px;
+      border-radius: var(--r-md);
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-head);
+      box-shadow: 0 4px 16px rgba(52,211,153,0.3);
+    }
+    .btn-oui:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-oui:active { transform: translateY(1px); }
+
+    .btn-non {
+      background: linear-gradient(135deg, #f87171, #dc2626);
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 14px 36px;
+      border-radius: var(--r-md);
+      border: none;
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-head);
+      box-shadow: 0 4px 16px rgba(248,113,113,0.3);
+    }
+    .btn-non:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-non:active { transform: translateY(1px); }
+
+    .btn-oui:disabled, .btn-non:disabled {
+      opacity: 0.4; cursor: default; transform: none;
+    }
+
+    /* Feedback */
+    .feedback-row {
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .feedback-msg {
+      font-family: var(--font-head);
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .feedback-msg.ok  { color: var(--success); }
+    .feedback-msg.err { color: var(--danger); }
+
+    /* Explication */
+    .explication-box {
+      display: none;
+      padding: 12px 18px;
+      border-radius: var(--r-md);
+      font-size: 13px;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+    .explication-box.ok  {
+      background: rgba(52,211,153,0.08);
+      border: 1px solid rgba(52,211,153,0.25);
+      color: var(--text2);
+    }
+    .explication-box.err {
+      background: rgba(248,113,113,0.08);
+      border: 1px solid rgba(248,113,113,0.2);
+      color: var(--text2);
+    }
+    .explication-box.show { display: block; }
+
+    /* Touches clavier hint */
+    .key-hint {
+      font-size: 11px;
+      color: var(--text3);
+      margin-top: 8px;
+    }
+    .key-hint kbd {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-family: var(--font-head);
+      font-size: 11px;
+    }
+
+    /* Résultats */
+    .result-zone { display: none; }
+    .result-zone.show { display: block; }
+    .game-zone.hidden { display: none; }
+
+    /* Animation shake pour mauvaise réponse */
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-6px); }
+      40%      { transform: translateX(6px); }
+      60%      { transform: translateX(-4px); }
+      80%      { transform: translateX(4px); }
+    }
+    .shake { animation: shake 0.4s ease; }
+  </style>
+</head>
+<body>
+  <div id="header-slot"></div>
+  <div id="sidebar-slot"></div>
+
+  <div class="layout">
+    <main class="main">
+      <div class="container">
+
+        <div class="page-header fade-up">
+          <div class="page-icon">🃏</div>
+          <h1>Jeu des paires</h1>
+          <p>Ces deux cartes forment-elles une paire correcte ?</p>
+        </div>
+
+        <!-- KPIs -->
+        <div class="kpi-grid fade-up delay-1">
+          <div class="kpi-card">
+            <div class="kpi-value" id="kpiCorrect">0</div>
+            <div class="kpi-label">Corrects</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" id="kpiErrors">0</div>
+            <div class="kpi-label">Erreurs</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" id="kpiXP">0</div>
+            <div class="kpi-label">XP gagnés</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" id="kpiAccuracy">—</div>
+            <div class="kpi-label">Précision</div>
+          </div>
+        </div>
+
+        <!-- Zone de jeu -->
+        <div class="game-zone fade-up delay-2" id="gameZone">
+          <div class="paire-zone">
+
+            <div class="quiz-top">
+              <div class="quiz-progress-label">Progression <strong id="roundNum">1</strong> / <strong id="roundTotal">16</strong></div>
+              <span id="roundCategory" class="badge badge-blue"></span>
+            </div>
+            <div class="series-progress">
+              <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+            </div>
+
+            <div class="paire-question" id="paireQuestion">Ces deux éléments vont-ils ensemble ?</div>
+            <div class="paire-sub">Indique si c'est une paire correcte ou non.</div>
+
+            <!-- Deux cartes -->
+            <div class="cards-area" id="cardsArea">
+              <div class="flip-card" id="card1">
+                <div class="flip-card-inner">
+                  <div class="flip-card-front">🃏</div>
+                  <div class="flip-card-back">
+                    <div class="card-emoji" id="card1Emoji"></div>
+                    <div class="card-text"  id="card1Text"></div>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;font-size:28px;color:var(--text3);font-weight:700;">+</div>
+              <div class="flip-card" id="card2">
+                <div class="flip-card-inner">
+                  <div class="flip-card-front">🃏</div>
+                  <div class="flip-card-back">
+                    <div class="card-emoji" id="card2Emoji"></div>
+                    <div class="card-text"  id="card2Text"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Feedback -->
+            <div class="feedback-row">
+              <span class="feedback-msg" id="feedbackMsg"></span>
+            </div>
+
+            <!-- Explication -->
+            <div class="explication-box" id="explicBox"></div>
+
+            <!-- Boutons -->
+            <div class="answer-btns">
+              <button class="btn-oui" id="btnOui">✅ Oui, c'est une paire</button>
+              <button class="btn-non" id="btnNon">❌ Non, pas une paire</button>
+            </div>
+
+            <div class="key-hint">
+              Raccourcis : <kbd>O</kbd> = Oui &nbsp;|&nbsp; <kbd>N</kbd> = Non &nbsp;|&nbsp; <kbd>Entrée</kbd> = Suivant
+            </div>
+
+            <div style="margin-top:16px;">
+              <button class="btn btn-secondary btn-sm" id="btnNext" style="display:none;">Suivant →</button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Résultats finaux -->
+        <div class="result-zone fade-up" id="resultZone">
+          <div class="card card-accent card-lg" style="text-align:center;">
+            <div style="font-size:56px;margin-bottom:16px;" id="resEmoji">🃏</div>
+            <h2 style="font-family:var(--font-head);font-size:24px;font-weight:800;margin-bottom:8px;" id="resTitle">Exercice terminé !</h2>
+            <p style="color:var(--text2);margin-bottom:28px;" id="resSubtitle">Voici tes résultats.</p>
+            <div class="kpi-grid" style="margin-bottom:28px;">
+              <div class="kpi-card"><div class="kpi-value" id="resCorrect">0</div><div class="kpi-label">Corrects</div></div>
+              <div class="kpi-card"><div class="kpi-value" id="resErrors">0</div><div class="kpi-label">Erreurs</div></div>
+              <div class="kpi-card"><div class="kpi-value" id="resXP">0</div><div class="kpi-label">XP</div></div>
+              <div class="kpi-card"><div class="kpi-value" id="resAccuracy">—</div><div class="kpi-label">Précision</div></div>
+            </div>
+            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+              <button class="btn btn-primary btn-lg" id="btnNextExercise">Exercice suivant</button>
+              <button class="btn btn-secondary btn-lg" id="btnRestart">Recommencer</button>
+              <a href="accueil.html" class="btn btn-secondary btn-lg">← Accueil</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+    <div id="footer-slot"></div>
+  </div>
+
+  <script src="../js/data/paire-data.js"></script>
+  <script src="../js/score.js"></script>
+  <script src="../js/exercises-config.js"></script>
+  <script src="../js/stages.js"></script>
+  <script src="../js/exercise-utils.js"></script>
+  <script src="../js/shared.js"></script>
+  <script src="../js/ui.js"></script>
+  <script>
+  'use strict';
+
+  /* =========================================================
+     DONNÉES
+     Chaque entrée est soit une vraie paire (isPair:true)
+     soit une fausse paire (isPair:false).
+     card1 / card2 : { emoji, text }
+     explication : pourquoi c'est correct ou non
+  ========================================================= */
+  const QUESTIONS = window.PAIRE_DATA;
+
+  const PAGE_ID = 'paire';
+  const TOTAL   = QUESTIONS.length;
+
+  let session = {
+    questions: [],
+    index:     0,
+    correct:   0,
+    errors:    0,
+    xp:        0,
+    typed:     0,
+    answered:  false,
+  };
+
+  let xpRulesShown = false;
+
+  /* ===== UTILITAIRES ===== */
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  /* ===== INIT ===== */
+  function startSession() {
+    session.questions = shuffle(QUESTIONS);
+    session.index     = 0;
+    session.correct   = 0;
+    session.errors    = 0;
+    session.xp        = 0;
+    session.typed     = 0;
+    session.answered  = false;
+
+    document.getElementById('resultZone').classList.remove('show');
+    document.getElementById('gameZone').classList.remove('hidden');
+    updateKPIs();
+
+    // Afficher les règles XP seulement à la première session
+    if (!xpRulesShown) {
+      xpRulesShown = true;
+      showXPRules('Paire');
+    }
+
+    loadRound();
+  }
+
+  /* ===== CHARGER UNE QUESTION ===== */
+  function loadRound() {
+    session.answered = false;
+    const q = session.questions[session.index];
+
+    document.getElementById('roundNum').textContent      = session.index + 1;
+    document.getElementById('roundTotal').textContent    = TOTAL;
+    document.getElementById('roundCategory').textContent = q.category;
+    document.getElementById('feedbackMsg').textContent   = '';
+    document.getElementById('feedbackMsg').className     = 'feedback-msg';
+    document.getElementById('explicBox').classList.remove('show');
+    document.getElementById('explicBox').className       = 'explication-box';
+    document.getElementById('btnNext').style.display     = 'none';
+    document.getElementById('btnOui').disabled           = false;
+    document.getElementById('btnNon').disabled           = false;
+
+    const pct = Math.round((session.index / TOTAL) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+
+    // Remplir les cartes
+    document.getElementById('card1Emoji').textContent = q.card1.emoji;
+    document.getElementById('card1Text').textContent  = q.card1.text;
+    document.getElementById('card2Emoji').textContent = q.card2.emoji;
+    document.getElementById('card2Text').textContent  = q.card2.text;
+
+    // Retourner les cartes (reset puis flip avec délai)
+    const c1 = document.getElementById('card1');
+    const c2 = document.getElementById('card2');
+    c1.classList.remove('flipped', 'match', 'no-match');
+    c2.classList.remove('flipped', 'match', 'no-match');
+
+    // Retourner les cartes avec un léger délai
+    setTimeout(() => {
+      c1.classList.add('flipped');
+      setTimeout(() => c2.classList.add('flipped'), 150);
+    }, 100);
+  }
+
+  /* ===== RÉPONDRE ===== */
+  function answer(userSaysPair) {
+    if (session.answered) return;
+    session.answered = true;
+    session.typed++;
+
+    const q    = session.questions[session.index];
+    const isOk = (userSaysPair === q.isPair);
+
+    document.getElementById('btnOui').disabled = true;
+    document.getElementById('btnNon').disabled = true;
+    document.getElementById('btnNext').style.display = 'inline-flex';
+    document.getElementById('btnNext').textContent   =
+      session.index < TOTAL - 1 ? 'Suivant →' : 'Terminer';
+
+    const fb  = document.getElementById('feedbackMsg');
+    const c1  = document.getElementById('card1');
+    const c2  = document.getElementById('card2');
+    const exp = document.getElementById('explicBox');
+
+    if (isOk) {
+      session.correct++;
+      const xp = 2;
+      session.xp += xp;
+
+      fb.textContent = '✅ Correct ! +' + xp + ' XP';
+      fb.className   = 'feedback-msg ok';
+
+      c1.classList.add('match');
+      c2.classList.add('match');
+
+      exp.textContent = q.explication;
+      exp.className   = 'explication-box ok show';
+
+      showToast('+' + xp + ' XP', 'success');
+      recordExerciseProgress(PAGE_ID, { correct: 1, typed: 1, errors: 0, xp });
+    } else {
+      session.errors++;
+
+      fb.textContent = '❌ Incorrect !';
+      fb.className   = 'feedback-msg err';
+
+      c1.classList.add('no-match');
+      c2.classList.add('no-match');
+
+      // Shake
+      const area = document.getElementById('cardsArea');
+      area.classList.add('shake');
+      setTimeout(() => area.classList.remove('shake'), 400);
+
+      exp.textContent = q.explication;
+      exp.className   = 'explication-box err show';
+
+      recordExerciseProgress(PAGE_ID, { correct: 0, typed: 1, errors: 1, xp: 0 });
+    }
+
+    updateKPIs();
+  }
+
+  /* ===== SUIVANT ===== */
+  function nextRound() {
+    session.index++;
+    if (session.index >= TOTAL) {
+      finishSession();
+    } else {
+      loadRound();
+    }
+  }
+
+  /* ===== FIN ===== */
+  function finishSession() {
+    promoteExerciseStatus(PAGE_ID, 'completed');
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('gameZone').classList.add('hidden');
+    document.getElementById('resultZone').classList.add('show');
+
+    const accuracy = calcAccuracy(session.correct, session.typed);
+    document.getElementById('resCorrect').textContent  = session.correct;
+    document.getElementById('resErrors').textContent   = session.errors;
+    document.getElementById('resXP').textContent       = session.xp;
+    document.getElementById('resAccuracy').textContent = accuracy + '%';
+
+    if (accuracy >= 80) launchConfetti();
+  }
+
+  /* ===== KPIs ===== */
+  function updateKPIs() {
+    document.getElementById('kpiCorrect').textContent  = session.correct;
+    document.getElementById('kpiErrors').textContent   = session.errors;
+    document.getElementById('kpiXP').textContent       = session.xp;
+    const acc = calcAccuracy(session.correct, session.typed);
+    document.getElementById('kpiAccuracy').textContent = session.typed > 0 ? acc + '%' : '—';
+  }
+
+  /* ===== EVENTS ===== */
+  document.addEventListener('DOMContentLoaded', () => {
+    // Bouton "Exercice suivant recommandé"
+        const btnNextEx = document.getElementById('btnNextExercise');
+        const nextEx = getNextExercise(PAGE_ID);
+        if (nextEx && nextEx.name && nextEx.href) {
+          btnNextEx.addEventListener('click', () => {
+            window.location.href = nextEx.href;
+          });
+          btnNextEx.textContent = 'Exercice suivant : ' + nextEx.name;
+        } else {
+          btnNextEx.style.display = 'none';
+        }
+    document.getElementById('btnOui').addEventListener('click', () => answer(true));
+    document.getElementById('btnNon').addEventListener('click', () => answer(false));
+    document.getElementById('btnNext').addEventListener('click', nextRound);
+    document.getElementById('btnRestart').addEventListener('click', startSession);
+
+    document.addEventListener('keydown', e => {
+      if (e.target.tagName === 'INPUT') return;
+      const key = e.key.toLowerCase();
+      if (key === 'o' && !session.answered) answer(true);
+      else if (key === 'n' && !session.answered) answer(false);
+      else if (key === 'enter' && session.answered) nextRound();
+    });
+
+    startSession();
+  });
+  </script>
+</body>
+</html>
+
+
+
+
+
