@@ -28,10 +28,14 @@
     .exercise-phrase {
       font-size: 22px;
       font-family: 'Courier New', monospace;
-      letter-spacing: 2px;
-      line-height: 1.8;
+      letter-spacing: 2.4px;
+      line-height: 1.4;
       margin-bottom: 16px;
-      word-break: break-all;
+      white-space: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      text-wrap: nowrap;
+      scrollbar-width: thin;
     }
     .char { display: inline; transition: color 0.08s; }
     .char.correct { color: var(--success); }
