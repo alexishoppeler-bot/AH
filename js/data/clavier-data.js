@@ -110,10 +110,11 @@ window.CLAVIER_DATA = {
     "J’ouvre le navigateur.",
     "Je tape mon mot de passe.",
     "Je vérifie l’orthographe.",
-    "Je prépare une candidature complète."
+    "Je prépare une candidature complète.",
 
   ]
 };
+
 
 
 
