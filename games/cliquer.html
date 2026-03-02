@@ -17,6 +17,32 @@
     .parcours-header .btn {
       margin-left: auto;
     }
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border));
+      background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      color: var(--text1);
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ef4444;
+      box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+      animation: live-pulse 1.4s infinite;
+    }
+    @keyframes live-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
     .step-indicator {
       display: flex; gap: 6px;
     }
@@ -320,7 +346,7 @@
         <div class="page-header fade-up">
           <div class="page-icon">🖱️</div>
           <h1>Clic souris</h1>
-          <p>Parcours en 5 étapes : du clic simple à la sélection de texte.</p>
+          <p>Jeux d'étapes en boucle : une consigne aléatoire à chaque manche.</p>
         </div>
 
         <!-- KPI global -->
@@ -339,11 +365,10 @@
           </div>
         </div>
 
-        <!-- Parcours header -->
+        <!-- Header jeu -->
         <div class="parcours-header fade-up delay-2">
-          <div class="step-indicator" id="step-dots"></div>
-          <span style="font-size:13px;color:var(--text2);" id="step-label">Étape 1/5</span>
-          <button class="btn btn-secondary" id="btn-training-quick">🧪 Fenêtre entraînement</button>
+          <span class="live-pill" id="step-label"><span class="live-dot" aria-hidden="true"></span> Manche en cours</span>
+          <button class="btn btn-secondary" id="btn-next-random">Nouvelle manche</button>
         </div>
 
         <!-- Zone de l'étape courante -->
@@ -361,73 +386,8 @@
       <div class="modal-title" id="stepTitle"></div>
       <div class="modal-text"  id="stepText"></div>
       <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-        <button class="btn btn-primary" id="btn-next-step">Étape suivante →</button>
-        <button class="btn btn-secondary" id="btn-retry-step">Recommencer cette étape</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal fin du parcours -->
-  <div class="modal-overlay" id="modal-fin">
-    <div class="modal">
-      <div class="modal-icon" id="resEmoji">🏆</div>
-      <div class="modal-title" id="resTitle">Parcours terminé !</div>
-      <div class="modal-text"  id="resSubtitle"></div>
-      <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-        <button class="btn btn-primary"   id="btn-restart-parcours">🔄 Recommencer le parcours</button>
-        <button class="btn btn-secondary" id="btnNextExercise">Exercice suivant</button>
-        <a href="cliquer.html" class="btn btn-secondary">&larr; Retour</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- Fenêtre entraînement libre -->
-  <div class="modal-overlay" id="modal-train">
-    <div class="modal train-modal">
-      <div class="train-head">
-        <h3 class="train-title">Mode entraînement infini aléatoire</h3>
-        <button class="btn btn-secondary" id="btn-train-close">Fermer</button>
-      </div>
-      <div class="train-instruction" id="train-instruction">Consigne...</div>
-      <div class="train-kpis">
-        <span class="train-kpi">✅ Réussites: <span id="train-ok">0</span></span>
-        <span class="train-kpi">🔥 Série: <span id="train-streak">0</span></span>
-        <span class="train-kpi">📋 Presse-papiers: <span id="train-clip">vide</span></span>
-      </div>
-
-      <div class="train-board" id="train-board">
-        <div class="train-box">
-          <h4>Actions souris</h4>
-          <button class="train-target" id="train-target">🎯</button>
-        </div>
-
-        <div class="train-box">
-          <h4>Glisser-déposer</h4>
-          <div class="train-dd">
-            <div class="train-drag" id="train-drag" draggable="true">📄 Fichier</div>
-            <div class="train-drop" id="train-drop">Dépose ici</div>
-          </div>
-        </div>
-
-        <div class="train-box">
-          <h4>Sélection de texte</h4>
-          <p class="train-select-text" id="train-select-text">La souris permet de cliquer, sélectionner et glisser des éléments.</p>
-        </div>
-
-        <div class="train-box">
-          <h4>Bloc-notes (clic droit pour menu)</h4>
-          <textarea class="train-note" id="train-note">Texte exemple: cliquer copier coller.</textarea>
-        </div>
-
-        <div class="train-menu" id="train-menu">
-          <button type="button" data-action="copy">📄 Copier</button>
-          <button type="button" data-action="paste">📋 Coller</button>
-        </div>
-      </div>
-
-      <div class="train-feedback" id="train-feedback"></div>
-      <div style="margin-top:12px;display:flex;gap:10px;justify-content:flex-end;">
-        <button class="btn btn-secondary" id="btn-train-skip">Consigne suivante</button>
+        <button class="btn btn-primary" id="btn-next-step">Manche suivante →</button>
+        <button class="btn btn-secondary" id="btn-retry-step">Rejouer cette manche</button>
       </div>
     </div>
   </div>
@@ -627,6 +587,17 @@
               }
             });
 
+            // Clic gauche sur la cible = mauvaise action (feedback explicite)
+            arena.addEventListener('click', e => {
+              if (!active) return;
+              if (e.target === tgt || tgt.contains(e.target)) {
+                errEl.textContent = +errEl.textContent + 1;
+                addGlobalScore(0, 1, -1);
+                const r = arena.getBoundingClientRect();
+                spawnMiss(arena, e.clientX - r.left - 12, e.clientY - r.top - 12);
+              }
+            });
+
             function finish() {
               active = false;
               const ok = +okEl.textContent;
@@ -685,6 +656,13 @@
               tgt.style.display = 'flex';
               tgt.style.animation = 'none'; void tgt.offsetWidth; tgt.style.animation = '';
               cnt.textContent = `${done + 1}/${TOTAL}`;
+              tgt.onclick = () => {
+                errs++;
+                errEl.textContent = errs;
+                msg.style.display = 'flex';
+                msg.textContent = 'Double-clic requis';
+                addGlobalScore(0, 1, -1);
+              };
               tgt.ondblclick = () => {
                 done++; okEl.textContent = done;
                 tgt.style.display = 'none';
@@ -836,7 +814,7 @@
                   .replace(/[\u2019\u2018]/g, "'");
         }
 
-        let step, okCount, cooldown, selTimer, trainingMode, currentTask, lastTaskIndex;
+        let step, okCount, cooldown, selTimer, currentTask;
         let onSelectionChange = null;
 
         const html = `
@@ -845,9 +823,6 @@
             <p class="mb-16" style="font-size:13px;color:var(--text2);">
               Clique et glisse pour sélectionner du texte. Suis les consignes.
             </p>
-            <div class="sel-actions">
-              <button class="btn btn-secondary" id="sel-training-btn">🎯 Entraînement infini aléatoire</button>
-            </div>
             <div class="sel-consigne" id="sel-badge">
               <span class="badge" id="sel-num">1</span>
               <span id="sel-task">…</span>
@@ -869,49 +844,24 @@
             const fbEl   = document.getElementById('sel-fb');
             const okEl   = document.getElementById('sel-ok');
             const stepPill = document.getElementById('sel-step-pill');
-            const trainingBtn = document.getElementById('sel-training-btn');
 
             step = 0; okCount = 0; cooldown = false;
-            trainingMode = forceSelectionTraining === true;
-            forceSelectionTraining = false;
             currentTask = TASKS[0];
-            lastTaskIndex = -1;
             okEl.textContent = 0;
             promoteExerciseStatus(PAGE_ID, 'in_progress');
 
-            if (trainingMode) {
-              trainingBtn.textContent = '↩ Revenir au parcours';
-              fbEl.textContent = 'Mode entraînement infini activé.';
-            }
-
-            function pickRandomTask() {
-              if (TASKS.length === 1) return TASKS[0];
-              let idx = Math.floor(Math.random() * TASKS.length);
-              if (idx === lastTaskIndex) idx = (idx + 1) % TASKS.length;
-              lastTaskIndex = idx;
-              return TASKS[idx];
-            }
-
-            function setParcoursPill(stepNumber) {
+            function setStepPill(stepNumber) {
               stepPill.innerHTML = 'Sous-tâche <span id="sel-sc"></span>/3';
               const scNode = document.getElementById('sel-sc');
               if (scNode) scNode.textContent = stepNumber;
             }
 
             function showTask() {
-              if (!trainingMode && step >= TASKS.length) { finish(); return; }
-
-              if (trainingMode) {
-                currentTask = pickRandomTask();
-                taskEl.textContent = currentTask.label;
-                numEl.textContent = '∞';
-                stepPill.textContent = 'Mode entraînement';
-              } else {
-                currentTask = TASKS[step];
-                taskEl.textContent = currentTask.label;
-                numEl.textContent  = step + 1;
-                setParcoursPill(step + 1);
-              }
+              if (step >= TASKS.length) { finish(); return; }
+              currentTask = TASKS[step];
+              taskEl.textContent = currentTask.label;
+              numEl.textContent  = step + 1;
+              setStepPill(step + 1);
 
               fbEl.textContent   = '';
               window.getSelection().removeAllRanges();
@@ -931,10 +881,10 @@
                 cooldown = true;
                 okCount++; okEl.textContent = okCount;
                 addGlobalScore(1, 0, 3);
-                fbEl.textContent = trainingMode ? '✅ Bien joué ! Nouvelle consigne…' : '✅ Parfait !';
+                fbEl.textContent = '✅ Parfait !';
                 block.classList.add('flash');
                 setTimeout(() => block.classList.remove('flash'), 450);
-                if (!trainingMode) step++;
+                step++;
                 setTimeout(() => { cooldown = false; showTask(); }, 900);
               }
             }
@@ -963,24 +913,12 @@
               }
             });
 
-            trainingBtn.addEventListener('click', () => {
-              trainingMode = !trainingMode;
-              step = 0;
-              if (trainingMode) {
-                trainingBtn.textContent = '↩ Revenir au parcours';
-                fbEl.textContent = 'Mode entraînement infini activé.';
-              } else {
-                trainingBtn.textContent = '🎯 Entraînement infini aléatoire';
-                fbEl.textContent = 'Mode parcours réactivé.';
-              }
-              showTask();
-            });
-
             function finish() {
-              promoteExerciseStatus(PAGE_ID, 'completed');
+              promoteExerciseStatus(PAGE_ID, 'in_progress');
               // Fermer les listeners globaux proprement
               if (onSelectionChange) document.removeEventListener('selectionchange', onSelectionChange);
-              openFinalModal();
+              openStepModal('✍️', 'Sélection de texte maîtrisée !',
+                `${okCount}/3 sous-tâches validées`, okCount >= 2);
             }
 
             showTask();
@@ -995,64 +933,32 @@
   ══════════════════════════════════════════════════════ */
   let currentStep = 0;
   let currentStepObj = null; // { html, start }
-  let forceSelectionTraining = false;
-  const TRAIN_TASKS = [
-    { id: 'left', label: 'Clique sur la cible 🎯' },
-    { id: 'double', label: 'Double-clique sur la cible 🎯' },
-    { id: 'right', label: 'Fais un clic droit sur la cible 🎯' },
-    { id: 'drag', label: 'Glisse le fichier 📄 dans la zone "Dépose ici"' },
-    { id: 'select', label: 'Sélectionne le mot « sélectionner » dans le texte' },
-    { id: 'menu-copy', label: 'Clic droit dans le bloc-notes puis clique sur « Copier »' },
-    { id: 'menu-paste', label: 'Clic droit dans le bloc-notes puis clique sur « Coller »' },
-  ];
+  let lastStep = -1;
 
-  const stepZone  = document.getElementById('step-zone');
-  const dotsEl    = document.getElementById('step-dots');
-  const labelEl   = document.getElementById('step-label');
-  const btnTrainingQuick = document.getElementById('btn-training-quick');
+  const stepZone = document.getElementById('step-zone');
+  const labelEl = document.getElementById('step-label');
+  const btnNextRandom = document.getElementById('btn-next-random');
   const modalStep = document.getElementById('modal-step');
-  const modalFin  = document.getElementById('modal-fin');
-  const modalTrain = document.getElementById('modal-train');
-  const btnTrainClose = document.getElementById('btn-train-close');
-  const btnTrainSkip = document.getElementById('btn-train-skip');
-  const trainInstructionEl = document.getElementById('train-instruction');
-  const trainOkEl = document.getElementById('train-ok');
-  const trainStreakEl = document.getElementById('train-streak');
-  const trainClipEl = document.getElementById('train-clip');
-  const trainFeedbackEl = document.getElementById('train-feedback');
-  const trainBoard = document.getElementById('train-board');
-  const trainTarget = document.getElementById('train-target');
-  const trainDrag = document.getElementById('train-drag');
-  const trainDrop = document.getElementById('train-drop');
-  const trainText = document.getElementById('train-select-text');
-  const trainNote = document.getElementById('train-note');
-  const trainMenu = document.getElementById('train-menu');
-  let trainState = { current: null, last: null, ok: 0, streak: 0, clipboard: '', menuSource: '' };
 
-  // Construire les dots une seule fois
-  STEPS.forEach((_, i) => {
-    const d = document.createElement('div');
-    d.className = 'step-dot'; d.id = 'dot-' + i;
-    dotsEl.appendChild(d);
-  });
-
-  function updateDots() {
-    STEPS.forEach((_, i) => {
-      const d = document.getElementById('dot-' + i);
-      d.className = 'step-dot' +
-        (i < currentStep ? ' done' : i === currentStep ? ' current' : '');
-    });
-    labelEl.textContent = `Étape ${currentStep + 1}/${STEPS.length}`;
+  function pickRandomStep() {
+    if (STEPS.length <= 1) return 0;
+    let idx = Math.floor(Math.random() * STEPS.length);
+    if (idx === lastStep) idx = (idx + 1) % STEPS.length;
+    return idx;
   }
 
   function loadStep(idx) {
     currentStep = idx;
-    updateDots();
+    lastStep = idx;
+    labelEl.innerHTML = '<span class="live-dot" aria-hidden="true"></span> Manche en cours';
     const def = STEPS[idx];
     currentStepObj = def.build();
     stepZone.innerHTML = currentStepObj.html;
-    // Lancer l'étape au prochain tick (DOM prêt)
     requestAnimationFrame(() => currentStepObj.start());
+  }
+
+  function loadRandomStep() {
+    loadStep(pickRandomStep());
   }
 
   function openStepModal(icon, title, text, confetti) {
@@ -1063,196 +969,23 @@
     if (confetti) launchConfetti();
   }
 
-  function openFinalModal() {
-    modalFin.classList.add('show');
-    document.getElementById('resEmoji').textContent    = '🏆';
-    document.getElementById('resTitle').textContent   = 'Parcours terminé !';
-    document.getElementById('resSubtitle').textContent =
-      `${totalDone} réussis · ${totalMiss} ratés · ${totalXP} XP gagnés`;
-    if (typeof window.updateSessionProgressBar === 'function')
-      window.updateSessionProgressBar(5, 5);
-    launchConfetti();
-  }
-
-  function pickRandomTrainingTask() {
-    if (TRAIN_TASKS.length === 1) return TRAIN_TASKS[0];
-    let idx = Math.floor(Math.random() * TRAIN_TASKS.length);
-    if (TRAIN_TASKS[idx].id === trainState.last) idx = (idx + 1) % TRAIN_TASKS.length;
-    return TRAIN_TASKS[idx];
-  }
-
-  function hideTrainingMenu() {
-    trainMenu.style.display = 'none';
-    trainState.menuSource = '';
-  }
-
-  function showTrainingMenu(x, y, source) {
-    trainState.menuSource = source;
-    const box = trainBoard.getBoundingClientRect();
-    trainMenu.style.left = Math.max(8, x - box.left) + 'px';
-    trainMenu.style.top = Math.max(8, y - box.top) + 'px';
-    trainMenu.style.display = 'block';
-  }
-
-  function markTrainingSuccess(message) {
-    trainState.ok++;
-    trainState.streak++;
-    trainOkEl.textContent = String(trainState.ok);
-    trainStreakEl.textContent = String(trainState.streak);
-    trainFeedbackEl.textContent = '✅ ' + message;
-    addGlobalScore(1, 0, 1);
-    setTimeout(() => nextTrainingTask(), 700);
-  }
-
-  function nextTrainingTask() {
-    hideTrainingMenu();
-    const t = pickRandomTrainingTask();
-    trainState.current = t;
-    trainState.last = t.id;
-    trainInstructionEl.textContent = t.label;
-    trainFeedbackEl.textContent = '';
-    trainClipEl.textContent = trainState.clipboard ? '"' + trainState.clipboard.slice(0, 18) + '"' : 'vide';
-    if (t.id === 'menu-paste' && !trainState.clipboard) {
-      trainState.clipboard = 'texte copié';
-      trainClipEl.textContent = '"' + trainState.clipboard + '"';
-    }
-    if (t.id === 'drag') {
-      trainDrag.textContent = '📄 Fichier';
-      trainDrop.textContent = 'Dépose ici';
-    }
-    window.getSelection().removeAllRanges();
-  }
-
-  // Bouton "Étape suivante"
-  document.getElementById('btn-next-step').addEventListener('click', () => {
-    modalStep.classList.remove('show');
-    const next = currentStep + 1;
-    if (next < STEPS.length) loadStep(next);
-    else openFinalModal();
+  btnNextRandom.addEventListener('click', () => {
+    loadRandomStep();
   });
 
-  // Bouton "Recommencer cette étape"
+  // Bouton "Manche suivante"
+  document.getElementById('btn-next-step').addEventListener('click', () => {
+    modalStep.classList.remove('show');
+    loadRandomStep();
+  });
+
+  // Bouton "Rejouer cette manche"
   document.getElementById('btn-retry-step').addEventListener('click', () => {
     modalStep.classList.remove('show');
     loadStep(currentStep);
   });
 
-  // Bouton "Recommencer le parcours"
-  document.getElementById('btn-restart-parcours').addEventListener('click', () => {
-    modalFin.classList.remove('show');
-    totalDone = totalMiss = totalXP = 0;
-    document.getElementById('sc-done').textContent = 0;
-    document.getElementById('sc-miss').textContent = 0;
-    document.getElementById('sc-xp').textContent   = '0 XP';
-    loadStep(0);
-  });
-
-  // Ouvrir la fenêtre d'entraînement libre
-  btnTrainingQuick.addEventListener('click', () => {
-    modalStep.classList.remove('show');
-    modalFin.classList.remove('show');
-    modalTrain.classList.add('show');
-    if (!trainState.current) nextTrainingTask();
-  });
-
-  btnTrainClose.addEventListener('click', () => {
-    modalTrain.classList.remove('show');
-    hideTrainingMenu();
-  });
-  btnTrainSkip.addEventListener('click', () => {
-    trainState.streak = 0;
-    trainStreakEl.textContent = '0';
-    nextTrainingTask();
-  });
-
-  // Actions entraînement
-  trainTarget.addEventListener('click', () => {
-    if (!trainState.current) return;
-    if (trainState.current.id === 'left') markTrainingSuccess('Clic gauche validé.');
-  });
-  trainTarget.addEventListener('dblclick', () => {
-    if (!trainState.current) return;
-    if (trainState.current.id === 'double') markTrainingSuccess('Double-clic validé.');
-  });
-  trainTarget.addEventListener('contextmenu', e => {
-    e.preventDefault();
-    if (trainState.current && trainState.current.id === 'right') {
-      markTrainingSuccess('Clic droit validé.');
-      return;
-    }
-    showTrainingMenu(e.clientX, e.clientY, 'target');
-  });
-
-  trainDrag.addEventListener('dragstart', e => {
-    e.dataTransfer.setData('text/plain', 'train-file');
-    e.dataTransfer.effectAllowed = 'move';
-  });
-  trainDrop.addEventListener('dragover', e => e.preventDefault());
-  trainDrop.addEventListener('drop', e => {
-    e.preventDefault();
-    trainDrop.textContent = '✅ Déposé';
-    if (trainState.current && trainState.current.id === 'drag') {
-      markTrainingSuccess('Glisser-déposer validé.');
-    }
-  });
-
-  trainText.addEventListener('mouseup', () => {
-    if (!trainState.current || trainState.current.id !== 'select') return;
-    const sel = window.getSelection();
-    if (!sel || !sel.toString()) return;
-    const range = sel.rangeCount ? sel.getRangeAt(0) : null;
-    if (!range || !trainText.contains(range.commonAncestorContainer)) return;
-    if (sel.toString().trim().toLowerCase() === 'sélectionner' || sel.toString().trim().toLowerCase() === 'selectionner') {
-      markTrainingSuccess('Sélection validée.');
-    }
-  });
-
-  trainNote.addEventListener('contextmenu', e => {
-    e.preventDefault();
-    showTrainingMenu(e.clientX, e.clientY, 'note');
-  });
-  trainMenu.addEventListener('click', e => {
-    const btn = e.target.closest('button[data-action]');
-    if (!btn) return;
-    const action = btn.dataset.action;
-    if (action === 'copy') {
-      const start = trainNote.selectionStart || 0;
-      const end = trainNote.selectionEnd || 0;
-      const selected = trainNote.value.slice(start, end).trim();
-      if (selected) trainState.clipboard = selected;
-      trainClipEl.textContent = trainState.clipboard ? '"' + trainState.clipboard.slice(0, 18) + '"' : 'vide';
-      if (trainState.current && trainState.current.id === 'menu-copy') {
-        markTrainingSuccess('Copier validé.');
-      }
-    }
-    if (action === 'paste') {
-      const txt = trainState.clipboard || 'texte copié';
-      const start = trainNote.selectionStart || trainNote.value.length;
-      const end = trainNote.selectionEnd || trainNote.value.length;
-      trainNote.setRangeText(txt, start, end, 'end');
-      trainClipEl.textContent = '"' + txt.slice(0, 18) + '"';
-      if (trainState.current && trainState.current.id === 'menu-paste') {
-        markTrainingSuccess('Coller validé.');
-      }
-    }
-    hideTrainingMenu();
-  });
-
-  document.addEventListener('click', e => {
-    if (!trainMenu.contains(e.target)) hideTrainingMenu();
-  });
-
-  // Bouton "Exercice suivant"
-  const btnNextEx = document.getElementById('btnNextExercise');
-  const nextEx = getNextExercise(PAGE_ID);
-  if (nextEx && nextEx.name && nextEx.href) {
-    btnNextEx.addEventListener('click', () => { window.location.href = nextEx.href; });
-    btnNextEx.textContent = 'Exercice suivant : ' + nextEx.name;
-  } else {
-    btnNextEx.style.display = 'none';
-  }
-
-  // Afficher les règles XP et lancer l'étape 1
+  // Afficher les règles XP et lancer une manche aléatoire
   showXPRules('Cliquer');
   loadStep(0);
   </script>
