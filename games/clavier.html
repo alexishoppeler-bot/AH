@@ -335,7 +335,7 @@
             <div class="key wide-1">Ctrl</div>
             <div class="key wide-1">Alt</div>
             <div class="key space-key" data-key=" ">Espace</div>
-            <div class="key wide-1">Alt Gr</div>
+            <div class="key wide-1" data-key="AltGraph">Alt Gr</div>
             <div class="key wide-1">Ctrl</div>
           </div>
         </div>
@@ -439,6 +439,12 @@
   /* ── Render phrase ── */
   function renderPhrase() {
     const phrase = phrases[phraseIdx];
+    if (!phrase) {
+      phraseEl.textContent = '';
+      highlightKey(null);
+      updateCounters();
+      return;
+    }
     phraseEl.innerHTML = phrase.split('').map((ch, i) => {
       let cls = '';
       if (i < inputPos)      cls = 'correct';
@@ -459,7 +465,7 @@
     document.getElementById('sc-xp').textContent        = totalXP + ' XP';
     document.getElementById('qNum').textContent         = phrases.length > 0 ? Math.min(phraseIdx + 1, phrases.length) : 0;
     document.getElementById('qTotal').textContent       = phrases.length;
-    const pct = Math.round(phraseIdx / phrases.length * 100);
+    const pct = phrases.length > 0 ? Math.round(phraseIdx / phrases.length * 100) : 0;
     document.getElementById('prog-pct').textContent     = pct + '%';
     document.getElementById('progressFill').style.width = pct + '%';
   }
@@ -506,6 +512,7 @@
   /* ── Input handler ── */
   function onInput() {
     const phrase = phrases[phraseIdx];
+    if (!phrase) return;
     const typed  = inputEl.value;
     if (!typed.length) return;
 
@@ -655,6 +662,7 @@
     inputEl.addEventListener('input', onInput);
 
     document.getElementById('btn-skip').addEventListener('click', () => {
+      if (!phrases.length) return;
       phraseIdx = (phraseIdx + 1) % phrases.length;
       inputPos  = 0;
       inputEl.value = '';
@@ -826,7 +834,6 @@
   /* ── Arrêter ── */
   function trainStop() {
     // Peut être appelé même pendant la pause (trainActive peut être false)
-    const wasRunning = trainActive || trainPauseTimer;
     trainActive = false;
 
     // Annuler la pause en cours si nécessaire
@@ -924,7 +931,8 @@
     if (step.type === 'altgr')
       kb.querySelectorAll('.key').forEach(k => {
         const txt = (k.textContent || '').trim().toLowerCase();
-        if (txt === 'alt gr' || (k.dataset.key || '').toLowerCase() === 'altgr')
+        const dk = (k.dataset.key || '').toLowerCase();
+        if (txt === 'alt gr' || dk === 'altgr' || dk === 'altgraph')
           k.classList.add('highlight', 'highlight-altgr');
       });
 
@@ -962,7 +970,8 @@
       }
 
     } else if (step.type === 'altgr') {
-      if (e.altKey) {
+      const hasAltGr = e.getModifierState && e.getModifierState('AltGraph');
+      if (hasAltGr || (e.altKey && e.ctrlKey)) {
         const expected = ALTGR_PRODUCED_CHAR[step.key.toLowerCase()];
         ok = expected ? (e.key === expected) : (e.key.toLowerCase() === step.key.toLowerCase());
       }
