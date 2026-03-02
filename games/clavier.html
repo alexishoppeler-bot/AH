@@ -25,17 +25,20 @@
       padding: 24px;
       margin-bottom: 16px;
     }
+    .exercise-zone-main {
+      width: min(100%, 1220px);
+      margin-left: auto;
+      margin-right: auto;
+    }
     .exercise-phrase {
-      font-size: 22px;
+      font-size: clamp(16px, 1.9vw, 22px);
       font-family: 'Courier New', monospace;
-      letter-spacing: 2.4px;
+      letter-spacing: 1.2px;
       line-height: 1.4;
       margin-bottom: 16px;
       white-space: nowrap;
-      overflow-x: auto;
-      overflow-y: hidden;
+      overflow: hidden;
       text-wrap: nowrap;
-      scrollbar-width: thin;
     }
     .char { display: inline; transition: color 0.08s; }
     .char.correct { color: var(--success); }
@@ -214,7 +217,7 @@
         </div>
 
         <!-- Zone d'exercice -->
-        <div class="exercise-zone fade-up delay-2">
+        <div class="exercise-zone exercise-zone-main fade-up delay-2">
           <div class="feedback-text" id="feedback-text">&nbsp;</div>
           <div class="exercise-phrase" id="phrase-display"></div>
           <input type="text" id="typing-input" placeholder="Commence à taper ici…"
