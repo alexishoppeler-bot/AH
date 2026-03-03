@@ -3,7 +3,7 @@
 
 window.CLAVIER_DATA = {
   debutant: [
-    'ï É Ã !ê.',
+    'Je tape les caractères spéciaux.',
     'Je lis une annonce.',
     'Je note mon rendez-vous.',
     'Je classe mes dossiers.',
