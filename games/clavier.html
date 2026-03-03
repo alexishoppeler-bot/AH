@@ -79,10 +79,15 @@
     .key-btm { font-size: 11px; line-height: 1; }
     .key.highlight { background: var(--accent); color: #fff; box-shadow: 0 0 0 2px color-mix(in srgb,var(--accent) 40%,transparent); }
     .key.highlight .key-top { color: rgba(255,255,255,0.7); }
+    .key.highlight-next {
+      background: color-mix(in srgb, var(--accent) 22%, var(--surface));
+      box-shadow: inset 0 0 0 2px color-mix(in srgb,var(--accent) 45%,transparent);
+    }
     /* Shift requis → teinte orange */
     .key.highlight-shift { background: #f97316; box-shadow: 0 0 0 2px color-mix(in srgb,#f97316 40%,transparent); }
     /* AltGr requis → teinte violette */
     .key.highlight-altgr { background: #8b5cf6; box-shadow: 0 0 0 2px color-mix(in srgb,#8b5cf6 40%,transparent); }
+    .key.highlight-ctrl  { background: #0ea5a5; box-shadow: 0 0 0 2px color-mix(in srgb,#0ea5a5 40%,transparent); }
     /* Touche morte → teinte cyan */
     .key.highlight-dead  { background: #06b6d4; box-shadow: 0 0 0 2px color-mix(in srgb,#06b6d4 40%,transparent); }
     .key.pressed   { background: var(--success); color: #fff; transform: scale(0.9); }
@@ -313,7 +318,7 @@
             <div class="key" data-key="u">u</div><div class="key" data-key="i">i</div>
             <div class="key" data-key="o">o</div><div class="key" data-key="p">p</div>
             <div class="key duo" data-key="è" data-shift="ü"><span class="key-top">ü</span><span class="key-btm">è</span></div>
-            <div class="key duo" data-key="´" data-shift="!"><span class="key-top">!</span><span class="key-btm">´</span></div>
+            <div class="key duo" data-key="´" data-shift="!"><span class="key-top">!</span><span class="key-btm">¨</span></div>
             <div class="key wide-1" data-key="Enter">↵ Entrée</div>
           </div>
           <!-- Row 3: middle -->
@@ -343,11 +348,11 @@
           </div>
           <!-- Row 5: space -->
           <div class="keyboard-row">
-            <div class="key wide-1">Ctrl</div>
-            <div class="key wide-1">Alt</div>
+            <div class="key wide-1" data-key="Control">Ctrl</div>
+            <div class="key wide-1" data-key="Alt">Alt</div>
             <div class="key space-key" data-key=" ">Espace</div>
             <div class="key wide-1" data-key="AltGraph">Alt Gr</div>
-            <div class="key wide-1">Ctrl</div>
+            <div class="key wide-1" data-key="Control">Ctrl</div>
           </div>
         </div>
 
@@ -413,6 +418,7 @@
   let phraseStartTime = null;
   let wpmInterval    = null;
   let xpRulesShown = false;
+  let deadComboPending = false;
 
   const phraseEl   = document.getElementById('phrase-display');
   const inputEl    = document.getElementById('typing-input');
@@ -483,6 +489,7 @@
 
   /* ── Highlight key ── */
   function highlightKey(expectedChar) {
+    deadComboPending = false;
     // Déléguer au mapping CH-FR si disponible
     if (window.CH_FR_KEYMAP && expectedChar) {
       window.CH_FR_KEYMAP.highlightKeys(expectedChar);
@@ -520,12 +527,66 @@
     }
   }
 
+  /* ── Highlight step (combinaisons avec touche morte) ── */
+  function highlightComboNextStep(expectedChar, stepIdx) {
+    if (!window.CH_FR_KEYMAP || !expectedChar) return false;
+    const entry = window.CH_FR_KEYMAP.lookup(expectedChar);
+    if (!entry || !Array.isArray(entry.sequence) || !entry.sequence[stepIdx]) return false;
+
+    const kb = document.getElementById('virtual-keyboard');
+    if (!kb) return false;
+    const step = entry.sequence[stepIdx];
+
+    kb.querySelectorAll('.key').forEach(k =>
+      k.classList.remove('highlight', 'highlight-shift', 'highlight-altgr', 'highlight-dead'));
+
+    const fk = (step.key || '').toLowerCase();
+    kb.querySelectorAll('.key').forEach(k => {
+      const dk = (k.dataset.key || '').toLowerCase();
+      const ds = (k.dataset.shift || '').toLowerCase();
+      let match = false;
+      if (step.type === 'normal' && dk === fk) match = true;
+      if (step.type === 'shift' && (dk === fk || ds === fk)) match = true;
+      if (step.type === 'altgr' && dk === fk) match = true;
+      if (step.type === 'ctrl' && dk === fk) match = true;
+      if (step.type === 'dead' && dk === fk) match = true;
+      if (step.key === ' ' && dk === ' ') match = true;
+      if (match) {
+        k.classList.add('highlight');
+        if (step.type === 'dead') k.classList.add('highlight-dead');
+      }
+    });
+
+    if (step.type === 'shift') {
+      kb.querySelectorAll('.key[data-key="Shift"]').forEach(k =>
+        k.classList.add('highlight', 'highlight-shift'));
+    }
+
+    if (step.type === 'altgr') {
+      kb.querySelectorAll('.key').forEach(k => {
+        const txt = (k.textContent || '').trim().toLowerCase();
+        const dk = (k.dataset.key || '').toLowerCase();
+        if (txt === 'alt gr' || dk === 'altgr' || dk === 'altgraph')
+          k.classList.add('highlight', 'highlight-altgr');
+      });
+    }
+
+    if (step.type === 'ctrl')
+      kb.querySelectorAll('.key[data-key="Control"]').forEach(k =>
+        k.classList.add('highlight', 'highlight-ctrl'));
+
+    const hintEl = document.getElementById('shift-hint');
+    if (hintEl) hintEl.textContent = 'Étape ' + (stepIdx + 1) + '/' + entry.sequence.length + ' : ' + (step.label || '');
+    return true;
+  }
+
   /* ── Input handler ── */
   function onInput() {
     const phrase = phrases[phraseIdx];
     if (!phrase) return;
     const typed  = inputEl.value;
     if (!typed.length) return;
+    deadComboPending = false;
 
     const lastChar = typed[typed.length - 1];
     const expected = phrase[inputPos];
@@ -629,6 +690,7 @@
     totalTyped   = 0;
     totalErrors  = 0;
     totalXP      = 0;
+    deadComboPending = false;
     inputEl.value = '';
     inputEl.classList.remove('correct', 'wrong');
     feedbackEl.textContent = '\u00a0';
@@ -693,10 +755,165 @@
     document.getElementById('btn-train-stop').addEventListener('click', trainStop);
 
     /* Real keyboard visual feedback */
+    const activePressedByCode = new Map();
+    let deadVisualTimer = null;
+
+    function getKeysByDataKey(keyVal) {
+      return Array.from(document.querySelectorAll(`.key[data-key="${CSS.escape(keyVal)}"]`));
+    }
+
+    function getKeysByProducedChar(ch) {
+      if (!ch) return [];
+      const out = [];
+      document.querySelectorAll('.key').forEach(k => {
+        const dk = k.dataset.key || '';
+        const ds = k.dataset.shift || '';
+        if (dk === ch || ds === ch) out.push(k);
+      });
+      if (out.length) return out;
+      // Lettre majuscule → touche minuscule correspondante
+      if (ch.length === 1 && ch.toLowerCase() !== ch.toUpperCase())
+        return getKeysByDataKey(ch.toLowerCase());
+      return [];
+    }
+
+    function pushUnique(list, keyEls) {
+      keyEls.forEach(k => { if (k && !list.includes(k)) list.push(k); });
+    }
+
+    function resolvePressedKeys(e) {
+      const keys = [];
+      const deadLike = e.key === 'Dead' || e.key === '¨' || e.key === '´' || e.key === '^' || e.key === '`';
+      const codeMap = {
+        Backspace: 'Backspace',
+        Tab: 'Tab',
+        Enter: 'Enter',
+        ShiftLeft: 'Shift',
+        ShiftRight: 'Shift',
+        CapsLock: 'CapsLock',
+        Space: ' ',
+        AltRight: 'AltGraph',
+        AltLeft: 'Alt',
+        ControlLeft: 'Control',
+        ControlRight: 'Control',
+        Backquote: '°',
+        Minus: "'",
+        Equal: '^',
+        BracketLeft: 'è',
+        BracketRight: '´',
+        Backslash: '$',
+        IntlBackslash: '<',
+        Semicolon: 'é',
+        Quote: 'à',
+        Comma: ',',
+        Period: '.',
+        Slash: '-',
+      };
+
+      if (e.code.startsWith('Key') && e.code.length === 4) {
+        pushUnique(keys, getKeysByDataKey(e.code.slice(3).toLowerCase()));
+      } else if (e.code.startsWith('Digit') && e.code.length === 6) {
+        pushUnique(keys, getKeysByDataKey(e.code.slice(5)));
+      } else if (codeMap[e.code]) {
+        pushUnique(keys, getKeysByDataKey(codeMap[e.code]));
+      }
+
+      if (e.key && !deadLike) {
+        pushUnique(keys, getKeysByProducedChar(e.key));
+      }
+
+      if (deadLike) {
+        // Touches mortes: forcer l'affichage de la touche spéciale.
+        const deadKeyByChar = {
+          '^': '^',
+          '`': '^',
+          '´': '´',
+          '¨': '´',
+        };
+        pushUnique(keys, getKeysByDataKey(deadKeyByChar[e.key] || '´'));
+      }
+
+      if (e.shiftKey) pushUnique(keys, getKeysByDataKey('Shift'));
+      const hasAltGraph = (e.getModifierState && e.getModifierState('AltGraph')) || (e.altKey && e.ctrlKey);
+      if (hasAltGraph) {
+        pushUnique(keys, getKeysByDataKey('AltGraph'));
+      } else {
+        if (e.altKey) pushUnique(keys, getKeysByDataKey('Alt'));
+        if (e.ctrlKey) pushUnique(keys, getKeysByDataKey('Control'));
+      }
+
+      return keys;
+    }
+
+    function setPressedForCode(code, keyEls) {
+      const prev = activePressedByCode.get(code);
+      if (prev) prev.forEach(k => k.classList.remove('pressed'));
+      if (keyEls.length) {
+        keyEls.forEach(k => k.classList.add('pressed'));
+        activePressedByCode.set(code, keyEls);
+      } else {
+        activePressedByCode.delete(code);
+      }
+    }
+
+    function clearPressedForCode(code) {
+      const prev = activePressedByCode.get(code);
+      if (!prev) return;
+      prev.forEach(k => k.classList.remove('pressed'));
+      activePressedByCode.delete(code);
+    }
+
     document.addEventListener('keydown', e => {
       if (trainActive) return; // géré par le mode entraînement
-      const k = document.querySelector(`.key[data-key="${e.key}"]`);
-      if (k) { k.classList.add('pressed'); setTimeout(() => k.classList.remove('pressed'), 120); }
+      const deadLike = e.key === 'Dead' || e.key === '¨' || e.key === '´' || e.key === '^' || e.key === '`';
+
+      const phrase = phrases[phraseIdx] || '';
+      const expected = phrase[inputPos];
+      const expectedEntry = (window.CH_FR_KEYMAP && expected) ? window.CH_FR_KEYMAP.lookup(expected) : null;
+      const hasDeadCombo = !!(expectedEntry && expectedEntry.sequence &&
+        expectedEntry.sequence.length > 1 && expectedEntry.sequence[0].type === 'dead');
+
+      const keys = resolvePressedKeys(e);
+      setPressedForCode(e.code || e.key, keys);
+
+      if (deadLike) {
+        const deadDomKey = (e.key === '^' || e.key === '`') ? '^' : '´';
+        const deadKey = document.querySelector(`.key[data-key="${CSS.escape(deadDomKey)}"], .key[data-shift="!"]`);
+        if (deadKey) {
+          deadKey.classList.add('pressed', 'highlight', 'highlight-dead');
+          clearTimeout(deadVisualTimer);
+          deadVisualTimer = setTimeout(() => {
+            deadKey.classList.remove('pressed', 'highlight', 'highlight-dead');
+            clearPressedForCode(e.code || e.key);
+          }, 650);
+        }
+        keys.forEach(k => {
+          if ((k.dataset.key || '') === '´' || (k.dataset.key || '') === '^')
+            k.classList.add('highlight', 'highlight-dead');
+        });
+        if (hasDeadCombo && expected) {
+          // Montrer l'étape 1 brièvement, puis l'étape 2 (ex: i pour ï)
+          setTimeout(() => { deadComboPending = highlightComboNextStep(expected, 1); }, 140);
+        } else {
+          setTimeout(() => {
+            keys.forEach(k => k.classList.remove('highlight', 'highlight-dead'));
+          }, 600);
+        }
+      } else if (deadComboPending && expected) {
+        deadComboPending = false;
+      }
+    });
+
+    document.addEventListener('keyup', e => {
+      if (trainActive) return;
+      if (e.key === 'Dead' || e.key === '¨' || e.key === '´' || e.key === '^' || e.key === '`') return;
+      // On garde l'affichage des touches mortes un peu plus longtemps.
+      clearPressedForCode(e.code || e.key);
+    });
+
+    window.addEventListener('blur', () => {
+      activePressedByCode.forEach((keyEls) => keyEls.forEach(k => k.classList.remove('pressed')));
+      activePressedByCode.clear();
     });
 
   });
@@ -985,6 +1202,11 @@
       if (hasAltGr || (e.altKey && e.ctrlKey)) {
         const expected = ALTGR_PRODUCED_CHAR[step.key.toLowerCase()];
         ok = expected ? (e.key === expected) : (e.key.toLowerCase() === step.key.toLowerCase());
+      }
+
+    } else if (step.type === 'ctrl') {
+      if (e.ctrlKey && !e.altKey) {
+        ok = (e.key.toLowerCase() === step.key.toLowerCase());
       }
 
     } else if (step.type === 'dead') {

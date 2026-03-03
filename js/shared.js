@@ -43,6 +43,7 @@ const SIDEBAR_HTML = `
       </button>
       <div class="sidebar-group-body">
         <a href="../pages/souris-virtuelle.html" class="sidebar-link">Souris virtuelle v13</a>
+        <a href="../pages/support-clavier.html" class="sidebar-link">Support clavier</a>
       </div>
     </div>
   </div>

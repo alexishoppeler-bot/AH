@@ -3,7 +3,7 @@
 
 window.CLAVIER_DATA = {
   debutant: [
-    'Je cherche un emploi.',
+    'ï É Ã !ê.',
     'Je lis une annonce.',
     'Je note mon rendez-vous.',
     'Je classe mes dossiers.',

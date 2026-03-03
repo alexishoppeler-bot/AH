@@ -16,12 +16,12 @@
  *
  * Convention :
  *   - `key`   : la touche physique (valeur en bas sans modificateur)
- *   - `type`  : 'normal' | 'shift' | 'altgr' | 'dead'
+ *   - `type`  : 'normal' | 'shift' | 'altgr' | 'ctrl' | 'dead'
  *   - `label` : texte pédagogique affiché à l'apprenant
  *
  * Touches mortes CH-FR :
  *   ^ (accent circonflexe)  → touche physique "^" (à droite de P, sans Shift)
- *   ¨ (tréma)               → touche physique "^" + Shift  (= "¨")
+ *   ¨ (tréma)               → touche morte à côté de Entrée (selon configuration AH)
  *   ´ (accent aigu)         → touche physique "´" (à droite de Ü, sans Shift)
  *   ` (accent grave)        → touche physique "^" dans la rangée des chiffres
  *                             OU "´" + Shift selon clavier physique
@@ -57,6 +57,11 @@ window.CH_FR_KEYMAP = (function () {
     return { key, type: 'altgr', label: label || ('AltGr + ' + key) };
   }
 
+  /** Ctrl + touche */
+  function ctrl(key, label) {
+    return { key, type: 'ctrl', label: label || ('Ctrl + ' + key) };
+  }
+
   /** Touche morte (ne produit rien seule, attend la frappe suivante) */
   function dead(key, label) {
     return { key, type: 'dead', label: label || (key + ' (touche morte)') };
@@ -72,10 +77,11 @@ window.CH_FR_KEYMAP = (function () {
     ];
   }
 
-  // ¨ mort (Shift + ^) + lettre
+  // ¨ mort (touche à côté de Entrée) + lettre
+  // Ajusté selon le clavier réel des utilisateurs AH.
   function deadUmlaut(letter) {
     return [
-      shift('^', 'Maj + ^ (tréma – touche morte)'),
+      dead('´', '´ (tréma – touche morte, à côté de Entrée)'),
       normal(letter, letter),
     ];
   }
@@ -154,7 +160,10 @@ window.CH_FR_KEYMAP = (function () {
     'ü': { sequence: [shift('è', 'Maj + è → ü')] },
     'ö': { sequence: [shift('é', 'Maj + é → ö')] },
     'ä': { sequence: [shift('à', 'Maj + à → ä')] },
-    'É': { sequence: [shift('é', 'Maj + é → É')] },
+    'É': { sequence: [
+      altgr("'", 'Maintenir AltGr + ?'),
+      shift('e', 'Relâcher AltGr, puis Shift + e (majuscule)'),
+    ] },
     'È': { sequence: [shift('è', 'Maj + è → È')] },
     'À': { sequence: [shift('à', 'Maj + à → À')] },
     'Ü': { sequence: [shift('è', 'Maj + è → Ü')] },
@@ -185,8 +194,8 @@ window.CH_FR_KEYMAP = (function () {
     // ä, ö, ü ont leurs propres touches directes sur CH-FR (voir ci-dessus),
     // mais peuvent aussi être produits via tréma :
     // 'ä': deadUmlaut('a')  ← doublon, on garde la version touche directe
-    'Ë': { sequence: [shift('^', 'Maj + ^ (tréma – touche morte)'), shift('e', 'Maj + e')] },
-    'Ï': { sequence: [shift('^', 'Maj + ^ (tréma – touche morte)'), shift('i', 'Maj + i')] },
+    'Ë': { sequence: [dead('´', '´ (tréma – touche morte, à côté de Entrée)'), shift('e', 'Maj + e')] },
+    'Ï': { sequence: [dead('´', '´ (tréma – touche morte, à côté de Entrée)'), shift('i', 'Maj + i')] },
   });
 
   // ── Accent aigu ( ´ ) – touche morte + voyelle ─────────────────────────────
@@ -296,7 +305,7 @@ window.CH_FR_KEYMAP = (function () {
   /**
    * Retourne les types de modificateurs nécessaires.
    * @param {string} char
-   * @returns {{ needsShift: boolean, needsAltGr: boolean, needsDead: boolean }}
+   * @returns {{ needsShift: boolean, needsAltGr: boolean, needsCtrl: boolean, needsDead: boolean }}
    */
   function modifiers(char) {
     const entry = lookup(char);
@@ -305,6 +314,7 @@ window.CH_FR_KEYMAP = (function () {
     return {
       needsShift:  types.includes('shift'),
       needsAltGr:  types.includes('altgr'),
+      needsCtrl:   types.includes('ctrl'),
       needsDead:   types.includes('dead'),
     };
   }
@@ -322,7 +332,7 @@ window.CH_FR_KEYMAP = (function () {
 
     // Nettoyer les surlignages précédents
     kb.querySelectorAll('.key').forEach(k => {
-      k.classList.remove('highlight', 'highlight-shift', 'highlight-altgr', 'highlight-dead');
+      k.classList.remove('highlight', 'highlight-next', 'highlight-shift', 'highlight-altgr', 'highlight-dead');
     });
 
     const hintEl = document.getElementById('shift-hint');
@@ -333,46 +343,55 @@ window.CH_FR_KEYMAP = (function () {
 
     const steps = entry.sequence;
 
-    // Surligner selon le premier step (la vraie touche à presser maintenant)
-    // Si c'est une séquence (touche morte), on surligne l'étape 1 d'abord
-    const firstStep = steps[0];
+    function markStep(step, asNext) {
+      const mainCls = asNext ? 'highlight-next' : 'highlight';
 
-    // Surligner la touche physique
-    kb.querySelectorAll('.key').forEach(k => {
-      const dk = (k.dataset.key || '').toLowerCase();
-      const ds = (k.dataset.shift || '').toLowerCase();
-      const da = (k.dataset.altgr || '').toLowerCase();
-      const fk = firstStep.key.toLowerCase();
+      kb.querySelectorAll('.key').forEach(k => {
+        const dk = (k.dataset.key || '').toLowerCase();
+        const ds = (k.dataset.shift || '').toLowerCase();
+        const da = (k.dataset.altgr || '').toLowerCase();
+        const fk = (step.key || '').toLowerCase();
 
-      let match = false;
-      if (firstStep.type === 'normal' && dk === fk) match = true;
-      if (firstStep.type === 'shift'  && (dk === fk || ds === fk)) match = true;
-      if (firstStep.type === 'altgr'  && (dk === fk || da === fk)) match = true;
-      if (firstStep.type === 'dead'   && dk === fk) match = true;
+        let match = false;
+        if (step.type === 'normal' && dk === fk) match = true;
+        if (step.type === 'shift'  && (dk === fk || ds === fk)) match = true;
+        if (step.type === 'altgr'  && (dk === fk || da === fk)) match = true;
+        if (step.type === 'ctrl'   && dk === fk) match = true;
+        if (step.type === 'dead'   && dk === fk) match = true;
+        if (step.key === ' ' && dk === ' ') match = true;
 
-      // Espace
-      if (firstStep.key === ' ' && dk === ' ') match = true;
-
-      if (match) {
-        k.classList.add('highlight');
-        if (firstStep.type === 'dead') k.classList.add('highlight-dead');
-      }
-    });
-
-    // Surligner Shift si nécessaire
-    if (firstStep.type === 'shift') {
-      kb.querySelectorAll('.key[data-key="Shift"]').forEach(k => k.classList.add('highlight', 'highlight-shift'));
-    }
-
-    // Surligner AltGr si nécessaire
-    if (firstStep.type === 'altgr') {
-      kb.querySelectorAll('.key[data-key="AltGr"], .key').forEach(k => {
-        if ((k.dataset.key || '').toLowerCase() === 'altgr' ||
-            (k.textContent || '').trim().toLowerCase() === 'alt gr') {
-          k.classList.add('highlight', 'highlight-altgr');
+        if (match) {
+          k.classList.add(mainCls);
+          if (!asNext && step.type === 'dead') k.classList.add('highlight-dead');
         }
       });
+
+      if (step.type === 'shift') {
+        kb.querySelectorAll('.key[data-key="Shift"]').forEach(k => {
+          k.classList.add(mainCls);
+          if (!asNext) k.classList.add('highlight-shift');
+        });
+      }
+
+      if (step.type === 'altgr') {
+        kb.querySelectorAll('.key[data-key="AltGraph"], .key').forEach(k => {
+          if ((k.dataset.key || '').toLowerCase() === 'altgraph' ||
+              (k.textContent || '').trim().toLowerCase() === 'alt gr') {
+            k.classList.add(mainCls);
+            if (!asNext) k.classList.add('highlight-altgr');
+          }
+        });
+      }
+
+      if (step.type === 'ctrl') {
+        kb.querySelectorAll('.key[data-key="Control"]').forEach(k => k.classList.add(mainCls));
+      }
     }
+
+    // Étape à presser maintenant
+    markStep(steps[0], false);
+    // Prévisualisation de la touche suivante (combinaison)
+    if (steps.length > 1) markStep(steps[1], true);
 
     // Afficher le texte pédagogique
     if (hintEl) {
