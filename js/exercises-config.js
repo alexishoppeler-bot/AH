@@ -4,7 +4,7 @@ window.EXERCISE_CONFIG = {
   // Ordre global (navigation, evaluations, recommandations)
   orderedPages: [
     'clavier', 'cliquer', 'fenetres-web', 'anagramme', 'pendu', 'mots-meles',
-    'mots-croises', 'quiz', 'email-ecrire', 'email-pro', 'dossiers-explorateur', 'vrai-faux', 'ecouter', 'demeler',
+    'mots-croises', 'quiz', 'email-ecrire', 'email-pro', 'formulaire', 'dossiers-explorateur', 'vrai-faux', 'ecouter', 'demeler',
     'completer', 'apparier', 'trier', 'classement', 'paire'
   ],
 
@@ -25,6 +25,7 @@ window.EXERCISE_CONFIG = {
     quiz:           { name: 'Questionnaire de connaissances', href: 'quiz.html', cat: 'Logique' },
     'email-ecrire': { name: 'Redaction d e-mail', href: 'email-ecrire.html', cat: 'Professionnel' },
     'email-pro':    { name: 'Reponse e-mail professionnelle', href: 'email-pro.html', cat: 'Professionnel' },
+    formulaire:     { name: 'Formulaire de candidature', href: 'formulaire.html', cat: 'Professionnel' },
     'dossiers-explorateur': { name: 'Gestion des dossiers', href: 'dossiers-explorateur.html', cat: 'Pratique' },
     trier:          { name: 'Tri et classification', href: 'trier.html', cat: 'Logique' },
     'vrai-faux':    { name: 'Validation d affirmations', href: 'vrai-faux.html', cat: 'Logique' },
@@ -83,6 +84,7 @@ window.EXERCISE_CONFIG = {
   bonusExercises: [
     { page: 'email-ecrire', name: 'Redaction d e-mail', icon: '', level: 'intermediate', unlocksAt: 'always' },
     { page: 'email-pro', name: 'Reponse e-mail professionnelle', icon: '', level: 'intermediate', unlocksAt: 'always' },
+    { page: 'formulaire', name: 'Formulaire de candidature', icon: '', level: 'intermediate', unlocksAt: 'always' },
     { page: 'fenetres-web', name: 'Navigation web et fenetres', icon: '', level: 'intermediate', unlocksAt: 'always' },
     { page: 'dossiers-explorateur', name: 'Gestion des dossiers', icon: '', level: 'intermediate', unlocksAt: 'always' },
     { page: 'pendu', name: 'Devinette lexicale', icon: '', level: 'intermediate', unlocksAt: 'always' },
@@ -113,6 +115,7 @@ window.EXERCISE_CONFIG = {
       quiz: 'Bonne reponse: 3 XP + bonus serie (+2 des 3 bonnes d affilee).',
       'email-ecrire': 'Bonne reponse: +3 XP. Mauvaise reponse: 0 XP.',
       'email-pro': 'Bonne reponse: +3 XP. Mauvaise reponse: 0 XP.',
+      formulaire: 'Par formulaire: +5 XP par champ correct, +20 XP bonus si tout est juste, -10 XP si indice utilise (minimum 0).',
       'dossiers-explorateur': 'Mission validee: +6 XP.',
       'vrai-faux': 'Bonne reponse: 2 XP + bonus serie (+1 des 3 bonnes d affilee).',
       ecouter: 'Bonne reponse: +4 XP si trouvee vite, sinon +2 XP.',

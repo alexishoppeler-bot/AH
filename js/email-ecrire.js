@@ -46,7 +46,8 @@ function renderCase() {
   feedback.className = 'mail-feedback';
   feedback.textContent = '';
 
-  const pct = Math.round((session.index / session.items.length) * 100);
+  const answeredCount = session.index + (session.answered ? 1 : 0);
+  const pct = Math.round((answeredCount / session.items.length) * 100);
   document.getElementById('progressFill').style.width = pct + '%';
 
   const box = document.getElementById('mailChoices');
@@ -135,11 +136,13 @@ function finish() {
 
 function updateKPIs() {
   const total = session.items.length || 1;
-  const progress = Math.round((session.index / total) * 100);
+  const answeredCount = session.index + (session.answered ? 1 : 0);
+  const progress = Math.round((answeredCount / total) * 100);
   document.getElementById('kpiCorrect').textContent = session.correct;
   document.getElementById('kpiErrors').textContent = session.errors;
   document.getElementById('kpiXP').textContent = session.xp;
   document.getElementById('kpiProgress').textContent = progress + '%';
+  document.getElementById('progressFill').style.width = progress + '%';
 }
 
 document.addEventListener('DOMContentLoaded', () => {

@@ -10,6 +10,7 @@
   --surface2:    #f8fafc;
   --border:      #d0d8e4;
   --text:        #1a2236;
+  --text1:       var(--text);
   --text2:       #4a5568;
   --text3:       #8a96a8;
 

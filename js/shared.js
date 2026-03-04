@@ -18,10 +18,35 @@ const SIDEBAR_HTML = `
     </div>
     <div class="sidebar-group">
       <button class="sidebar-group-btn" type="button" aria-expanded="false">
-        Jeux
+        Jeux individuels
         <span class="chev" aria-hidden="true">▾</span>
       </button>
-      <div class="sidebar-group-body" id="sidebar-games-container"></div>
+      <div class="sidebar-group-body">
+        <a href="../games/clavier.html" class="sidebar-link">Clavier</a>
+        <a href="../games/cliquer.html" class="sidebar-link">Cliquer</a>
+        <a href="../games/fenetres-web.html" class="sidebar-link">Fenetres web</a>
+        <a href="../games/email-ecrire.html" class="sidebar-link">Email ecrire</a>
+        <a href="../games/email-pro.html" class="sidebar-link">Email pro</a>
+        <a href="../games/formulaire.html" class="sidebar-link">Formulaire</a>
+        <a href="../games/dossiers-explorateur.html" class="sidebar-link">Dossiers explorateur</a>
+        <a href="../games/ecouter.html" class="sidebar-link">Ecouter</a>
+      </div>
+    </div>
+    <div class="sidebar-group">
+      <button class="sidebar-group-btn" type="button" aria-expanded="false">
+        Tournois
+        <span class="chev" aria-hidden="true">▾</span>
+      </button>
+      <div class="sidebar-group-body">
+        <a href="../games/anagramme.html" class="sidebar-link">Anagramme</a>
+        <a href="../games/pendu.html" class="sidebar-link">Pendu</a>
+        <a href="../games/quiz.html" class="sidebar-link">Quiz</a>
+        <a href="../games/vrai-faux.html" class="sidebar-link">Vrai/Faux</a>
+        <a href="../games/demeler.html" class="sidebar-link">Demeler</a>
+        <a href="../games/completer.html" class="sidebar-link">Completer</a>
+        <a href="../games/apparier.html" class="sidebar-link">Apparier</a>
+        <a href="../games/paire.html" class="sidebar-link">Paire</a>
+      </div>
     </div>
     <div class="sidebar-group">
       <button class="sidebar-group-btn" type="button" aria-expanded="false">
@@ -68,50 +93,6 @@ const FOOTER_HTML = `
   <span>© 2026 Alexis Höppeler — Plateforme Autonomie numérique</span>
   <span style="color:var(--text3)">Données stockées localement · Aucune connexion requise</span>
 </footer>`;
-
-// --- Générer une liste unique de jeux dans la sidebar ---
-function renderSidebarGames() {
-  const container = document.getElementById('sidebar-games-container');
-  if (!container) return;
-  if (typeof StageManager === 'undefined') {
-    setTimeout(renderSidebarGames, 50);
-    return;
-  }
-
-  const nextExercise = StageManager.getNextRecommendedExercise();
-  const exerciseByPage = new Map();
-  for (const stage of StageManager.getStages()) {
-    for (const ex of stage.exercises) exerciseByPage.set(ex.page, ex);
-  }
-  for (const bonus of [...StageManager.getUnlockedBonuses(), ...StageManager.getLockedBonuses()]) {
-    exerciseByPage.set(bonus.page, bonus);
-  }
-  const config = window.EXERCISE_CONFIG || {};
-  const orderedPages = Array.isArray(config.orderedPages) ? config.orderedPages : [];
-  const exercises = orderedPages.map(page => exerciseByPage.get(page)).filter(Boolean);
-  let html = '';
-  for (const ex of exercises) {
-    const metrics = ScoreManager.readMetrics(ex.page);
-    const status = metrics.status;
-    let statusIcon = '▶';
-    let statusLabel = 'Pas commencée';
-    if (status === 'completed') {
-      statusIcon = '↻';
-      statusLabel = 'Recommencer';
-    } else if (status === 'in_progress') {
-      statusIcon = '⏸';
-      statusLabel = 'En cours';
-    }
-    const isNext = nextExercise && nextExercise.page === ex.page ? 'next-exercise' : '';
-    html += `
-      <a href="../games/${ex.page}.html" class="sidebar-link ${isNext}" data-status="${status}" title="${statusLabel}">
-        <span class="icon" style="font-size:12px;font-weight:700;color:var(--accent);">${statusIcon}</span>
-        <span style="flex:1;font-size:12px;">${ex.name}</span>
-      </a>
-    `;
-  }
-  container.innerHTML = html;
-}
 
 // Supprime l'affichage des cartes KPI tout en conservant les IDs
 // nécessaires aux scripts de suivi/statistiques.
@@ -166,13 +147,6 @@ function initSharedLayout() {
   const fSlot = document.getElementById('footer-slot');
   if (fSlot) fSlot.outerHTML = FOOTER_HTML;
 
-  // Remplir les conteneurs dynamiques
-  renderSidebarGames();
-
-  // Rafraîchir quand les scores changent
-  document.addEventListener('score:updated', () => {
-    renderSidebarGames();
-  });
 }
 
 // Injecter le layout des que possible pour eviter l'effet de flash.
