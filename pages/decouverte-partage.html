@@ -316,7 +316,9 @@
 <footer>
   <div>Autoévaluation collective · Pas de bonne ou mauvaise réponse</div>
   <div class="nav-links">
+    <button onclick="resetPage()">Reset</button>
     <button class="btn-pdf" onclick="window.print()">Télécharger en PDF</button>
+    <a class="nav-btn" href="../index.html">Accueil</a>
     <a class="nav-btn" href="../index.html">⬅ Retour</a>
     <a class="nav-btn" href="debriefing.html">Suivant ➜</a>
   </div>
@@ -341,6 +343,23 @@
     document.getElementById('motsAffiches').appendChild(span);
     input.value = '';
     input.focus();
+  }
+
+  function resetPage() {
+    counts.fill(0);
+    for (let i = 0; i < counts.length; i++) {
+      const counter = document.getElementById('c' + i);
+      if (counter) counter.textContent = '0';
+    }
+
+    const motsAffiches = document.getElementById('motsAffiches');
+    if (motsAffiches) motsAffiches.innerHTML = '';
+
+    const input = document.getElementById('motInput');
+    if (input) {
+      input.value = '';
+      input.focus();
+    }
   }
 </script>
 

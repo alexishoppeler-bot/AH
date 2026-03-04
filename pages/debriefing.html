@@ -285,8 +285,8 @@
 
   <!-- 1) Haut gauche -->
   <section class="carte" id="auto-section" style="grid-column:1">
-    <h2>📊 Autoévaluation initiale</h2>
-    <div class="question">🎯 Quel est votre niveau pour remplir un formulaire en ligne aujourd’hui ?</div>
+    <h2>📊 Autoévaluation finale</h2>
+    <div class="question">🎯 Quel est votre niveau pour remplir un formulaire maintenant ?</div>
     <div class="votes">
       <div class="vote-card" onclick="voteAuto(0)">😕 Je bloque souvent<div class="count" id="a0">0</div></div>
 <div class="vote-card" onclick="voteAuto(1)">🙂 J’y arrive avec aide<div class="count" id="a1">0</div></div>
@@ -298,7 +298,7 @@
   <!-- 2) Bas droite -->
   <section class="carte" id="ressenti-section" style="grid-column:2">
     <h2>🧭 Comment s’est passé le cours ?</h2>
-    <div class="question">💬 Comment vous êtes-vous senti(e) avec la souris aujourd’hui ?</div>
+    <div class="question">💬 Comment vous êtes-vous senti(e) pendant le cours?</div>
     <div class="votes">
       <div class="vote-card" onclick="voteRessenti(0)">🙂 Bien<div class="count" id="r0">0</div></div>
       <div class="vote-card" onclick="voteRessenti(1)">😐 Moyen<div class="count" id="r1">0</div></div>
@@ -311,6 +311,7 @@
 
 <footer>
   <div class="card-controls">
+    <button class="btn btn-secondary" id="card-reset">Reset</button>
     <button class="btn btn-secondary" id="card-prev">⬅︎ Retour</button>
     <div class="card-indicator" id="card-indicator">Carte 1 / 4</div>
     <button class="btn" id="card-next">Suivant ➜</button>
@@ -370,6 +371,7 @@
     const cards = Array.from(document.querySelectorAll('main .carte'));
     const prevBtn = document.getElementById('card-prev');
     const nextBtn = document.getElementById('card-next');
+    const resetBtn = document.getElementById('card-reset');
     const indicator = document.getElementById('card-indicator');
     let current = 0;
 
@@ -399,6 +401,21 @@
           current++;
           updateCards();
         }
+      });
+    }
+
+    if(resetBtn){
+      resetBtn.addEventListener('click', () => {
+        state.auto.fill(0);
+        state.ressenti.fill(0);
+        for(let i = 0; i < 4; i++){
+          const autoCount = document.getElementById('a' + i);
+          const ressentiCount = document.getElementById('r' + i);
+          if(autoCount) autoCount.textContent = '0';
+          if(ressentiCount) ressentiCount.textContent = '0';
+        }
+        current = 0;
+        updateCards();
       });
     }
 
