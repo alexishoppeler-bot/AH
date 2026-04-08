@@ -1,7 +1,7 @@
 'use strict';
 
 (function initExerciseConfig() {
-  const nonOrderedPages = ['accueil', 'evaluations', 'regles', 'donnees'];
+  const nonOrderedPages = ['accueil', 'evaluations', 'regles', 'donnees', 'autoevaluation'];
   const entries = [
     { page: 'accueil', name: 'Accueil', icon: '🏠', cat: 'Navigation' },
     { page: 'formulaire', name: 'Formulaire', icon: '📝', cat: 'Candidature' },
@@ -28,7 +28,8 @@
     { page: 'paire', name: 'Paires', icon: '🃏', cat: 'Jeu' },
     { page: 'evaluations', name: 'Evaluations', icon: '📈', cat: 'Suivi' },
     { page: 'regles', name: 'Regles XP', icon: '📏', cat: 'Suivi' },
-    { page: 'donnees', name: 'Donnees', icon: '💾', cat: 'Suivi' }
+    { page: 'donnees', name: 'Donnees', icon: '💾', cat: 'Suivi' },
+    { page: 'autoevaluation', name: 'Autoévaluation', icon: '🧭', cat: 'Suivi' }
   ];
 
   const XP_RULES_BY_PAGE = {

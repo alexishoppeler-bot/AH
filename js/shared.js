@@ -15,7 +15,7 @@
     return [
       {
         title: 'Debut',
-        links: ['accueil', 'evaluations', 'regles', 'donnees']
+        links: ['accueil', 'evaluations', 'regles', 'donnees', 'autoevaluation']
       },
       {
         title: 'Exercices pas a pas',
