@@ -7,6 +7,7 @@
     { page: 'formulaire', name: 'Formulaire', icon: '📝', cat: 'Candidature' },
     { page: 'email-ecrire', name: 'Ecrire un e-mail', icon: '✉️', cat: 'Communication' },
     { page: 'email-pro', name: 'E-mails professionnels', icon: '📧', cat: 'Communication' },
+    { page: 'retaper', name: 'Retaper', icon: '✍️', cat: 'Communication' },
     { page: 'alphabet', name: 'Alphabet', icon: '🔤', cat: 'Langue' },
     { page: 'clavier', name: 'Clavier', icon: '⌨️', cat: 'Langue' },
     { page: 'ecouter', name: 'Ecouter', icon: '🎧', cat: 'Langue' },
@@ -51,6 +52,7 @@
     'formulaire': '+6-9 XP par formulaire reussi (bonus si sans indice).',
     'email-ecrire': '+3 XP par bonne reponse.',
     'email-pro': '+3 XP par bonne reponse.',
+    'retaper': '+7 XP parfait, +5 XP (>=90%), +3 XP (>=70%), +1 XP sinon. -1 XP si indice.',
     'simulations-dialogues': '+3 XP (bonne reponse), +1 XP (reponse moyenne).',
     'orientation': '+3 XP arrivee a destination, +2 XP chemin parfait.'
   };

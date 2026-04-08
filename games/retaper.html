@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="fr-CH">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Retaper - AH</title>
+  <link rel="stylesheet" href="../css/theme.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <link rel="stylesheet" href="../css/pages/retaper.css">
+</head>
+<body>
+  <div id="header-slot"></div>
+  <div id="sidebar-slot"></div>
+
+  <div class="layout">
+    <main class="main">
+      <div class="container">
+
+        <div class="page-header fade-up">
+          <div class="page-icon">&#9997;&#65039;</div>
+          <h1>Retaper un e-mail</h1>
+          <p>Lisez le mod&egrave;le, puis recopiez-le exactement dans la zone de saisie.</p>
+        </div>
+
+        <!-- KPI -->
+        <div class="kpi-grid fade-up delay-1">
+          <div class="kpi-card">
+            <div class="kpi-value" id="kpiCorrect">0</div>
+            <div class="kpi-label">Justes</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" id="kpiErrors">0</div>
+            <div class="kpi-label">Erreurs</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" id="kpiXP">0</div>
+            <div class="kpi-label">Points</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value" id="kpiProgress">0%</div>
+            <div class="kpi-label">Avance</div>
+          </div>
+        </div>
+
+        <!-- Zone de jeu -->
+        <div class="game-zone fade-up delay-2" id="gameZone">
+          <div class="retaper-zone">
+
+            <div class="retaper-top">
+              <div class="retaper-progress-label">
+                E-mail <strong id="roundNum">1</strong>&nbsp;/&nbsp;<strong id="roundTotal">10</strong>
+              </div>
+              <span id="roundCategory" class="badge badge-blue"></span>
+            </div>
+
+            <div class="series-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width:0%"></div>
+              </div>
+            </div>
+
+            <!-- Situation -->
+            <div class="contexte-box">
+              <div class="contexte-label">Situation</div>
+              <div id="contexteText"></div>
+            </div>
+
+            <!-- Objet -->
+            <div class="sujet-box">
+              <span class="sujet-label">Objet :</span>
+              <span class="sujet-value" id="sujetValue"></span>
+            </div>
+
+            <!-- Mod&egrave;le &agrave; recopier -->
+            <div class="ref-label">Mod&egrave;le &agrave; recopier</div>
+            <div class="ref-box" id="refText" aria-label="Texte de r&eacute;f&eacute;rence &agrave; recopier"></div>
+
+            <!-- Indice -->
+            <div class="hint-box" id="hintBox"></div>
+
+            <!-- Zone de saisie -->
+            <textarea
+              class="typing-area"
+              id="typingArea"
+              placeholder="Recopiez ici le texte ci-dessus exactement..."
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+              rows="7"
+            ></textarea>
+
+            <!-- Statistiques en direct -->
+            <div class="typing-stats">
+              <span>Caract&egrave;res&nbsp;: <strong id="statTyped">0/0</strong></span>
+              <span>Erreurs&nbsp;: <strong class="stat-errors-val" id="statErrors">0</strong></span>
+            </div>
+
+            <!-- Feedback -->
+            <div class="feedback-row">
+              <span class="feedback-msg" id="feedbackMsg"></span>
+            </div>
+
+            <div class="action-row">
+              <button class="btn btn-ghost btn-sm" id="btnHint" type="button">Indice</button>
+              <button class="btn btn-primary" id="btnValidate" type="button">Valider</button>
+              <button class="btn btn-secondary" id="btnNext" type="button" style="display:none;">Suivant &rarr;</button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- R&eacute;sultats finaux -->
+        <div class="result-zone fade-up" id="resultZone">
+          <div class="card card-accent card-lg" style="text-align:center;">
+            <div style="font-size:56px;margin-bottom:16px;" id="resEmoji">&#9997;&#65039;</div>
+            <h2 style="font-family:var(--font-head);font-size:24px;font-weight:800;margin-bottom:8px;" id="resTitle">Session termin&eacute;e&nbsp;!</h2>
+            <p style="color:var(--text2);margin-bottom:28px;" id="resSubtitle">Voici vos r&eacute;sultats pour cette session.</p>
+            <div class="kpi-grid" style="margin-bottom:28px;">
+              <div class="kpi-card">
+                <div class="kpi-value" id="resCorrect">0</div>
+                <div class="kpi-label">Justes</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-value" id="resErrors">0</div>
+                <div class="kpi-label">Erreurs</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-value" id="resXP">0</div>
+                <div class="kpi-label">XP</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-value" id="resAccuracy">-</div>
+                <div class="kpi-label">Pr&eacute;cision</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+              <button class="btn btn-ghost btn-sm btn-share" type="button">Copier mon r&eacute;sum&eacute;</button>
+              <a href="#" class="btn btn-primary btn-lg" id="btnNextExercise">Exercice suivant</a>
+              <button class="btn btn-secondary btn-lg" id="btnRestart" type="button">Recommencer</button>
+              <a href="accueil.html" class="btn btn-secondary btn-lg">&larr; Accueil</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+    <div id="footer-slot"></div>
+  </div>
+
+  <script src="../js/score.js"></script>
+  <script src="../js/exercises-config.js"></script>
+  <script src="../js/stages.js"></script>
+  <script src="../js/exercise-utils.js"></script>
+  <script src="../js/shared.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/data/retaper-data.js"></script>
+  <script>
+  'use strict';
+
+  /*
+   * Retaper — recopier des mod&egrave;les d'e-mail professionnels.
+   * L'apprenant recopie le texte affiché caractère par caractère.
+   * Coloration en direct : vert = correct, rouge = erreur, curseur animé.
+   * XP : +7 parfait, +5 ≥ 90 %, +3 ≥ 70 %, +1 sinon. −1 XP si indice utilisé.
+   */
+
+  const DATA    = window.RETAPER_DATA || [];
+  const PAGE_ID = 'retaper';
+  const TOTAL   = DATA.length;
+
+  let session = {
+    items:     [],
+    index:     0,
+    correct:   0,
+    typed:     0,
+    xp:        0,
+    submitted: false,
+    hintUsed:  false
+  };
+
+  let xpRulesShown = false;
+
+  /* ===== UTILITAIRES ===== */
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function calcLocalAccuracy(typed, ref) {
+    if (!ref.length) return 100;
+    let ok = 0;
+    const len = Math.min(typed.length, ref.length);
+    for (let i = 0; i < len; i++) {
+      if (typed[i] === ref[i]) ok++;
+    }
+    return Math.round((ok / ref.length) * 100);
+  }
+
+  /* ===== DÉMARRAGE ===== */
+  function startSession() {
+    if (!DATA.length) {
+      showToast('Aucune donnée trouvée pour Retaper.', 'error');
+      return;
+    }
+    session.items     = shuffle([...DATA]);
+    session.index     = 0;
+    session.correct   = 0;
+    session.typed     = 0;
+    session.xp        = 0;
+    session.submitted = false;
+    session.hintUsed  = false;
+
+    document.getElementById('resultZone').classList.remove('show');
+    document.getElementById('gameZone').classList.remove('hidden');
+
+    if (!xpRulesShown) {
+      xpRulesShown = true;
+      showXPRules('Retaper');
+    }
+
+    loadItem();
+  }
+
+  /* ===== CHARGER UN ITEM ===== */
+  function loadItem() {
+    const item = session.items[session.index];
+    session.submitted = false;
+    session.hintUsed  = false;
+
+    /* Progression */
+    document.getElementById('roundNum').textContent      = session.index + 1;
+    document.getElementById('roundTotal').textContent    = TOTAL;
+    document.getElementById('roundCategory').textContent = item.category;
+    const pct = Math.round((session.index / TOTAL) * 100);
+    document.getElementById('progressFill').style.width  = pct + '%';
+
+    /* KPI */
+    document.getElementById('kpiCorrect').textContent  = session.correct;
+    document.getElementById('kpiErrors').textContent   = session.typed - session.correct;
+    document.getElementById('kpiXP').textContent       = session.xp;
+    document.getElementById('kpiProgress').textContent = pct + '%';
+
+    /* Contenu */
+    document.getElementById('contexteText').textContent = item.contexte;
+    document.getElementById('sujetValue').textContent   = item.sujet;
+
+    renderReference(item.corps);
+
+    /* Zone de saisie */
+    const ta = document.getElementById('typingArea');
+    ta.value     = '';
+    ta.className = 'typing-area';
+    ta.disabled  = false;
+
+    /* Stats */
+    document.getElementById('statTyped').textContent  = '0/' + item.corps.length;
+    document.getElementById('statErrors').textContent = '0';
+
+    /* Feedback */
+    const fb = document.getElementById('feedbackMsg');
+    fb.textContent = '';
+    fb.className   = 'feedback-msg';
+
+    /* Indice */
+    const hintBox = document.getElementById('hintBox');
+    hintBox.classList.remove('show');
+    hintBox.textContent = '';
+    const btnHint = document.getElementById('btnHint');
+    btnHint.disabled    = false;
+    btnHint.textContent = 'Indice';
+
+    /* Boutons */
+    document.getElementById('btnValidate').style.display = 'inline-flex';
+    document.getElementById('btnValidate').disabled      = false;
+    document.getElementById('btnNext').style.display     = 'none';
+
+    ta.focus();
+  }
+
+  /* ===== RENDU DU TEXTE DE RÉFÉRENCE ===== */
+  function renderReference(text) {
+    const el = document.getElementById('refText');
+    el.innerHTML = '';
+    for (let i = 0; i < text.length; i++) {
+      const span = document.createElement('span');
+      span.className      = 'ref-char pending';
+      span.dataset.idx    = i;
+      span.textContent    = text[i]; /* \n preserved by white-space:pre-wrap */
+      el.appendChild(span);
+    }
+  }
+
+  /* ===== COMPARAISON EN DIRECT ===== */
+  function updateComparison() {
+    if (session.submitted) return;
+
+    const item  = session.items[session.index];
+    const ref   = item.corps;
+    const typed = document.getElementById('typingArea').value;
+    const chars = document.querySelectorAll('#refText .ref-char');
+
+    let errorCount = 0;
+    chars.forEach((span, i) => {
+      span.classList.remove('correct', 'wrong', 'current', 'pending');
+      if (i < typed.length) {
+        if (typed[i] === ref[i]) {
+          span.classList.add('correct');
+        } else {
+          span.classList.add('wrong');
+          errorCount++;
+        }
+      } else if (i === typed.length) {
+        span.classList.add('current');
+      } else {
+        span.classList.add('pending');
+      }
+    });
+
+    document.getElementById('statTyped').textContent  = typed.length + '/' + ref.length;
+    document.getElementById('statErrors').textContent = errorCount;
+
+    const ta = document.getElementById('typingArea');
+    ta.classList.remove('has-error', 'perfect');
+    if (errorCount > 0)       ta.classList.add('has-error');
+    else if (typed.length > 0) ta.classList.add('perfect');
+
+    /* Soumission automatique si texte identique */
+    if (typed === ref) {
+      submitItem(true);
+    }
+  }
+
+  /* ===== SOUMETTRE L'ITEM ===== */
+  function submitItem(isPerfect) {
+    if (session.submitted) return;
+    session.submitted = true;
+
+    const item     = session.items[session.index];
+    const ref      = item.corps;
+    const typed    = document.getElementById('typingArea').value;
+    const accuracy = isPerfect ? 100 : calcLocalAccuracy(typed, ref);
+
+    session.typed++;
+    const isGood = accuracy >= 70;
+    if (isGood) session.correct++;
+
+    let xp = 0;
+    if (isPerfect)        xp = 7;
+    else if (accuracy >= 90) xp = 5;
+    else if (accuracy >= 70) xp = 3;
+    else                     xp = 1;
+
+    if (session.hintUsed && xp > 1) xp -= 1;
+    session.xp += xp;
+
+    recordExerciseProgress(PAGE_ID, {
+      correct: isGood ? 1 : 0,
+      typed:   1,
+      errors:  isGood ? 0 : 1,
+      xp
+    });
+
+    const fb = document.getElementById('feedbackMsg');
+    if (isPerfect) {
+      fb.textContent = '\u2713 Parfait ! +' + xp + ' XP';
+      fb.className   = 'feedback-msg ok';
+      showToast('Parfait ! +' + xp + ' XP', 'success');
+      launchConfetti();
+    } else if (accuracy >= 70) {
+      fb.textContent = '\u2713 Bien ! ' + accuracy + '\u00a0% de précision. +' + xp + ' XP';
+      fb.className   = 'feedback-msg ok';
+      showToast('Bon travail\u00a0! +' + xp + ' XP', 'success');
+    } else {
+      fb.textContent = '\u2717 ' + accuracy + '\u00a0% de précision. +' + xp + ' XP. Relisez le modèle.';
+      fb.className   = 'feedback-msg err';
+      showToast('Continuez à pratiquer.', 'info');
+    }
+
+    /* Mettre à jour les KPI */
+    document.getElementById('kpiCorrect').textContent = session.correct;
+    document.getElementById('kpiErrors').textContent  = session.typed - session.correct;
+    document.getElementById('kpiXP').textContent      = session.xp;
+
+    document.getElementById('typingArea').disabled          = true;
+    document.getElementById('btnValidate').style.display    = 'none';
+    document.getElementById('btnHint').disabled             = true;
+    document.getElementById('btnNext').style.display        = 'inline-flex';
+  }
+
+  /* ===== ITEM SUIVANT ===== */
+  function nextItem() {
+    session.index++;
+    if (session.index >= TOTAL) {
+      finishSession();
+    } else {
+      loadItem();
+    }
+  }
+
+  /* ===== FIN DE SESSION ===== */
+  function finishSession() {
+    promoteExerciseStatus(PAGE_ID, 'completed');
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('gameZone').classList.add('hidden');
+    document.getElementById('resultZone').classList.add('show');
+
+    const accuracy = calcAccuracy(session.correct, session.typed);
+    document.getElementById('resCorrect').textContent  = session.correct;
+    document.getElementById('resErrors').textContent   = session.typed - session.correct;
+    document.getElementById('resXP').textContent       = session.xp;
+    document.getElementById('resAccuracy').textContent = accuracy + '%';
+
+    const emoji = accuracy >= 90 ? '🌟' : accuracy >= 70 ? '✅' : '✍️';
+    document.getElementById('resEmoji').textContent  = emoji;
+    document.getElementById('resSubtitle').textContent =
+      'Vous avez recopié ' + session.typed + ' e-mail' + (session.typed > 1 ? 's' : '') +
+      ' avec ' + accuracy + '\u00a0% de précision globale.';
+
+    if (accuracy >= 80) launchConfetti();
+  }
+
+  /* ===== ÉVÉNEMENTS ===== */
+  document.addEventListener('DOMContentLoaded', () => {
+
+    /* Saisie en direct */
+    document.getElementById('typingArea').addEventListener('input', updateComparison);
+
+    /* Valider manuellement */
+    document.getElementById('btnValidate').addEventListener('click', () => submitItem(false));
+
+    /* Suivant */
+    document.getElementById('btnNext').addEventListener('click', nextItem);
+
+    /* Indice */
+    document.getElementById('btnHint').addEventListener('click', () => {
+      if (session.submitted || session.hintUsed) return;
+      session.hintUsed = true;
+      const item    = session.items[session.index];
+      const hintBox = document.getElementById('hintBox');
+      hintBox.textContent = 'Indice\u00a0: ' + item.hint;
+      hintBox.classList.add('show');
+      document.getElementById('btnHint').disabled    = true;
+      document.getElementById('btnHint').textContent = 'Indice utilisé';
+    });
+
+    /* Recommencer */
+    document.getElementById('btnRestart').addEventListener('click', startSession);
+
+    /* Exercice suivant recommandé */
+    const btnNextEx = document.getElementById('btnNextExercise');
+    const nextEx    = getNextExercise(PAGE_ID);
+    if (nextEx && nextEx.name && nextEx.href) {
+      btnNextEx.addEventListener('click', () => { window.location.href = nextEx.href; });
+      btnNextEx.textContent = 'Exercice suivant\u00a0: ' + nextEx.name;
+    } else {
+      btnNextEx.style.display = 'none';
+    }
+
+    /* Raccourci clavier : Entrée pour valider quand non soumis */
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && e.ctrlKey && !session.submitted) {
+        e.preventDefault();
+        submitItem(false);
+      }
+    });
+
+    startSession();
+  });
+  </script>
+</body>
+</html>
