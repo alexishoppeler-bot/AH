@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="fr-CH">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" href="../assets/logo.png" type="image/png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accueil - AH</title>
+  <link rel="stylesheet" href="../css/theme.css">
+  <link rel="stylesheet" href="../css/layout.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/utilities.css">
+  <link rel="stylesheet" href="../css/pages/accueil.css">
+</head>
+<body>
+  <div id="header-slot"></div>
+  <div id="sidebar-slot"></div>
+
+  <div class="layout">
+    <main class="main">
+      <div class="container">
+        <section class="hero-section fade-up">
+          <div class="hero-copy">
+            <span class="hero-eyebrow">Simple et pas a pas</span>
+            <h1>Apprendre doucement. Faire seul. Reussir.</h1>
+            <p>
+              Cette plateforme aide a utiliser l'ordinateur pour la vie de tous les jours.
+              Vous pouvez lire, ecrire, remplir un formulaire, envoyer un e-mail et classer des dossiers.
+              Tout est fait pour apprendre tranquillement.
+            </p>
+            <div class="hero-actions">
+              <a class="btn btn-primary btn-lg" href="#parcours">Commencer</a>
+              <a class="btn btn-secondary btn-lg" href="evaluations.html">Voir mes resultats</a>
+            </div>
+          </div>
+
+          <aside class="hero-panel card card-accent">
+            <div class="hero-panel-title">Aujourd'hui</div>
+            <div class="hero-panel-grid">
+              <div class="hero-metric">
+                <strong id="summaryExercises">0</strong>
+                <span>activites</span>
+              </div>
+              <div class="hero-metric">
+                <strong id="summaryCategories">0</strong>
+                <span>themes</span>
+              </div>
+              <div class="hero-metric">
+                <strong id="summaryCompleted">0</strong>
+                <span>faites</span>
+              </div>
+              <div class="hero-metric">
+                <strong id="summaryAutonomy">100%</strong>
+                <span>sauvegarde ici</span>
+              </div>
+            </div>
+            <div class="next-step-box">
+              <div class="section-label">Prochaine etape</div>
+              <div class="next-step-name" id="nextExerciseName">Chargement...</div>
+              <p id="nextExerciseText">La plateforme montre une bonne suite pour continuer.</p>
+              <a class="btn btn-ghost btn-sm" id="nextExerciseLink" href="formulaire.html">Ouvrir</a>
+            </div>
+          </aside>
+        </section>
+
+        <section class="intro-grid fade-up delay-1">
+          <article class="intro-card">
+            <div class="section-label">Ce que vous faites</div>
+            <h2>Des exercices utiles</h2>
+            <p>
+              Chaque exercice aide pour une action simple.
+              Vous apprenez a comprendre une consigne, cliquer au bon endroit,
+              choisir la bonne information et ecrire un message simple.
+            </p>
+          </article>
+          <article class="intro-card">
+            <div class="section-label">Pourquoi c'est utile</div>
+            <h2>Voir ses progres</h2>
+            <p>
+              Vous pouvez refaire les exercices plusieurs fois.
+              Vous voyez vos resultats. Le plus important n'est pas d'aller vite.
+              Le plus important est de comprendre et de faire seul.
+            </p>
+          </article>
+        </section>
+
+        <section class="activities-section fade-up delay-2">
+          <div class="section-label">Activites</div>
+          <h2 class="section-heading">Choisir un exercice</h2>
+          <div class="activities-grid" id="activitiesGrid"></div>
+        </section>
+
+        <section class="focus-grid fade-up delay-3">
+          <article class="focus-panel">
+            <div class="section-label">Objectifs</div>
+            <h2>Ce que vous allez apprendre</h2>
+            <ul class="check-list">
+              <li>Comprendre une consigne simple.</li>
+              <li>Remplir un formulaire.</li>
+              <li>Ecrire ou choisir un e-mail.</li>
+              <li>Utiliser la souris, le clavier et les dossiers.</li>
+              <li>Lire et ecouter plus facilement.</li>
+            </ul>
+          </article>
+
+          <article class="focus-panel autonomy-panel">
+            <div class="section-label">Aide</div>
+            <h2>Avancer tranquillement</h2>
+            <ol class="steps-list">
+              <li>Choisissez une activite.</li>
+              <li>Faites l'exercice a votre rythme.</li>
+              <li>Recommencez si besoin.</li>
+            </ol>
+            <p class="motivation-note">
+              Chaque exercice termine montre un progres.
+              Meme quelques minutes peuvent aider.
+            </p>
+          </article>
+        </section>
+
+        <section class="quick-access fade-up delay-4">
+          <div class="section-label">Acces rapide</div>
+          <div class="quick-links">
+            <a class="quick-link" href="evaluations.html">
+              <span>📈</span>
+              <span>Voir mes resultats</span>
+            </a>
+            <a class="quick-link" href="regles.html">
+              <span>📏</span>
+              <span>Voir les points</span>
+            </a>
+            <a class="quick-link" href="donnees.html">
+              <span>💾</span>
+              <span>Voir les donnees</span>
+            </a>
+          </div>
+        </section>
+
+        <section class="apps-section fade-up delay-4b" id="apps">
+          <div class="section-label">Applications</div>
+          <h2 class="section-heading">Outils</h2>
+          <div class="apps-grid" id="appsGrid"></div>
+        </section>
+
+        <section class="parcours-section fade-up delay-5" id="parcours">
+          <div class="parcours-head">
+            <div>
+              <div class="section-label">Parcours</div>
+              <h2 class="section-heading">Choisissez et commencez</h2>
+            </div>
+            <div class="category-chips" id="categoryChips"></div>
+          </div>
+          <div class="level-cards" id="exerciseCards"></div>
+        </section>
+
+        <div class="footer-info fade-up delay-6">
+          <p>
+            Resultats sur cet appareil · Exercices simples ·
+            <a href="donnees.html">Confidentialite</a>
+          </p>
+        </div>
+      </div>
+    </main>
+    <div id="footer-slot"></div>
+  </div>
+
+  <script src="../js/score.js"></script>
+  <script src="../js/exercises-config.js"></script>
+  <script src="../js/stages.js"></script>
+  <script src="../js/exercise-utils.js"></script>
+  <script src="../js/shared.js"></script>
+  <script src="../js/ui.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderAccueil();
+    });
+
+    function renderAccueil() {
+      const config = window.EXERCISE_CONFIG || {};
+      const orderedPages = Array.isArray(config.orderedPages) ? config.orderedPages : [];
+      const meta = config.meta || {};
+      const firstMeta = orderedPages[0] ? (meta[orderedPages[0]] || {}) : {};
+      const nextExercise = (window.StageManager && StageManager.getNextRecommendedExercise())
+        || (orderedPages[0] ? { page: orderedPages[0], name: firstMeta.name, href: firstMeta.href } : null);
+
+      renderSummary(config, orderedPages, nextExercise);
+      renderApps(config);
+      renderActivities(config, orderedPages);
+      renderCategoryChips(config, orderedPages);
+      renderGameCards(config, orderedPages, nextExercise);
+    }
+
+    function renderApps(config) {
+      const grid = document.getElementById('appsGrid');
+      if (!grid) return;
+      const apps = Array.isArray(config.apps) ? config.apps : [];
+      if (apps.length === 0) {
+        document.getElementById('apps').style.display = 'none';
+        return;
+      }
+      grid.innerHTML = apps.map((app) => [
+        '<a class="app-card" href="' + escapeHTML(app.href) + '">',
+        '  <div class="app-card-icon">' + escapeHTML(app.icon) + '</div>',
+        '  <div class="app-card-body">',
+        '    <h3>' + escapeHTML(app.name) + '</h3>',
+        '    <p>' + escapeHTML(app.desc) + '</p>',
+        '  </div>',
+        '  <div class="app-card-cta">Ouvrir →</div>',
+        '</a>'
+      ].join('')).join('');
+    }
+
+    function renderSummary(config, orderedPages, nextExercise) {
+      const categories = new Set();
+      let completed = 0;
+
+      orderedPages.forEach((page) => {
+        const pageMeta = config.meta && config.meta[page];
+        if (pageMeta && pageMeta.cat) categories.add(pageMeta.cat);
+        if (window.ScoreManager && ScoreManager.readMetrics(page).status === 'completed') completed += 1;
+      });
+
+      setText('summaryExercises', orderedPages.length);
+      setText('summaryCategories', categories.size);
+      setText('summaryCompleted', completed);
+
+      if (nextExercise) {
+        setText('nextExerciseName', nextExercise.name || 'Commencer');
+        setText('nextExerciseText', 'Un bon exercice pour continuer sans se perdre.');
+        const link = document.getElementById('nextExerciseLink');
+        if (link) link.href = nextExercise.href || (nextExercise.page + '.html');
+      }
+    }
+
+    function renderActivities(config, orderedPages) {
+      const activitiesGrid = document.getElementById('activitiesGrid');
+      if (!activitiesGrid) return;
+
+      const categoryMap = buildCategoryMap(config, orderedPages);
+      const contentByCategory = {
+        'Candidature': {
+          title: 'Formulaire et papiers',
+          desc: 'Ecrire les bonnes informations et choisir les bons documents.'
+        },
+        'Communication': {
+          title: 'E-mails simples',
+          desc: 'Lire une situation et choisir ou ecrire la bonne reponse.'
+        },
+        'Navigation': {
+          title: 'Ordinateur et internet',
+          desc: 'Utiliser les fenetres, les dossiers et les pages internet.'
+        },
+        'Langue': {
+          title: 'Lire, ecouter, ecrire',
+          desc: 'Travailler les mots, les lettres, l ecoute et le clavier.'
+        },
+        'Compétences': {
+          title: 'Petites actions utiles',
+          desc: 'Observer, cliquer, completer et faire une action simple.'
+        },
+        'CompÃ©tences': {
+          title: 'Petites actions utiles',
+          desc: 'Observer, cliquer, completer et faire une action simple.'
+        },
+        'Jeu': {
+          title: 'Apprendre avec le jeu',
+          desc: 'Memoriser, trier, apparier et repondre en jouant.'
+        }
+      };
+
+      activitiesGrid.innerHTML = Object.keys(categoryMap).map((category) => {
+        const info = contentByCategory[category] || {
+          title: category,
+          desc: 'Exercices simples pour avancer pas a pas.'
+        };
+        const examples = categoryMap[category].slice(0, 3).map((item) => item.name).join(' · ');
+        return [
+          '<article class="activity-card">',
+          '  <div class="activity-top">',
+          '    <span class="activity-badge">' + escapeHTML(category) + '</span>',
+          '    <span class="activity-count">' + categoryMap[category].length + ' activites</span>',
+          '  </div>',
+          '  <h3>' + escapeHTML(info.title) + '</h3>',
+          '  <p>' + escapeHTML(info.desc) + '</p>',
+          '  <div class="activity-examples">' + escapeHTML(examples) + '</div>',
+          '</article>'
+        ].join('');
+      }).join('');
+    }
+
+    function renderCategoryChips(config, orderedPages) {
+      const container = document.getElementById('categoryChips');
+      if (!container) return;
+      const categoryMap = buildCategoryMap(config, orderedPages);
+      container.innerHTML = Object.keys(categoryMap).map((category) => {
+        return '<span class="category-chip">' + escapeHTML(category) + ' · ' + categoryMap[category].length + '</span>';
+      }).join('');
+    }
+
+    function renderGameCards(config, orderedPages, nextExercise) {
+      const cardsContainer = document.getElementById('exerciseCards');
+      if (!cardsContainer) return;
+
+      cardsContainer.innerHTML = '';
+
+      orderedPages.forEach((page) => {
+        const pageMeta = (config.meta && config.meta[page]) || {};
+        const metrics = window.ScoreManager ? ScoreManager.readMetrics(page) : { status: 'not_started', xp: 0, typed: 0, correct: 0 };
+        const status = metrics.status || 'not_started';
+        const completionText = status === 'completed'
+          ? 'Fini'
+          : (status === 'in_progress' ? 'En cours' : 'Pas commence');
+        const category = pageMeta.cat || 'Exercice';
+        const accuracy = metrics.typed > 0 ? Math.round((metrics.correct / metrics.typed) * 100) : null;
+        const statsText = accuracy !== null ? (metrics.xp || 0) + ' XP · ' + accuracy + '% juste' : (metrics.xp || 0) + ' XP';
+        const isRecommended = nextExercise && nextExercise.page === page;
+
+        const card = document.createElement('a');
+        card.href = pageMeta.href || (page + '.html');
+        card.className = 'level-card' + (isRecommended ? ' recommended' : '');
+        card.innerHTML = [
+          '<div class="level-card-top">',
+          '  <span class="level-card-category">' + escapeHTML(category) + '</span>',
+          isRecommended ? '  <span class="level-card-flag">Conseille</span>' : '',
+          '</div>',
+          '<h3>' + escapeHTML(pageMeta.name || page) + '</h3>',
+          '<p class="level-card-desc">' + completionText + '</p>',
+          '<div class="level-card-meta">' + escapeHTML(statsText) + '</div>',
+          '<div class="level-card-cta">' + (status === 'completed' ? 'Refaire' : 'Commencer') + ' →</div>'
+        ].join('');
+        cardsContainer.appendChild(card);
+      });
+    }
+
+    function buildCategoryMap(config, orderedPages) {
+      return orderedPages.reduce((acc, page) => {
+        const pageMeta = (config.meta && config.meta[page]) || {};
+        const category = pageMeta.cat || 'Autres';
+        if (!acc[category]) acc[category] = [];
+        acc[category].push({ page: page, name: pageMeta.name || page });
+        return acc;
+      }, {});
+    }
+
+    function setText(id, value) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = String(value);
+    }
+
+    function escapeHTML(text) {
+      return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    document.addEventListener('score:updated', renderAccueil);
+    document.addEventListener('admin:unlock-changed', renderAccueil);
+  </script>
+</body>
+</html>

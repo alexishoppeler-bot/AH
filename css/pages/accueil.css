@@ -1,0 +1,578 @@
+/* ===== ACCUEIL ===== */
+
+.hero-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(320px, 0.9fr);
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.hero-copy,
+.hero-panel,
+.intro-card,
+.activities-section,
+.focus-panel,
+.parcours-section {
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.hero-copy {
+  padding: 34px;
+  background:
+    radial-gradient(circle at top right, rgba(131, 189, 69, 0.16), transparent 30%),
+    linear-gradient(135deg, rgba(50, 93, 169, 0.08), rgba(255, 255, 255, 0.96));
+}
+
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(50, 93, 169, 0.10);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero-copy h1 {
+  max-width: 11ch;
+  margin-bottom: 16px;
+  font-size: clamp(34px, 5vw, 54px);
+  line-height: 1.04;
+  color: var(--text);
+}
+
+.hero-copy p {
+  max-width: 62ch;
+  margin-bottom: 24px;
+  color: var(--text2);
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.hero-panel {
+  padding: 24px;
+}
+
+.hero-panel-title {
+  margin-bottom: 16px;
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.hero-panel-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.hero-metric {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface2);
+}
+
+.hero-metric strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--accent);
+  font-family: var(--font-head);
+  font-size: 28px;
+  font-weight: 800;
+}
+
+.hero-metric span {
+  color: var(--text2);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.next-step-box {
+  padding: 18px;
+  border-radius: var(--r-lg);
+  background: rgba(50, 93, 169, 0.05);
+  border: 1px solid rgba(50, 93, 169, 0.12);
+}
+
+.next-step-name {
+  margin-bottom: 6px;
+  color: var(--text);
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.next-step-box p {
+  margin-bottom: 12px;
+  color: var(--text2);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.intro-grid,
+.focus-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.intro-card,
+.focus-panel {
+  padding: 24px;
+}
+
+.intro-card h2,
+.focus-panel h2,
+.section-heading {
+  margin-bottom: 12px;
+  color: var(--text);
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.intro-card p,
+.focus-panel p,
+.activities-section > p {
+  color: var(--text2);
+  line-height: 1.75;
+}
+
+.section-label {
+  margin-bottom: 10px;
+  color: var(--text3);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.activities-section,
+.parcours-section {
+  margin-bottom: 28px;
+  padding: 28px;
+}
+
+.activities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.activity-card {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: linear-gradient(180deg, var(--surface2), var(--surface));
+}
+
+.activity-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.activity-badge,
+.activity-count,
+.category-chip,
+.level-card-category,
+.level-card-flag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.activity-badge,
+.level-card-category {
+  background: rgba(50, 93, 169, 0.10);
+  color: var(--accent);
+}
+
+.activity-count,
+.category-chip {
+  background: rgba(131, 189, 69, 0.14);
+  color: #567d22;
+}
+
+.activity-card h3 {
+  margin-bottom: 8px;
+  color: var(--text);
+  font-size: 18px;
+}
+
+.activity-card p {
+  margin-bottom: 14px;
+  color: var(--text2);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.activity-examples {
+  color: var(--text3);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.check-list,
+.steps-list {
+  padding-left: 20px;
+  color: var(--text2);
+}
+
+.check-list li,
+.steps-list li {
+  margin-bottom: 10px;
+  line-height: 1.7;
+}
+
+.motivation-note {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-left: 4px solid var(--accent2);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+  background: rgba(131, 189, 69, 0.10);
+}
+
+.apps-section {
+  margin-bottom: 28px;
+}
+
+.apps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.app-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: linear-gradient(135deg, rgba(50, 93, 169, 0.06), var(--surface));
+  box-shadow: var(--shadow-sm);
+  color: var(--text);
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.app-card:hover {
+  opacity: 1;
+  transform: translateY(-3px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+}
+
+.app-card-icon {
+  font-size: 2.2rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.app-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.app-card-body h3 {
+  margin-bottom: 5px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.app-card-body p {
+  color: var(--text2);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.app-card-cta {
+  flex-shrink: 0;
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.quick-access {
+  margin-bottom: 28px;
+}
+
+.quick-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.quick-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.quick-link:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+}
+
+.parcours-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.category-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.level-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.level-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: linear-gradient(180deg, var(--surface), var(--surface2));
+  box-shadow: var(--shadow-sm);
+  color: var(--text);
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.level-card:hover {
+  opacity: 1;
+  transform: translateY(-3px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+}
+
+.level-card.recommended {
+  border-color: rgba(50, 93, 169, 0.34);
+  box-shadow: 0 8px 26px rgba(50, 93, 169, 0.12);
+}
+
+.level-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.level-card-flag {
+  background: rgba(180, 204, 29, 0.18);
+  color: #6f790f;
+}
+
+.level-card h3 {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.level-card-desc {
+  color: var(--text2);
+  font-size: 14px;
+}
+
+.level-card-meta {
+  color: var(--text3);
+  font-size: 12px;
+}
+
+.level-card-cta {
+  margin-top: auto;
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.footer-info {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.footer-info p {
+  color: var(--text3);
+  font-size: 13px;
+  text-align: center;
+}
+
+.footer-info a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+@media (min-width: 1200px) {
+  .hero-section {
+    grid-template-columns: minmax(0, 1.8fr) minmax(360px, 0.95fr);
+    gap: 30px;
+    margin-bottom: 34px;
+  }
+
+  .hero-copy,
+  .hero-panel {
+    min-height: 100%;
+  }
+
+  .hero-copy {
+    padding: 42px;
+  }
+
+  .hero-copy h1 {
+    max-width: 12ch;
+    font-size: clamp(44px, 4vw, 68px);
+  }
+
+  .hero-copy p {
+    max-width: 70ch;
+    font-size: 17px;
+  }
+
+  .hero-panel {
+    padding: 28px;
+  }
+
+  .hero-panel-grid {
+    gap: 14px;
+  }
+
+  .hero-metric {
+    padding: 18px;
+  }
+
+  .hero-metric strong {
+    font-size: 32px;
+  }
+
+  .intro-grid,
+  .focus-grid {
+    gap: 22px;
+    margin-bottom: 34px;
+  }
+
+  .intro-card,
+  .focus-panel,
+  .activities-section,
+  .parcours-section {
+    padding: 30px;
+  }
+
+  .section-heading,
+  .intro-card h2,
+  .focus-panel h2 {
+    font-size: 28px;
+  }
+
+  .activities-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .activity-card {
+    padding: 22px;
+  }
+
+  .level-cards {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .level-card {
+    padding: 22px;
+  }
+}
+
+@media (min-width: 1500px) {
+  .hero-section {
+    grid-template-columns: minmax(0, 2fr) minmax(390px, 0.95fr);
+  }
+
+  .activities-grid {
+    grid-template-columns: repeat(3, minmax(280px, 1fr));
+  }
+
+  .level-cards {
+    grid-template-columns: repeat(4, minmax(260px, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .hero-section,
+  .intro-grid,
+  .focus-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-copy h1 {
+    max-width: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-copy,
+  .hero-panel,
+  .intro-card,
+  .focus-panel,
+  .activities-section,
+  .parcours-section {
+    padding: 20px;
+  }
+
+  .hero-panel-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-heading,
+  .intro-card h2,
+  .focus-panel h2 {
+    font-size: 21px;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+  }
+}

@@ -1,0 +1,261 @@
+﻿<!DOCTYPE html>
+<html lang="fr-CH">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Generateur de Prompt Codex</title>
+  <link rel="stylesheet" href="../css/theme.css">
+  <link rel="stylesheet" href="../css/pages/admin-prompt-generator.css">
+</head>
+<body>
+  <div class="wrap">
+    <section class="header">
+      <h1>Generateur de Prompt Codex (Admin)</h1>
+      <p class="note">Page locale separee, non liee au site. Genere un prompt a copier-coller dans Codex pour automatiser modifications HTML, JS, data-js, CSS, etc.</p>
+    </section>
+
+    <div class="grid">
+      <section class="card">
+        <h2>1) Objectif principal</h2>
+        <div class="field">
+          <label for="goal">Ce que tu veux faire</label>
+          <textarea id="goal" placeholder="Ex: Creer un nouveau jeu, ajuster la logique score, ajouter des donnees dans js/data, corriger UI mobile..."></textarea>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="pages">Pages HTML cibles (separe par virgule)</label>
+            <input id="pages" type="text" placeholder="games/email-pro.html, games/dossiers-explorateur.html">
+          </div>
+          <div class="field">
+            <label for="scripts">Scripts JS cibles</label>
+            <input id="scripts" type="text" placeholder="js/email-pro.js, js/dossiers-explorateur.js">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="dataFiles">Fichiers data-js cibles</label>
+            <input id="dataFiles" type="text" placeholder="js/data/ecouter-data.js">
+          </div>
+          <div class="field">
+            <label for="styles">Fichiers CSS cibles</label>
+            <input id="styles" type="text" placeholder="css/email-pro.css">
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>2) Type de travail</h2>
+        <div class="checks" id="workTypes">
+          <label class="check"><input type="checkbox" value="Modifier des fichiers existants" checked>Modifier fichiers existants</label>
+          <label class="check"><input type="checkbox" value="Ajouter de nouveaux fichiers">Ajouter nouveaux fichiers</label>
+          <label class="check"><input type="checkbox" value="Mettre a jour la logique JS" checked>Mettre a jour logique JS</label>
+          <label class="check"><input type="checkbox" value="Creer ou enrichir des donnees dans js/data" checked>Maj data-js</label>
+          <label class="check"><input type="checkbox" value="Ameliorer UX/UI responsive">Ameliorer UI responsive</label>
+          <label class="check"><input type="checkbox" value="Nettoyer ou refactoriser du code">Refactoriser</label>
+          <label class="check"><input type="checkbox" value="Verifier et executer des tests locaux">Executer tests</label>
+          <label class="check"><input type="checkbox" value="Expliquer les changements avec references de fichiers" checked>Resume technique</label>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="constraints">Contraintes a respecter</label>
+            <textarea id="constraints" placeholder="Ex: Ne pas toucher au menu, garder le style actuel, pas de dependance externe, ASCII only..."></textarea>
+          </div>
+          <div class="field">
+            <label for="acceptance">Definition de termine (done)</label>
+            <textarea id="acceptance" placeholder="Ex: Le jeu fonctionne, donnees chargees, aucun bug console, mobile ok, score sauvegarde..."></textarea>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="mode">Mode de reponse attendu</label>
+          <select id="mode">
+            <option value="execute">Execution directe (modifier les fichiers tout de suite)</option>
+            <option value="plan">Commencer par un mini plan, puis executer</option>
+            <option value="review">Mode review: trouver bugs/risques avant modifs</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>3) Prompt final (copier-coller dans Codex)</h2>
+        <textarea id="output" class="output" placeholder="Clique sur Generer le prompt..."></textarea>
+        <div class="actions">
+          <button class="btn-preset" id="btnPresetRevision">Preset revision complete</button>
+          <button class="btn-main" id="btnGenerate">Generer le prompt</button>
+          <button class="btn-copy" id="btnCopy">Copier</button>
+          <button class="btn-clear" id="btnClear">Vider</button>
+        </div>
+        <div class="status" id="status"></div>
+        <div class="hint">Astuce: garde cette page hors navigation publique. Ouvre-la directement via son chemin: <code>admin/prompt-generator.html</code>.</div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    function inferWorkspacePath() {
+      if (window.location.protocol !== "file:") return "";
+      let pathname = decodeURIComponent(window.location.pathname || "");
+      if (/^\/[A-Za-z]:/.test(pathname)) pathname = pathname.slice(1);
+      pathname = pathname.replace(/\//g, "\\");
+      return pathname.replace(/\\admin\\prompt-generator\.html$/i, "");
+    }
+
+    const pathValue = inferWorkspacePath() || "[chemin-projet-a-remplacer]";
+
+    const $ = (id) => document.getElementById(id);
+
+    function getCheckedValues(containerId) {
+      return [...document.querySelectorAll(`#${containerId} input[type=\"checkbox\"]:checked`)]
+        .map((el) => el.value);
+    }
+
+    function listOrDefault(raw, fallback) {
+      const parts = raw.split(/[,\n;]+/).map(s => s.trim()).filter(Boolean);
+      return parts.length ? parts : [fallback];
+    }
+
+    function setWorkTypes(values) {
+      const wanted = new Set(values);
+      const checks = document.querySelectorAll('#workTypes input[type="checkbox"]');
+      checks.forEach((check) => {
+        check.checked = wanted.has(check.value);
+      });
+    }
+
+    function applyCompleteRevisionPreset() {
+      $("goal").value = "Automatiser au maximum la revision complete du dossier: nettoyer, modifier et supprimer si necessaire.";
+      $("pages").value = "games/*.html";
+      $("scripts").value = "js/*.js";
+      $("dataFiles").value = "js/data/*.js";
+      $("styles").value = "css/*.css";
+      $("constraints").value = "Conserver le comportement actuel, eviter les regressions et garder un code lisible.";
+      $("acceptance").value = "Coherence config/pages/scripts, zero erreur JS, et bilan complet des fichiers modifies/supprimes.";
+      $("mode").value = "review";
+      setWorkTypes([
+        "Modifier des fichiers existants",
+        "Ajouter de nouveaux fichiers",
+        "Mettre a jour la logique JS",
+        "Creer ou enrichir des donnees dans js/data",
+        "Ameliorer UX/UI responsive",
+        "Nettoyer ou refactoriser du code",
+        "Verifier et executer des tests locaux",
+        "Expliquer les changements avec references de fichiers"
+      ]);
+      setStatus("Preset revision complete applique.", "ok");
+    }
+
+    function modeInstruction(mode) {
+      if (mode === "plan") {
+        return "Commence par un plan court (3 a 6 etapes), puis execute les modifications sans attendre ma validation.";
+      }
+      if (mode === "review") {
+        return "Adopte un mode review en priorite: liste bugs/risques/regressions, puis corrige ce qui est necessaire.";
+      }
+      return "Execute directement les modifications dans les fichiers, puis verifie le resultat.";
+    }
+
+    function generatePrompt() {
+      const goal = $("goal").value.trim();
+      const pages = listOrDefault($("pages").value, "games/accueil.html");
+      const scripts = listOrDefault($("scripts").value, "js/shared.js");
+      const dataFiles = listOrDefault($("dataFiles").value, "js/data/*.js");
+      const styles = listOrDefault($("styles").value, "css/*.css");
+      const types = getCheckedValues("workTypes");
+      const constraints = $("constraints").value.trim();
+      const acceptance = $("acceptance").value.trim();
+      const mode = $("mode").value;
+
+      const now = new Date();
+      const stamp = now.toLocaleString("fr-CH");
+
+      const prompt = [
+        "Contexte projet:",
+        `- Dossier de travail: ${pathValue}`,
+        "- Type: site d exercices HTML/CSS/JS avec donnees dans js/data",
+        "",
+        "Mission:",
+        goal ? `- ${goal}` : "- Appliquer une amelioration complete du site en gardant la structure existante.",
+        "",
+        "Perimetre fichiers prioritaires:",
+        `- Pages HTML: ${pages.join(", ")}`,
+        `- Scripts JS: ${scripts.join(", ")}`,
+        `- Data JS: ${dataFiles.join(", ")}`,
+        `- CSS: ${styles.join(", ")}`,
+        "",
+        "Travaux a effectuer:",
+        ...types.map((t) => `- ${t}`),
+        "",
+        "Contraintes:",
+        constraints ? `- ${constraints}` : "- Ne casse rien hors perimetre et preserve le comportement existant.",
+        "- Eviter les regressions UX et verifier les interactions principales.",
+        "- Garder un code lisible, coherent avec le style du projet.",
+        "",
+        "Definition de termine:",
+        acceptance ? `- ${acceptance}` : "- Fonctionne sans erreur console et sans regression visible.",
+        "",
+        "Mode de travail:",
+        `- ${modeInstruction(mode)}`,
+        "- Donne un resume clair des changements avec references de fichiers.",
+        "",
+        "Sortie attendue:",
+        "- Modifs appliquees dans le repo.",
+        "- Liste precise des fichiers modifies/ajoutes.",
+        "- Tests/verifications executes et resultat.",
+        "",
+        `Date de generation du prompt: ${stamp}`
+      ].join("\\n");
+
+      $("output").value = prompt;
+      setStatus("Prompt genere.", "ok");
+    }
+
+    async function copyPrompt() {
+      const text = $("output").value;
+      if (!text.trim()) {
+        setStatus("Rien a copier. Genere un prompt d abord.", "err");
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(text);
+        setStatus("Prompt copie dans le presse-papiers.", "ok");
+      } catch (err) {
+        $("output").focus();
+        $("output").select();
+        setStatus("Copie auto bloquee. Utilise Ctrl+C apres selection.", "err");
+      }
+    }
+
+    function clearAll() {
+      ["goal", "pages", "scripts", "dataFiles", "styles", "constraints", "acceptance", "output"].forEach((id) => {
+        $(id).value = "";
+      });
+
+      setWorkTypes([
+        "Modifier des fichiers existants",
+        "Mettre a jour la logique JS",
+        "Creer ou enrichir des donnees dans js/data",
+        "Expliquer les changements avec references de fichiers"
+      ]);
+
+      $("mode").value = "execute";
+      setStatus("Champs reinitialises.", "ok");
+    }
+
+    function setStatus(message, type) {
+      const el = $("status");
+      el.className = `status ${type || ""}`;
+      el.textContent = message;
+    }
+
+    $("btnPresetRevision").addEventListener("click", applyCompleteRevisionPreset);
+    $("btnGenerate").addEventListener("click", generatePrompt);
+    $("btnCopy").addEventListener("click", copyPrompt);
+    $("btnClear").addEventListener("click", clearAll);
+  </script>
+</body>
+</html>
+

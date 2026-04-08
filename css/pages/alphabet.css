@@ -1,0 +1,143 @@
+﻿/* Auto-extrait depuis games/alphabet.html */
+/* ── KPI ── */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .kpi-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 12px;
+      text-align: center;
+    }
+
+    .kpi-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-top: 4px;
+    }
+
+    /* ── Sortable list ── */
+    .alphabet-zone {
+      background: var(--surface);
+      border: 2px solid var(--accent);
+      border-radius: var(--r-lg);
+      padding: 20px;
+      margin-bottom: 20px;
+      min-height: 300px;
+    }
+
+    .alphabet-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .alphabet-item {
+      background: var(--bg2);
+      border: 2px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 16px;
+      cursor: move;
+      user-select: none;
+      font-weight: 600;
+      color: var(--text1);
+      transition: all 0.2s;
+      touch-action: none;
+    }
+
+    .alphabet-item:hover {
+      border-color: var(--accent);
+      box-shadow: var(--shadow-md);
+      transform: translateX(4px);
+    }
+
+    .alphabet-item.dragging {
+      opacity: 0.6;
+      transform: scale(0.98);
+    }
+
+    .alphabet-item.over {
+      border-color: var(--accent);
+      background: var(--bg3);
+    }
+
+    /* ── Result zone ── */
+    .result-zone {
+      display: none;
+    }
+
+    .result-zone.show {
+      display: block;
+    }
+
+    /* ── Action buttons ── */
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+
+    .action-buttons .btn {
+      min-width: 140px;
+    }
+
+    /* ── Mobile ── */
+    @media (max-width: 600px) {
+      .alphabet-zone {
+        padding: 16px;
+        min-height: 250px;
+      }
+
+      .alphabet-item {
+        padding: 12px;
+        font-size: 14px;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .action-buttons .btn {
+        width: 100%;
+      }
+    }
+
+    @media (min-width: 1200px) {
+      .kpi-card {
+        padding: 16px;
+      }
+
+      .kpi-value {
+        font-size: 28px;
+      }
+
+      .alphabet-zone {
+        padding: 28px;
+        min-height: 360px;
+      }
+
+      .alphabet-list {
+        gap: 12px;
+      }
+
+      .alphabet-item {
+        padding: 18px;
+        font-size: 15px;
+      }
+    }
+
