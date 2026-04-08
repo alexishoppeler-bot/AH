@@ -32,6 +32,10 @@ Le script contrôle notamment :
 - artefacts d'encodage
 - fichiers parasites
 
+En CI, le même contrôle est exécuté automatiquement via :
+
+- `.github/workflows/revision-complete.yml`
+
 ## Documentation complémentaire
 
 - `QUICK_START.md`

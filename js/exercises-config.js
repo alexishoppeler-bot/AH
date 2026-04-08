@@ -55,6 +55,33 @@
     'orientation': '+3 XP arrivee a destination, +2 XP chemin parfait.'
   };
 
+  const CATEGORY_CONTENT_BY_CATEGORY = {
+    Candidature: {
+      title: 'Formulaire et papiers',
+      desc: 'Ecrire les bonnes informations et choisir les bons documents.'
+    },
+    Communication: {
+      title: 'E-mails simples',
+      desc: 'Lire une situation et choisir ou ecrire la bonne reponse.'
+    },
+    Navigation: {
+      title: 'Ordinateur et internet',
+      desc: 'Utiliser les fenetres, les dossiers et les pages internet.'
+    },
+    Langue: {
+      title: 'Lire, ecouter, ecrire',
+      desc: 'Travailler les mots, les lettres, l ecoute et le clavier.'
+    },
+    Competences: {
+      title: 'Petites actions utiles',
+      desc: 'Observer, cliquer, completer et faire une action simple.'
+    },
+    Jeu: {
+      title: 'Apprendre avec le jeu',
+      desc: 'Memoriser, trier, apparier et repondre en jouant.'
+    }
+  };
+
   const meta = {};
   const orderedPages = [];
   const xpByPage = {};
@@ -76,6 +103,7 @@
     orderedPages,
     nonOrderedPages,
     bonusExercises: [],
+    categoryContentByCategory: CATEGORY_CONTENT_BY_CATEGORY,
     xpRules: { byPage: xpByPage },
     apps: [
       {

@@ -236,36 +236,7 @@
       if (!activitiesGrid) return;
 
       const categoryMap = buildCategoryMap(config, orderedPages);
-      const contentByCategory = {
-        'Candidature': {
-          title: 'Formulaire et papiers',
-          desc: 'Ecrire les bonnes informations et choisir les bons documents.'
-        },
-        'Communication': {
-          title: 'E-mails simples',
-          desc: 'Lire une situation et choisir ou ecrire la bonne reponse.'
-        },
-        'Navigation': {
-          title: 'Ordinateur et internet',
-          desc: 'Utiliser les fenetres, les dossiers et les pages internet.'
-        },
-        'Langue': {
-          title: 'Lire, ecouter, ecrire',
-          desc: 'Travailler les mots, les lettres, l ecoute et le clavier.'
-        },
-        'Compétences': {
-          title: 'Petites actions utiles',
-          desc: 'Observer, cliquer, completer et faire une action simple.'
-        },
-        'CompÃ©tences': {
-          title: 'Petites actions utiles',
-          desc: 'Observer, cliquer, completer et faire une action simple.'
-        },
-        'Jeu': {
-          title: 'Apprendre avec le jeu',
-          desc: 'Memoriser, trier, apparier et repondre en jouant.'
-        }
-      };
+      const contentByCategory = (config && config.categoryContentByCategory) || {};
 
       activitiesGrid.innerHTML = Object.keys(categoryMap).map((category) => {
         const info = contentByCategory[category] || {

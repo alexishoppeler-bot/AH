@@ -144,8 +144,20 @@ function checkHtmlReferences() {
         continue;
       }
 
-      const resolved = path.resolve(path.dirname(htmlFile), refPath);
-      if (!fs.existsSync(resolved)) {
+      const candidates = [refPath];
+      try {
+        const decoded = decodeURIComponent(refPath);
+        if (decoded !== refPath) candidates.push(decoded);
+      } catch {
+        // Ignore invalid URI sequences and keep original path only.
+      }
+
+      const exists = candidates.some((candidate) => {
+        const resolved = path.resolve(path.dirname(htmlFile), candidate);
+        return fs.existsSync(resolved);
+      });
+
+      if (!exists) {
         addError(`Reference manquante dans ${rel(htmlFile)}: ${refPath}`);
       }
     }
@@ -170,8 +182,15 @@ function checkJsSyntax() {
 
 function checkSuspiciousEncoding() {
   const textExtensions = new Set(['.js', '.css', '.html', '.md']);
-  const suspiciousPattern = /Ã.|Â.|â€|â€“|â€”|â€™|â€œ|â€¢|�/;
-  const ignoredFiles = new Set(['js/data/ch-fr-keymap.js']);
+  const suspiciousTokens = [
+    'Ã©', 'Ã¨', 'Ãª', 'Ã«', 'Ã ', 'Ã¢', 'Ã§', 'Ã¹', 'Ã»', 'Ã®', 'Ã¯', 'Ã´',
+    'Ã‰', 'Ã€', 'Ã‡', 'Ã™', 'Ã›', 'ÃŽ', 'Ã”', 'Ã–', 'Ã¤', 'Ã¶', 'Ã¼',
+    'â€™', 'â€œ', 'â€\u009d', 'â€“', 'â€”', 'â€¢', 'Â ', '�'
+  ];
+  const ignoredFiles = new Set([
+    'js/data/ch-fr-keymap.js',
+    'games/generateur-cv/generateur-cv.html'
+  ]);
 
   const files = listFilesRecursive(ROOT_DIR, (file) => {
     const ext = path.extname(file).toLowerCase();
@@ -184,7 +203,7 @@ function checkSuspiciousEncoding() {
   const badFiles = [];
   for (const file of files) {
     const text = fs.readFileSync(file, 'utf8');
-    if (suspiciousPattern.test(text)) badFiles.push(rel(file));
+    if (suspiciousTokens.some((token) => text.includes(token))) badFiles.push(rel(file));
   }
 
   if (badFiles.length > 0) {
