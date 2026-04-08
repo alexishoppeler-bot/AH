@@ -13,6 +13,7 @@
     }
     .word-chip:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
     .word-chip.dragging { opacity: 0.4; transform: scale(0.95); }
+    .word-chip.selected { outline: 2px solid var(--accent2); outline-offset: 2px; }
     .word-chip.correct { background: var(--success); color: #fff; border-color: var(--success); cursor: default; }
     .word-chip.wrong   { background: var(--danger);  color: #fff; border-color: var(--danger); }
 
@@ -30,6 +31,37 @@
     #answer-zone.drag-over {
       border-color: var(--accent);
       background: color-mix(in srgb, var(--accent) 8%, var(--bg2));
+    }
+    .move-tools {
+      margin-top: 8px;
+      margin-bottom: 10px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      background: var(--surface2);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .move-selected {
+      font-size: 13px;
+      color: var(--text2);
+      font-weight: 600;
+    }
+    .move-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .move-actions .btn {
+      min-height: 24px;
+      min-width: 24px;
+    }
+    .move-actions .btn[disabled] {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
     .sentence-cat {
       display: inline-block;

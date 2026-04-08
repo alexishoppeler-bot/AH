@@ -58,22 +58,31 @@
             <div class="card-title">&#128221; Phrase &agrave; reconstituer</div>
             <div class="sentence-cat" id="sentence-cat">-</div>
             <div style="font-size:12px;color:var(--text3);margin-bottom:14px;" id="instruction">
-              Glisse un mot sur un autre pour changer l'ordre sur place.
+              Fais glisser un mot pour le placer au bon endroit. Tu peux aussi cliquer un mot puis un second mot pour les echanger, ou utiliser Deplacer a gauche / Deplacer a droite.
             </div>
 
             <!-- Zone de reordonnancement -->
             <div style="margin-bottom:14px;">
-              <div id="answer-zone"></div>
+              <div id="answer-zone" role="list" aria-label="Mots a reordonner"></div>
+            </div>
+
+            <div class="move-tools" aria-label="Controles de deplacement">
+              <div class="move-selected" id="selected-word-label">Mot selectionne : aucun</div>
+              <div class="move-actions">
+                <button class="btn btn-secondary btn-sm" id="btn-move-left" type="button">Deplacer a gauche</button>
+                <button class="btn btn-secondary btn-sm" id="btn-move-right" type="button">Deplacer a droite</button>
+              </div>
             </div>
 
             <!-- Correction -->
-            <div class="correct-sentence" id="correct-sentence"></div>
+            <div class="correct-sentence" id="correct-sentence" aria-live="polite"></div>
 
-            <div id="feedback-demeler" class="feedback-text">&nbsp;</div>
+            <div id="feedback-demeler" class="feedback-text" role="status" aria-live="polite">&nbsp;</div>
 
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
               <button class="btn btn-primary btn-sm" id="btn-check" type="button">V&eacute;rifier</button>
               <button class="btn btn-secondary btn-sm" id="btn-clear" type="button">Effacer</button>
+              <button class="btn btn-secondary btn-sm" id="btn-undo" type="button">Annuler</button>
               <button class="btn btn-secondary btn-sm" id="btn-hint" type="button">Indice (-2 XP si correct)</button>
               <button class="btn btn-ghost btn-sm" id="btn-next" type="button">Suivant</button>
             </div>
@@ -83,7 +92,7 @@
         <!-- Raccourcis -->
         <div class="alert alert-info mt-16 fade-up delay-3">
           <span>&#9000;</span>
-          <div>Raccourcis : <strong>Entr&eacute;e</strong> = V&eacute;rifier - <strong>&Eacute;chap</strong> = Effacer - <strong>H</strong> = Indice - <strong>N</strong> = Suivant</div>
+          <div>Raccourcis : <strong>Entr&eacute;e</strong> = V&eacute;rifier - <strong>&Eacute;chap</strong> = M&eacute;langer - <strong>H</strong> = Indice - <strong>N</strong> = Suivant - <strong>Z</strong> = Annuler - <strong>&larr;/&rarr;</strong> sur un mot = d&eacute;placer</div>
         </div>
 
         <!-- Resultats finaux -->
@@ -93,9 +102,9 @@
             <h2 style="font-family:var(--font-head);font-size:24px;font-weight:800;margin-bottom:8px;" id="resTitle">Exercice termin&eacute; !</h2>
             <p style="color:var(--text2);margin-bottom:24px;" id="resSubtitle"></p>
             <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-            <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;">
+              <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:12px;">
               <button class="btn btn-ghost btn-sm btn-share" type="button">Copier mon résumé</button>
-            </div>
+              </div>
               <button class="btn btn-primary btn-lg" id="btnNextExercise" type="button">Exercice suivant</button>
               <button class="btn btn-secondary btn-lg" id="btn-restart" type="button">Recommencer</button>
               <a href="evaluations.html" class="btn btn-success btn-lg">Évaluations</a>
@@ -126,6 +135,8 @@
   let hintUsed = false;
   let answerWords = [], availableWords = [];
   let dragSrcId = null;
+  let selectedWordId = null;
+  let moveHistory = [];
   let xpRulesShown = false;
 
   /* ── Shuffle ── */
@@ -177,6 +188,8 @@
     const words = s.text.replace(/[.!?]$/, '').split(' ');
     answerWords = shuffle(words.map((w, i) => ({ w, id: i })));
     availableWords = [];
+    selectedWordId = null;
+    moveHistory = [];
     hintUsed = false;
     document.getElementById('sentence-cat').textContent = s.cat;
     document.getElementById('feedback-demeler').textContent = '\u00a0';
@@ -191,6 +204,7 @@
     const az = document.getElementById('answer-zone');
     az.querySelectorAll('.word-chip').forEach(c => c.remove());
     answerWords.forEach(item => az.appendChild(makeChip(item, 'answer')));
+    updateSelectedWordLabel();
   }
 
   /* ── Make chip ── */
@@ -200,6 +214,10 @@
     chip.textContent = item.w;
     chip.dataset.id  = item.id;
     chip.draggable   = true;
+    chip.tabIndex    = 0;
+    chip.setAttribute('role', 'button');
+    chip.setAttribute('aria-label', `Mot ${item.w}`);
+    if (item.id === selectedWordId) chip.classList.add('selected');
 
     /* Drag start */
     chip.addEventListener('dragstart', e => {
@@ -227,13 +245,42 @@
       const targetZone = zone;
 
       if (sourceZone === targetZone) {
+        pushHistory();
         reorderWithinZone(targetZone, dragSrcId.id, item.id, placeBefore);
       } else {
+        pushHistory();
         moveAcrossZones(sourceZone, targetZone, dragSrcId.id, item.id, placeBefore);
       }
 
       renderZones();
       dragSrcId = null;
+    });
+
+    chip.addEventListener('click', () => {
+      if (selectedWordId !== null && selectedWordId !== item.id) {
+        swapWordsById(selectedWordId, item.id);
+        return;
+      }
+      selectedWordId = selectedWordId === item.id ? null : item.id;
+      renderZones();
+    });
+
+    chip.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        selectedWordId = item.id;
+        renderZones();
+        return;
+      }
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        moveWordByKeyboard(item.id, -1);
+        return;
+      }
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        moveWordByKeyboard(item.id, 1);
+      }
     });
 
     return chip;
@@ -295,10 +342,80 @@
   }
 
   function placeInAnswerAt(item, index) {
+    pushHistory();
     answerWords = answerWords.filter(i => i.id !== item.id);
     const safeIndex = Math.max(0, Math.min(index, answerWords.length));
     answerWords.splice(safeIndex, 0, item);
+    selectedWordId = item.id;
     renderZones();
+  }
+
+  function updateSelectedWordLabel() {
+    const current = answerWords.find((i) => i.id === selectedWordId);
+    const label = document.getElementById('selected-word-label');
+    label.textContent = current
+      ? ('Mot selectionne : ' + current.w + ' (clique un autre mot pour echanger)')
+      : 'Mot selectionne : aucun';
+    document.getElementById('btn-move-left').disabled = !current;
+    document.getElementById('btn-move-right').disabled = !current;
+  }
+
+  function moveWordByKeyboard(wordId, delta) {
+    const list = [...answerWords];
+    const from = list.findIndex((i) => i.id === wordId);
+    if (from < 0) return;
+    const to = Math.max(0, Math.min(list.length - 1, from + delta));
+    if (from === to) return;
+    pushHistory();
+    const [moved] = list.splice(from, 1);
+    list.splice(to, 0, moved);
+    answerWords = list;
+    selectedWordId = moved.id;
+    renderZones();
+  }
+
+  function moveSelected(delta) {
+    if (selectedWordId === null) {
+      showToast('Selectionne d abord un mot.', 'info');
+      return;
+    }
+    moveWordByKeyboard(selectedWordId, delta);
+  }
+
+  function swapWordsById(firstId, secondId) {
+    if (firstId === secondId) return;
+    const list = [...answerWords];
+    const firstIndex = list.findIndex((i) => i.id === firstId);
+    const secondIndex = list.findIndex((i) => i.id === secondId);
+    if (firstIndex < 0 || secondIndex < 0) return;
+    pushHistory();
+    [list[firstIndex], list[secondIndex]] = [list[secondIndex], list[firstIndex]];
+    answerWords = list;
+    selectedWordId = secondId;
+    renderZones();
+    showToast('Mots echanges.', 'info');
+  }
+
+  function pushHistory() {
+    moveHistory.push(answerWords.map((i) => ({ ...i })));
+    if (moveHistory.length > 30) moveHistory.shift();
+    updateUndoButton();
+  }
+
+  function undoLastMove() {
+    if (!moveHistory.length) {
+      showToast('Aucun mouvement a annuler.', 'info');
+      return;
+    }
+    answerWords = moveHistory.pop();
+    selectedWordId = null;
+    renderZones();
+    updateUndoButton();
+  }
+
+  function updateUndoButton() {
+    const btn = document.getElementById('btn-undo');
+    if (btn) btn.disabled = moveHistory.length === 0;
   }
 
   /* ── Drop on answer zone ── */
@@ -338,6 +455,7 @@
       fb.className   = 'feedback-text ok';
       const xp = hintUsed ? 3 : 5;
       okCount++; xpCount += xp;
+      selectedWordId = null;
       recordExerciseProgress(PAGE_ID, { correct: 1, typed: 1, errors: 0, xp });
       updateKPI();
       if (!hintUsed) launchConfetti();
@@ -359,6 +477,7 @@
     if (hintUsed) { showToast('Indice d\u00e9j\u00e0 utilis\u00e9.', 'info'); return; }
     const s     = session[idx];
     const words = s.text.replace(/[.!?]$/, '').split(' ');
+    pushHistory();
     // Révéler les 2 premiers mots dans le bon ordre en tête
     const first2 = words.slice(0, 2);
     const orderedStart = [];
@@ -369,6 +488,7 @@
     });
     const remaining = answerWords.filter(i => !usedIds.has(i.id));
     answerWords = [...orderedStart, ...remaining];
+    selectedWordId = orderedStart[0] ? orderedStart[0].id : null;
     hintUsed = true;
     updateKPI();
     showToast('Indice : les 2 premiers mots sont en place (-2 XP si correct).', 'info');
@@ -407,10 +527,16 @@
     promoteExerciseStatus(PAGE_ID, 'in_progress');
 
     document.getElementById('btn-check').addEventListener('click', checkAnswer);
+    document.getElementById('btn-clear').textContent = 'Melanger';
     document.getElementById('btn-clear').addEventListener('click', () => {
+      pushHistory();
       answerWords = shuffle(answerWords);
+      selectedWordId = null;
       renderZones();
     });
+    document.getElementById('btn-undo').addEventListener('click', undoLastMove);
+    document.getElementById('btn-move-left').addEventListener('click', () => moveSelected(-1));
+    document.getElementById('btn-move-right').addEventListener('click', () => moveSelected(1));
     document.getElementById('btn-hint').addEventListener('click', giveHint);
     document.getElementById('btn-next').addEventListener('click', () => { idx++; loadSentence(); });
     document.getElementById('btn-restart').addEventListener('click', () => {
@@ -427,18 +553,15 @@
       if (e.key === 'Enter') checkAnswer();
       if (e.key === 'Escape') {
         answerWords = shuffle(answerWords);
+        selectedWordId = null;
         renderZones();
       }
       if (e.key.toLowerCase() === 'h') giveHint();
       if (e.key.toLowerCase() === 'n') { idx++; loadSentence(); }
+      if (e.key.toLowerCase() === 'z') undoLastMove();
     });
+    updateUndoButton();
   });
   </script>
 </body>
 </html>
-
-
-
-
-
-
