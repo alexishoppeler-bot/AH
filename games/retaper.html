@@ -173,16 +173,71 @@
   const TOTAL   = DATA.length;
 
   let session = {
-    items:     [],
-    index:     0,
-    correct:   0,
-    typed:     0,
-    xp:        0,
-    submitted: false,
-    hintUsed:  false
+    items:      [],
+    index:      0,
+    correct:    0,
+    typed:      0,
+    xp:         0,
+    submitted:  false,
+    hintUsed:   false,
+    currentRef: ''   /* référence normalisée de l'item en cours */
   };
 
   let xpRulesShown = false;
+
+  /* ===== NORMALISATION DES CARACTÈRES ===== */
+  /*
+   * L'OS (macOS, Windows, iOS) remplace automatiquement les apostrophes
+   * droites par des apostrophes courbes, les guillemets droits par des
+   * guillemets typographiques, etc. On normalise le texte saisi avant
+   * comparaison pour que la frappe correcte soit toujours reconnue.
+   * Tous les remplacements sont 1:1 (longueur conservée, curseur intact).
+   */
+  const CHAR_MAP = [
+    [/[\u2018\u201B\u02BC\u02B9\u0060\u00B4\u2032\uFF07]/g, '\u0027'], /* apostrophes courbes → ' */
+    [/\u2019/g, '\u0027'],                                               /* RIGHT SINGLE QUOTATION MARK → ' */
+    [/[\u201C\u201D\u00AB\u00BB\u2033]/g, '\u0022'],                    /* guillemets → " */
+    [/[\u2013\u2014\u2015]/g, '\u002D'],                                 /* tirets longs → - */
+    [/\u00A0/g, '\u0020'],                                               /* espace insécable → espace */
+  ];
+
+  function normalizeInput(str) {
+    let s = str;
+    for (const [re, rep] of CHAR_MAP) s = s.replace(re, rep);
+    return s;
+  }
+
+  /* Normalise la valeur d'un textarea en préservant la position du curseur */
+  function normalizeTextarea(ta) {
+    const pos  = ta.selectionStart;
+    const orig = ta.value;
+    const norm = normalizeInput(orig);
+    if (norm !== orig) {
+      ta.value = norm;
+      try { ta.setSelectionRange(pos, pos); } catch (e) {}
+    }
+  }
+
+  /* Normalise les espaces : espaces multiples, espaces autour des sauts
+     de ligne, et plus de 2 sauts de ligne consécutifs */
+  function normalizeWhitespace(str) {
+    return str
+      .replace(/[ \t]+/g, ' ')       /* espaces/tabs multiples → espace simple */
+      .replace(/ *\n */g, '\n')       /* espaces autour des sauts de ligne      */
+      .replace(/\n{3,}/g, '\n\n')    /* 3+ sauts de ligne → 2 max              */
+      .replace(/^ | $/gm, '')         /* espaces en début/fin de chaque ligne    */
+      .trim();
+  }
+
+  /* Normalise le texte de référence (apostrophes + espaces) */
+  function normalizeRef(str) {
+    return normalizeWhitespace(normalizeInput(str));
+  }
+
+  /* Normalise le texte tapé par l'utilisateur (même règles) */
+  function normalizeTyped(str) {
+    return normalizeWhitespace(normalizeInput(str));
+  }
 
   /* ===== UTILITAIRES ===== */
   function shuffle(arr) {
@@ -248,11 +303,12 @@
     document.getElementById('kpiXP').textContent       = session.xp;
     document.getElementById('kpiProgress').textContent = pct + '%';
 
-    /* Contenu */
+    /* Contenu — normaliser la référence une seule fois ici */
+    session.currentRef = normalizeRef(item.corps);
     document.getElementById('contexteText').textContent = item.contexte;
     document.getElementById('sujetValue').textContent   = item.sujet;
 
-    renderReference(item.corps);
+    renderReference(session.currentRef);
 
     /* Zone de saisie */
     const ta = document.getElementById('typingArea');
@@ -261,7 +317,7 @@
     ta.disabled  = false;
 
     /* Stats */
-    document.getElementById('statTyped').textContent  = '0/' + item.corps.length;
+    document.getElementById('statTyped').textContent  = '0/' + session.currentRef.length;
     document.getElementById('statErrors').textContent = '0';
 
     /* Feedback */
@@ -302,9 +358,11 @@
   function updateComparison() {
     if (session.submitted) return;
 
-    const item  = session.items[session.index];
-    const ref   = item.corps;
-    const typed = document.getElementById('typingArea').value;
+    const ta = document.getElementById('typingArea');
+    normalizeTextarea(ta);  /* remplace apostrophes courbes, guillemets (1:1) */
+
+    const ref   = session.currentRef;
+    const typed = normalizeTyped(ta.value);  /* normalise aussi les espaces */
     const chars = document.querySelectorAll('#refText .ref-char');
 
     let errorCount = 0;
@@ -327,7 +385,6 @@
     document.getElementById('statTyped').textContent  = typed.length + '/' + ref.length;
     document.getElementById('statErrors').textContent = errorCount;
 
-    const ta = document.getElementById('typingArea');
     ta.classList.remove('has-error', 'perfect');
     if (errorCount > 0)       ta.classList.add('has-error');
     else if (typed.length > 0) ta.classList.add('perfect');
@@ -343,9 +400,8 @@
     if (session.submitted) return;
     session.submitted = true;
 
-    const item     = session.items[session.index];
-    const ref      = item.corps;
-    const typed    = document.getElementById('typingArea').value;
+    const ref      = session.currentRef;
+    const typed    = normalizeTyped(document.getElementById('typingArea').value);
     const accuracy = isPerfect ? 100 : calcLocalAccuracy(typed, ref);
 
     session.typed++;
