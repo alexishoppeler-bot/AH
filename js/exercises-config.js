@@ -3,33 +3,33 @@
 (function initExerciseConfig() {
   const nonOrderedPages = ['accueil', 'evaluations', 'regles', 'donnees', 'autoevaluation'];
   const entries = [
-    { page: 'accueil', name: 'Accueil', icon: '🏠', cat: 'Navigation' },
-    { page: 'formulaire', name: 'Formulaire', icon: '📝', cat: 'Candidature' },
-    { page: 'email-ecrire', name: 'Ecrire un e-mail', icon: '✉️', cat: 'Communication' },
-    { page: 'email-pro', name: 'E-mails professionnels', icon: '📧', cat: 'Communication' },
-    { page: 'retaper', name: 'Retaper', icon: '✍️', cat: 'Communication' },
-    { page: 'alphabet', name: 'Alphabet', icon: '🔤', cat: 'Langue' },
-    { page: 'clavier', name: 'Clavier', icon: '⌨️', cat: 'Langue' },
-    { page: 'ecouter', name: 'Ecouter', icon: '🎧', cat: 'Langue' },
-    { page: 'cliquer', name: 'Cliquer', icon: '🖱️', cat: 'Competences' },
-    { page: 'cherche-clique', name: 'Cherche & clique', icon: '🔎', cat: 'Competences' },
-    { page: 'completer', name: 'Completer', icon: '🧩', cat: 'Competences' },
-    { page: 'orientation', name: 'Orientation', icon: '🗺️', cat: 'Jeu' },
-    { page: 'anagramme', name: 'Anagramme', icon: '🔀', cat: 'Jeu' },
-    { page: 'apparier', name: 'Apparier', icon: '🔗', cat: 'Jeu' },
-    { page: 'pendu', name: 'Pendu', icon: '🪢', cat: 'Jeu' },
-    { page: 'vrai-faux', name: 'Vrai / Faux', icon: '✅', cat: 'Jeu' },
-    { page: 'classement', name: 'Classement', icon: '📊', cat: 'Jeu' },
-    { page: 'mots-croises', name: 'Mots croises', icon: '🧱', cat: 'Jeu' },
-    { page: 'mots-meles', name: 'Mots meles', icon: '🔠', cat: 'Jeu' },
-    { page: 'demeler', name: 'Demeler', icon: '🧶', cat: 'Jeu' },
-    { page: 'quiz', name: 'Quiz', icon: '❓', cat: 'Jeu' },
-    { page: 'trier', name: 'Trier', icon: '🗂️', cat: 'Jeu' },
-    { page: 'paire', name: 'Paires', icon: '🃏', cat: 'Jeu' },
-    { page: 'evaluations', name: 'Evaluations', icon: '📈', cat: 'Suivi' },
-    { page: 'regles', name: 'Regles XP', icon: '📏', cat: 'Suivi' },
-    { page: 'donnees', name: 'Donnees', icon: '💾', cat: 'Suivi' },
-    { page: 'autoevaluation', name: 'Autoévaluation', icon: '🧭', cat: 'Suivi' }
+    { page: 'accueil', name: 'Accueil', icon: '🏠', cat: 'Navigation', section: null },
+    { page: 'formulaire', name: 'Formulaire', icon: '📝', cat: 'Candidature', section: 'Recherche d\'emploi' },
+    { page: 'email-ecrire', name: 'Ecrire un e-mail', icon: '✉️', cat: 'Communication', section: 'Recherche d\'emploi' },
+    { page: 'email-pro', name: 'E-mails professionnels', icon: '📧', cat: 'Communication', section: 'Recherche d\'emploi' },
+    { page: 'retaper', name: 'Retaper', icon: '✍️', cat: 'Communication', section: 'Bureautique' },
+    { page: 'alphabet', name: 'Alphabet', icon: '🔤', cat: 'Langue', section: 'Français' },
+    { page: 'clavier', name: 'Clavier', icon: '⌨️', cat: 'Langue', section: 'Bureautique' },
+    { page: 'ecouter', name: 'Ecouter', icon: '🎧', cat: 'Langue', section: 'Français' },
+    { page: 'cliquer', name: 'Cliquer', icon: '🖱️', cat: 'Competences', section: 'Bureautique' },
+    { page: 'cherche-clique', name: 'Cherche & clique', icon: '🔎', cat: 'Competences', section: 'Bureautique' },
+    { page: 'completer', name: 'Completer', icon: '🧩', cat: 'Competences', section: 'Bureautique' },
+    { page: 'orientation', name: 'Orientation', icon: '🗺️', cat: 'Jeu', section: 'Bureautique' },
+    { page: 'anagramme', name: 'Anagramme', icon: '🔀', cat: 'Jeu', section: 'Français' },
+    { page: 'apparier', name: 'Apparier', icon: '🔗', cat: 'Jeu', section: 'Français' },
+    { page: 'pendu', name: 'Pendu', icon: '🪢', cat: 'Jeu', section: 'Français' },
+    { page: 'vrai-faux', name: 'Vrai / Faux', icon: '✅', cat: 'Jeu', section: 'Français' },
+    { page: 'classement', name: 'Classement', icon: '📊', cat: 'Jeu', section: 'Français' },
+    { page: 'mots-croises', name: 'Mots croises', icon: '🧱', cat: 'Jeu', section: 'Français' },
+    { page: 'mots-meles', name: 'Mots meles', icon: '🔠', cat: 'Jeu', section: 'Français' },
+    { page: 'demeler', name: 'Demeler', icon: '🧶', cat: 'Jeu', section: 'Français' },
+    { page: 'quiz', name: 'Quiz', icon: '❓', cat: 'Jeu', section: 'Français' },
+    { page: 'trier', name: 'Trier', icon: '🗂️', cat: 'Jeu', section: 'Français' },
+    { page: 'paire', name: 'Paires', icon: '🃏', cat: 'Jeu', section: 'Français' },
+    { page: 'evaluations', name: 'Evaluations', icon: '📈', cat: 'Suivi', section: null },
+    { page: 'regles', name: 'Regles XP', icon: '📏', cat: 'Suivi', section: null },
+    { page: 'donnees', name: 'Donnees', icon: '💾', cat: 'Suivi', section: null },
+    { page: 'autoevaluation', name: 'Autoévaluation', icon: '🧭', cat: 'Suivi', section: null }
   ];
 
   const XP_RULES_BY_PAGE = {
@@ -93,6 +93,7 @@
       name: e.name,
       icon: e.icon,
       cat: e.cat,
+      section: e.section || null,
       href: e.page + '.html'
     };
     if (!nonOrderedPages.includes(e.page)) {

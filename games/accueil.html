@@ -261,9 +261,12 @@
     function renderCategoryChips(config, orderedPages) {
       const container = document.getElementById('categoryChips');
       if (!container) return;
-      const categoryMap = buildCategoryMap(config, orderedPages);
-      container.innerHTML = Object.keys(categoryMap).map((category) => {
-        return '<span class="category-chip">' + escapeHTML(category) + ' · ' + categoryMap[category].length + '</span>';
+      const sectionMap = buildSectionMap(config, orderedPages);
+      const sectionOrder = ['Bureautique', 'Recherche d\'emploi', 'Français'];
+      const sections = sectionOrder.filter((s) => sectionMap[s]);
+      Object.keys(sectionMap).forEach((s) => { if (!sections.includes(s)) sections.push(s); });
+      container.innerHTML = sections.map((section) => {
+        return '<span class="category-chip">' + escapeHTML(section) + ' · ' + sectionMap[section].length + '</span>';
       }).join('');
     }
 
@@ -273,32 +276,47 @@
 
       cardsContainer.innerHTML = '';
 
-      orderedPages.forEach((page) => {
-        const pageMeta = (config.meta && config.meta[page]) || {};
-        const metrics = window.ScoreManager ? ScoreManager.readMetrics(page) : { status: 'not_started', xp: 0, typed: 0, correct: 0 };
-        const status = metrics.status || 'not_started';
-        const completionText = status === 'completed'
-          ? 'Fini'
-          : (status === 'in_progress' ? 'En cours' : 'Pas commence');
-        const category = pageMeta.cat || 'Exercice';
-        const accuracy = metrics.typed > 0 ? Math.round((metrics.correct / metrics.typed) * 100) : null;
-        const statsText = accuracy !== null ? (metrics.xp || 0) + ' XP · ' + accuracy + '% juste' : (metrics.xp || 0) + ' XP';
-        const isRecommended = nextExercise && nextExercise.page === page;
+      const sectionOrder = ['Bureautique', 'Recherche d\'emploi', 'Français'];
+      const sectionMap = buildSectionMap(config, orderedPages);
+      const sections = sectionOrder.filter((s) => sectionMap[s]);
+      Object.keys(sectionMap).forEach((s) => { if (!sections.includes(s)) sections.push(s); });
 
-        const card = document.createElement('a');
-        card.href = pageMeta.href || (page + '.html');
-        card.className = 'level-card' + (isRecommended ? ' recommended' : '');
-        card.innerHTML = [
-          '<div class="level-card-top">',
-          '  <span class="level-card-category">' + escapeHTML(category) + '</span>',
-          isRecommended ? '  <span class="level-card-flag">Conseille</span>' : '',
-          '</div>',
-          '<h3>' + escapeHTML(pageMeta.name || page) + '</h3>',
-          '<p class="level-card-desc">' + completionText + '</p>',
-          '<div class="level-card-meta">' + escapeHTML(statsText) + '</div>',
-          '<div class="level-card-cta">' + (status === 'completed' ? 'Refaire' : 'Commencer') + ' →</div>'
-        ].join('');
-        cardsContainer.appendChild(card);
+      sections.forEach((section) => {
+        const pages = sectionMap[section];
+        if (!pages || pages.length === 0) return;
+
+        const header = document.createElement('div');
+        header.className = 'section-group-header';
+        header.innerHTML = '<h3 class="section-group-title">' + escapeHTML(section) + '</h3>';
+        cardsContainer.appendChild(header);
+
+        pages.forEach((page) => {
+          const pageMeta = (config.meta && config.meta[page]) || {};
+          const metrics = window.ScoreManager ? ScoreManager.readMetrics(page) : { status: 'not_started', xp: 0, typed: 0, correct: 0 };
+          const status = metrics.status || 'not_started';
+          const completionText = status === 'completed'
+            ? 'Fini'
+            : (status === 'in_progress' ? 'En cours' : 'Pas commence');
+          const category = pageMeta.cat || 'Exercice';
+          const accuracy = metrics.typed > 0 ? Math.round((metrics.correct / metrics.typed) * 100) : null;
+          const statsText = accuracy !== null ? (metrics.xp || 0) + ' XP · ' + accuracy + '% juste' : (metrics.xp || 0) + ' XP';
+          const isRecommended = nextExercise && nextExercise.page === page;
+
+          const card = document.createElement('a');
+          card.href = pageMeta.href || (page + '.html');
+          card.className = 'level-card' + (isRecommended ? ' recommended' : '');
+          card.innerHTML = [
+            '<div class="level-card-top">',
+            '  <span class="level-card-category">' + escapeHTML(category) + '</span>',
+            isRecommended ? '  <span class="level-card-flag">Conseille</span>' : '',
+            '</div>',
+            '<h3>' + escapeHTML(pageMeta.name || page) + '</h3>',
+            '<p class="level-card-desc">' + completionText + '</p>',
+            '<div class="level-card-meta">' + escapeHTML(statsText) + '</div>',
+            '<div class="level-card-cta">' + (status === 'completed' ? 'Refaire' : 'Commencer') + ' →</div>'
+          ].join('');
+          cardsContainer.appendChild(card);
+        });
       });
     }
 
@@ -308,6 +326,16 @@
         const category = pageMeta.cat || 'Autres';
         if (!acc[category]) acc[category] = [];
         acc[category].push({ page: page, name: pageMeta.name || page });
+        return acc;
+      }, {});
+    }
+
+    function buildSectionMap(config, orderedPages) {
+      return orderedPages.reduce((acc, page) => {
+        const pageMeta = (config.meta && config.meta[page]) || {};
+        const section = pageMeta.section || 'Autres';
+        if (!acc[section]) acc[section] = [];
+        acc[section].push(page);
         return acc;
       }, {});
     }

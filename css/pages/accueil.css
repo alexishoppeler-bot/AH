@@ -368,6 +368,24 @@
   gap: 16px;
 }
 
+.section-group-header {
+  grid-column: 1 / -1;
+  margin-top: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--border, #e5e7eb);
+}
+
+.section-group-header:first-child {
+  margin-top: 0;
+}
+
+.section-group-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text1);
+  margin: 0;
+}
+
 .level-card {
   display: flex;
   flex-direction: column;

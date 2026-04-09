@@ -12,15 +12,24 @@
   }
 
   function sectionedLinks() {
+    const orderedPages = (window.EXERCISE_CONFIG && window.EXERCISE_CONFIG.orderedPages) || [];
+    const meta = (window.EXERCISE_CONFIG && window.EXERCISE_CONFIG.meta) || {};
+    const sectionOrder = ['Bureautique', 'Recherche d\'emploi', 'Français'];
+    const sectionMap = {};
+    for (const page of orderedPages) {
+      const section = (meta[page] && meta[page].section) || 'Autres';
+      if (!sectionMap[section]) sectionMap[section] = [];
+      sectionMap[section].push(page);
+    }
+    const exerciseSections = sectionOrder
+      .filter((s) => sectionMap[s])
+      .map((s) => ({ title: s, links: sectionMap[s] }));
+    Object.keys(sectionMap).forEach((s) => {
+      if (!sectionOrder.includes(s)) exerciseSections.push({ title: s, links: sectionMap[s] });
+    });
     return [
-      {
-        title: 'Debut',
-        links: ['accueil', 'evaluations', 'regles', 'donnees', 'autoevaluation']
-      },
-      {
-        title: 'Exercices pas a pas',
-        links: ((window.EXERCISE_CONFIG && window.EXERCISE_CONFIG.orderedPages) || [])
-      }
+      { title: 'Debut', links: ['accueil', 'evaluations', 'regles', 'donnees', 'autoevaluation'] },
+      ...exerciseSections
     ];
   }
 
@@ -61,7 +70,7 @@
         const m = meta[page] || { name: page, href: page + '.html', icon: '•' };
         const active = page === pageId ? ' active' : '';
         let statusAttr = '';
-        if (window.ScoreManager && section.title === 'Exercices pas a pas') {
+        if (window.ScoreManager && ['Bureautique', 'Recherche d\'emploi', 'Français', 'Autres'].includes(section.title)) {
           const status = window.ScoreManager.readMetrics(page).status;
           statusAttr = ' data-status="' + status + '"';
         }
