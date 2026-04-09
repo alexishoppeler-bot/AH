@@ -16,5 +16,11 @@ window.ALPHABET_DATA = [
   { words: ['Arrêt de bus', 'Billet', 'Candidature', 'Disponible', 'Emploi', 'Formation', 'Gare', 'Horaire'], difficulty: 'easy' },
   { words: ['Qualité', 'Renens', 'Salaire', 'Tram', 'Urgence', 'Vevey', 'Yverdon', 'Zone industrielle'], difficulty: 'easy' },
   { words: ['Attestation de domicile', 'Bureau de placement', 'Commune', 'Démarche administrative', 'Entretien d’embauche', 'Formulaire de demande', 'Guichet communal', 'Heure de rendez-vous'], difficulty: 'easy' },
-  { words: ['Informations personnelles', 'Justificatif de domicile', 'Lettre de motivation', 'Montreux', 'Numéro de permis', 'Office régional de placement', 'Poste de travail', 'Recherche d’emploi'], difficulty: 'easy' }
+  { words: ['Informations personnelles', 'Justificatif de domicile', 'Lettre de motivation', 'Montreux', 'Numéro de permis', 'Office régional de placement', 'Poste de travail', 'Recherche d’emploi'], difficulty: 'easy' },
+  { words: ['Allocation', 'Bureau', 'Commune', 'Dossier', 'Entretien', 'Formation', 'Guichet', 'Horaire'], difficulty: 'easy' },
+  { words: ['Agence', 'Billet', 'Contrat', 'Demande', 'Employeur', 'Formateur', 'Guichet', 'Justificatif'], difficulty: 'easy' },
+  { words: ['Appartement', 'Banque', 'Courrier', 'Déménagement', 'Électricité', 'Facture', 'Gérance', 'Habitant'], difficulty: 'easy' },
+  { words: ['Atelier', 'Boulangerie', 'Cuisine', 'Diplôme', 'Entrepôt', 'Formation', 'Livraison', 'Magasin'], difficulty: 'easy' },
+  { words: ['Accès', 'Badge', 'Calendrier', 'Clavier', 'Connexion', 'Dossier', 'Fenêtre', 'Imprimante'], difficulty: 'easy' },
+  { words: ['Assurance', 'Attestation', 'Certificat', 'Convocation', 'Déclaration', 'Dossier', 'Formulaire', 'Signature'], difficulty: 'easy' }
 ];

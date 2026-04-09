@@ -15,6 +15,28 @@ let session = {
 };
 let autoAdvanceTimer = null;
 
+function filledFieldCount(fields) {
+  return fields.reduce((count, field) => {
+    const input = document.getElementById(`field-${field.name}`);
+    return count + (input && input.value.trim() ? 1 : 0);
+  }, 0);
+}
+
+function updateRoundStrip(fields) {
+  const total = fields.length;
+  const done = filledFieldCount(fields);
+  document.getElementById('fieldsCount').textContent = String(total);
+  document.getElementById('fieldsDone').textContent = String(done);
+  document.getElementById('profileStatus').textContent = session.answered
+    ? 'Vérifié'
+    : done === 0
+      ? 'À commencer'
+      : done < total
+        ? 'À compléter'
+        : 'Prêt';
+  document.getElementById('btnValidate').disabled = done === 0 || session.answered;
+}
+
 function clearAutoAdvance() {
   if (autoAdvanceTimer) {
     clearTimeout(autoAdvanceTimer);
@@ -56,6 +78,13 @@ function normalize(text) {
     .replace(/\s+/g, ' ')
     .trim()
     .toLowerCase();
+}
+
+function formatSwissDate(text) {
+  const value = String(text || '').trim();
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return value;
+  return `${match[3]}.${match[2]}.${match[1]}`;
 }
 
 function splitSkillInput(text) {
@@ -152,7 +181,7 @@ function profileRows(round) {
   const fullName = [p.firstName, p.lastName].filter(Boolean).join(' ');
   return [
     ['Nom complet', fullName],
-    ['Date de naissance', p.birthDate || ''],
+    ['Date de naissance', formatSwissDate(p.birthDate || '')],
     ['Situation familiale', p.maritalStatus || ''],
     ['Age', p.age ? `${p.age} ans` : ''],
     ['E-mail', p.email || ''],
@@ -208,9 +237,9 @@ function renderRound() {
   const p = round.profile || {};
   const fullName = [p.firstName, p.lastName].filter(Boolean).join(' ') || 'Candidat';
   document.getElementById('profileTitle').textContent = `Profil : ${fullName}`;
-  document.getElementById('profileIntro').textContent = 'Lisez les informations. Puis completez le formulaire.';
+  document.getElementById('profileIntro').textContent = 'Lisez les informations, puis complétez le formulaire.';
   document.getElementById('formTitle').textContent = 'Formulaire';
-  document.getElementById('formIntro').textContent = 'Ecrivez la meme information que dans le profil.';
+  document.getElementById('formIntro').textContent = 'Remplissez les champs avec les mêmes informations que dans le profil.';
 
   const profileList = document.getElementById('profileList');
   const rows = profileRows(round);
@@ -240,6 +269,14 @@ function renderRound() {
       input.removeAttribute('aria-invalid');
       input.style.borderColor = '';
       input.style.boxShadow = '';
+      updateRoundStrip(fields);
+
+      const missing = fields.length - filledFieldCount(fields);
+      const feedback = document.getElementById('formFeedback');
+      feedback.className = 'form-feedback';
+      feedback.innerHTML = missing > 0
+        ? `Il reste <strong>${missing}</strong> champ${missing > 1 ? 's' : ''} à remplir.`
+        : 'Tous les champs sont remplis. Cliquez sur « Vérifier ».';
     });
 
     wrap.appendChild(label);
@@ -248,16 +285,18 @@ function renderRound() {
   });
 
   const feedback = document.getElementById('formFeedback');
-  feedback.innerHTML = 'Remplissez le formulaire. Puis cliquez sur Verifier.';
+  feedback.className = 'form-feedback';
+  feedback.innerHTML = 'Commencez par lire le profil à gauche, puis remplissez le formulaire à droite.';
 
   const btnValidate = document.getElementById('btnValidate');
-  btnValidate.disabled = false;
+  btnValidate.disabled = true;
 
   const btnNext = document.getElementById('btnNext');
   btnNext.style.display = 'none';
 
   const progress = Math.round((session.index / session.items.length) * 100);
   document.getElementById('progressFill').style.width = `${progress}%`;
+  updateRoundStrip(fields);
   updateKPIs();
 }
 
@@ -287,13 +326,13 @@ function validateRound() {
       input.setAttribute('aria-invalid', 'false');
       input.style.borderColor = 'var(--success)';
       input.style.boxShadow = '0 0 0 3px rgba(52, 211, 153, 0.12)';
-      messages.push(`<div class="feedback-item success">✓ ${escapeHTML(field.label)}: bon.</div>`);
+      messages.push(`<div class="feedback-item success">✓ ${escapeHTML(field.label)} : correct.</div>`);
     } else {
       wrongCount += 1;
       input.setAttribute('aria-invalid', 'true');
       input.style.borderColor = 'var(--danger)';
       input.style.boxShadow = '0 0 0 3px rgba(248, 113, 113, 0.12)';
-      messages.push(`<div class="feedback-item error">✗ ${escapeHTML(field.label)}: il faut "${escapeHTML(expectedRaw)}".</div>`);
+      messages.push(`<div class="feedback-item error">✗ ${escapeHTML(field.label)} : réponse attendue « ${escapeHTML(expectedRaw)} ».</div>`);
     }
 
     input.readOnly = true;
@@ -324,17 +363,21 @@ function validateRound() {
 
   if (isRoundCorrect) {
     const hintPenalty = session.hintsUsed > 0 ? ` (${session.hintsUsed} indice${session.hintsUsed > 1 ? 's' : ''} utilisé${session.hintsUsed > 1 ? 's' : ''})` : '';
-    summary = `<div class="feedback-item success">Bravo. Le formulaire est juste.${hintPenalty} +${awardedXP} XP.</div>`;
+    summary = `<div class="feedback-item success">Bravo, le formulaire est correct.${hintPenalty} +${awardedXP} XP.</div>`;
+    feedback.className = 'form-feedback success-state';
   } else {
     const errorRate = Math.round((wrongCount / fields.length) * 100);
-    summary = `<div class="feedback-item error">Il y a ${wrongCount} erreur${wrongCount > 1 ? 's' : ''} (${errorRate}%). +${awardedXP} XP.</div>`;
+    summary = `<div class="feedback-item error">Il reste ${wrongCount} erreur${wrongCount > 1 ? 's' : ''} (${errorRate} %). +${awardedXP} XP.</div>`;
+    feedback.className = 'form-feedback error-state';
   }
 
   feedback.innerHTML = summary + messages.join('');
 
   const btnValidate = document.getElementById('btnValidate');
   btnValidate.disabled = true;
+  document.getElementById('btnNext').style.display = 'inline-flex';
 
+  updateRoundStrip(fields);
   updateKPIs();
   scheduleAutoAdvance(nextRound);
 }
@@ -352,7 +395,7 @@ function showHint() {
   });
 
   if (!pending.length) {
-    showToast('Tout semble juste.', 'success');
+    showToast('Tout semble correct.', 'success');
     return;
   }
 
@@ -364,15 +407,16 @@ function showHint() {
   const preview = expected.slice(0, hintLength);
 
   const feedback = document.getElementById('formFeedback');
-  const hintType = expected.length <= 10 ? 'la reponse' : 'le debut';
-  feedback.innerHTML = `<div class="feedback-item">Aide : pour <strong>${escapeHTML(target.label)}</strong>, ${hintType} est <strong>${escapeHTML(preview)}${expected.length > hintLength ? '...' : ''}</strong></div>`;
+  feedback.className = 'form-feedback';
+  const hintType = expected.length <= 10 ? 'la réponse' : 'le début';
+  feedback.innerHTML = `<div class="feedback-item">Aide : pour <strong>${escapeHTML(target.label)}</strong>, ${hintType} est <strong>${escapeHTML(preview)}${expected.length > hintLength ? '...' : ''}</strong>.</div>`;
 
   session.hintsUsed += 1;
 }
 
 function nextRound() {
   if (!session.answered) {
-    showToast('Cliquez d abord sur Verifier.', 'info');
+    showToast('Cliquez d’abord sur « Vérifier ».', 'info');
     return;
   }
 
@@ -398,8 +442,8 @@ function finishSession() {
 
   const accuracy = calcAccuracy(session.correct, session.typed);
   document.getElementById('resEmoji').textContent = accuracy >= 80 ? '🏆' : '📝';
-  document.getElementById('resTitle').textContent = accuracy >= 80 ? 'Tres bien' : 'Continuez';
-  document.getElementById('resSubtitle').textContent = `${session.correct} formulaire(s) juste(s) sur ${session.items.length}.`;
+  document.getElementById('resTitle').textContent = accuracy >= 80 ? 'Très bien' : 'Continuez';
+  document.getElementById('resSubtitle').textContent = `${session.correct} formulaire${session.correct > 1 ? 's' : ''} correct${session.correct > 1 ? 's' : ''} sur ${session.items.length}.`;
 
   document.getElementById('resCorrect').textContent = String(session.correct);
   document.getElementById('resErrors').textContent = String(session.errors);
@@ -421,7 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnNextEx = document.getElementById('btnNextExercise');
   const nextEx = getNextExercise(PAGE_ID);
   if (nextEx && nextEx.name && nextEx.href) {
-    btnNextEx.textContent = `Suite : ${nextEx.name}`;
+    btnNextEx.textContent = `Exercice suivant : ${nextEx.name}`;
     btnNextEx.addEventListener('click', () => {
       window.location.href = nextEx.href;
     });
@@ -440,6 +484,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (event.key === 'Enter' && tag === 'INPUT' && !session.answered) {
       event.preventDefault();
       validateRound();
+      return;
+    }
+
+    if (event.key === 'Enter' && session.answered) {
+      event.preventDefault();
+      nextRound();
       return;
     }
 

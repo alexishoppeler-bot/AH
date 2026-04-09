@@ -162,4 +162,74 @@ window.COMPLETER_DATA = [
     choices: ['attestation', 'billet', 'mot de passe', 'stylo'],
     hint: 'Document officiel qui prouve mon adresse.'
   },
+  {
+    category: 'Numérique',
+    text: 'Je clique sur ___ pour lire le message reçu.',
+    answer: 'ouvrir',
+    choices: ['ouvrir', 'effacer', 'copier', 'signer'],
+    hint: 'Action pour afficher le contenu.'
+  },
+  {
+    category: 'E-mail',
+    text: 'J’écris l’___ du message avant le texte.',
+    answer: 'objet',
+    choices: ['objet', 'horaire', 'billet', 'prénom'],
+    hint: 'Petite ligne qui résume le message.'
+  },
+  {
+    category: 'E-mail',
+    text: 'Je joins mon ___ à l’e-mail de candidature.',
+    answer: 'CV',
+    choices: ['CV', 'quai', 'ticket', 'stylo'],
+    hint: 'Document avec l’expérience et la formation.'
+  },
+  {
+    category: 'ORP',
+    text: 'Mon conseiller ORP m’envoie une ___ pour un rendez-vous.',
+    answer: 'convocation',
+    choices: ['convocation', 'photo', 'adresse', 'fenêtre'],
+    hint: 'Message officiel qui demande de venir.'
+  },
+  {
+    category: 'Administratif',
+    text: 'Je prends un ___ à l’entrée pour attendre au guichet.',
+    answer: 'ticket',
+    choices: ['ticket', 'métier', 'quartier', 'contrat'],
+    hint: 'Petit papier avec un numéro.'
+  },
+  {
+    category: 'Santé',
+    text: 'Je montre ma carte d’___ à la réception du cabinet.',
+    answer: 'assurance',
+    choices: ['assurance', 'emploi', 'station', 'signature'],
+    hint: 'Elle sert pour les soins médicaux.'
+  },
+  {
+    category: 'Numérique',
+    text: 'Je tape mon mot de ___ pour ouvrir mon compte.',
+    answer: 'passe',
+    choices: ['passe', 'travail', 'ville', 'route'],
+    hint: 'Code secret de connexion.'
+  },
+  {
+    category: 'Transports',
+    text: 'Je regarde sur quel ___ arrive le train.',
+    answer: 'quai',
+    choices: ['quai', 'bureau', 'papier', 'prénom'],
+    hint: 'Lieu où j’attends le train.'
+  },
+  {
+    category: 'Vie quotidienne',
+    text: 'Je garde mon ___ de caisse après avoir payé.',
+    answer: 'reçu',
+    choices: ['reçu', 'salon', 'guichet', 'métro'],
+    hint: 'Petit document donné après le paiement.'
+  },
+  {
+    category: 'Logement',
+    text: 'Je contacte la ___ si j’ai un problème dans mon appartement.',
+    answer: 'gérance',
+    choices: ['gérance', 'gare', 'poste', 'cuisine'],
+    hint: 'Service qui gère l’immeuble.'
+  },
 ];

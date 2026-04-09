@@ -79,7 +79,7 @@ function renderCase() {
 
   const feedback = document.getElementById('mailFeedback');
   feedback.className = 'mail-feedback';
-  feedback.textContent = 'Lis la situation. Puis choisis un e-mail.';
+  feedback.textContent = 'Lisez la situation, puis choisissez l’e-mail le plus adapté.';
 
   const pct = Math.round((session.index / session.items.length) * 100);
   document.getElementById('progressFill').style.width = pct + '%';
@@ -132,15 +132,16 @@ function answer(idx) {
     session.xp += 3;
     buttons[idx].classList.add('correct');
     recordExerciseProgress(PAGE_ID, { correct: 1, typed: 1, errors: 0, xp: 3 });
-    showFeedback(true, current.correctFeedback || 'C est le bon choix.');
+    showFeedback(true, current.correctFeedback || 'C’est le bon choix.');
   } else {
     session.errors += 1;
     buttons[idx].classList.add('wrong');
     if (buttons[current.answer]) buttons[current.answer].classList.add('correct');
     recordExerciseProgress(PAGE_ID, { correct: 0, typed: 1, errors: 1, xp: 0 });
-    showFeedback(false, current.choices[idx].reasonIfWrong || 'Ce choix n est pas le bon.');
+    showFeedback(false, current.choices[idx].reasonIfWrong || 'Ce choix n’est pas le bon.');
   }
 
+  document.getElementById('btnNext').style.display = 'inline-flex';
   updateKPIs();
   scheduleAutoAdvance(nextCase);
 }
@@ -148,7 +149,7 @@ function answer(idx) {
 function showFeedback(ok, text) {
   const feedback = document.getElementById('mailFeedback');
   feedback.className = 'mail-feedback ' + (ok ? 'ok' : 'err');
-  feedback.textContent = (ok ? 'Bonne reponse. ' : 'Ce n est pas la bonne reponse. ') + text;
+  feedback.textContent = (ok ? 'Bonne réponse. ' : 'Ce n’est pas la bonne réponse. ') + text;
 }
 
 function nextCase() {
@@ -167,8 +168,8 @@ function finish() {
 
   const accuracy = calcAccuracy(session.correct, session.typed);
   document.getElementById('resEmoji').textContent = accuracy >= 80 ? '🏆' : '✉️';
-  document.getElementById('resTitle').textContent = accuracy >= 80 ? 'Tres bien' : 'Continuez';
-  document.getElementById('resSubtitle').textContent = `${session.correct} bonne reponse sur ${session.items.length} exercice(s).`;
+  document.getElementById('resTitle').textContent = accuracy >= 80 ? 'Très bien' : 'Continuez';
+  document.getElementById('resSubtitle').textContent = `${session.correct} bonne réponse${session.correct > 1 ? 's' : ''} sur ${session.items.length} exercice${session.items.length > 1 ? 's' : ''}.`;
   document.getElementById('resCorrect').textContent = session.correct;
   document.getElementById('resErrors').textContent = session.errors;
   document.getElementById('resXP').textContent = session.xp;
@@ -189,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const nextEx = getNextExercise(PAGE_ID);
   if (nextEx && nextEx.name && nextEx.href) {
     btnNextEx.addEventListener('click', () => { window.location.href = nextEx.href; });
-    btnNextEx.textContent = 'Suite : ' + nextEx.name;
+    btnNextEx.textContent = 'Exercice suivant : ' + nextEx.name;
   } else {
     btnNextEx.style.display = 'none';
   }
@@ -201,6 +202,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.target && e.target.tagName === 'INPUT') return;
     const map = { '1': 0, '2': 1, '3': 2, '4': 3 };
     if (!session.answered && Object.prototype.hasOwnProperty.call(map, e.key)) answer(map[e.key]);
+    if (e.key === 'Enter' && session.answered) nextCase();
   });
 
   startSession();

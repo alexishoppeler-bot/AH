@@ -60,9 +60,28 @@ window.VRAI_FAUX_DATA = [
 
   { category: 'Téléphone', difficulty: 'easy', statement: 'Si je suis en retard, je peux téléphoner pour prévenir.', answer: true, explication: 'Prévenir en cas de retard est une attitude responsable.' },
 
-  { category: 'Téléphone', difficulty: 'easy', statement: 'Si je suis en retard, je ne dois rien dire.', answer: false, explication: 'Il faut prévenir rapidement si vous êtes en retard.' }
-];
+  { category: 'Téléphone', difficulty: 'easy', statement: 'Si je suis en retard, je ne dois rien dire.', answer: false, explication: 'Il faut prévenir rapidement si vous êtes en retard.' },
 
+  { category: 'Formulaire', difficulty: 'easy', statement: 'Un champ obligatoire peut rester vide.', answer: false, explication: 'Un champ obligatoire doit être rempli pour valider le formulaire.' },
+
+  { category: 'Formulaire', difficulty: 'easy', statement: 'Il est utile de relire un formulaire avant de le signer.', answer: true, explication: 'Relire permet de corriger les erreurs avant l’envoi.' },
+
+  { category: 'E-mail', difficulty: 'easy', statement: 'Dans un e-mail professionnel, l’objet doit être clair.', answer: true, explication: 'Un objet clair aide le destinataire à comprendre rapidement le sujet.' },
+
+  { category: 'E-mail', difficulty: 'easy', statement: 'Si une pièce jointe est demandée, je peux oublier de la mentionner.', answer: false, explication: 'Il vaut mieux annoncer clairement la pièce jointe dans le message.' },
+
+  { category: 'Administratif', difficulty: 'easy', statement: 'Pour une démarche administrative, écrire seulement son prénom suffit toujours.', answer: false, explication: 'Une signature complète est généralement préférable dans ce contexte.' },
+
+  { category: 'Trajet', difficulty: 'easy', statement: 'Avant un rendez-vous, vérifier l’adresse et l’heure est utile.', answer: true, explication: 'Cela permet d’arriver au bon endroit et à l’heure.' },
+
+  { category: 'ORP', difficulty: 'easy', statement: 'Si l’ORP demande un document avant une date limite, il vaut mieux répondre dans le délai.', answer: true, explication: 'Respecter le délai aide à garder le dossier complet et à jour.' },
+
+  { category: 'Adresse', difficulty: 'easy', statement: 'Le code postal fait partie de l’adresse.', answer: true, explication: 'Le code postal complète l’adresse avec la ville.' },
+
+  { category: 'Numérique', difficulty: 'easy', statement: 'Quand un site affiche un message d’erreur, il faut vérifier les champs.', answer: true, explication: 'Le message signale souvent une information manquante ou incorrecte.' },
+
+  { category: 'Transports', difficulty: 'easy', statement: 'Un billet ou un abonnement peut être nécessaire avant de monter dans le train.', answer: true, explication: 'Selon la situation, il faut un titre de transport valide avant le départ.' }
+];
 
 
 

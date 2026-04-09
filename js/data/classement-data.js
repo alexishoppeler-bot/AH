@@ -62,4 +62,34 @@ window.CLASSEMENT_DATA = [
     label: 'Dans l’ordre logique',
     items: ['Allumer l’ordinateur', 'Attendre le démarrage', 'Ouvrir une session', 'Cliquer sur un programme', 'Commencer le travail'],
   },
+  {
+    category: 'Candidature',
+    question: 'Envoyer une candidature par e-mail',
+    label: 'Dans l’ordre logique',
+    items: ['Ouvrir la messagerie', 'Écrire l’objet', 'Rédiger le message', 'Joindre les documents', 'Cliquer sur envoyer'],
+  },
+  {
+    category: 'ORP',
+    question: 'Répondre à une demande de l’ORP',
+    label: 'Dans l’ordre logique',
+    items: ['Lire le message', 'Préparer le document demandé', 'Écrire la réponse', 'Joindre le document', 'Envoyer le message'],
+  },
+  {
+    category: 'Santé',
+    question: 'Prendre rendez-vous chez le médecin',
+    label: 'Dans l’ordre logique',
+    items: ['Choisir le cabinet', 'Téléphoner', 'Expliquer la demande', 'Noter la date et l’heure', 'Se présenter au rendez-vous'],
+  },
+  {
+    category: 'Logement',
+    question: 'Signaler un problème à la gérance',
+    label: 'Dans l’ordre logique',
+    items: ['Observer le problème', 'Chercher les coordonnées', 'Téléphoner ou écrire', 'Expliquer le problème', 'Noter la réponse'],
+  },
+  {
+    category: 'Numérique',
+    question: 'Se connecter à un compte en ligne',
+    label: 'Dans l’ordre logique',
+    items: ['Ouvrir le site', 'Entrer l’identifiant', 'Entrer le mot de passe', 'Cliquer sur connexion', 'Vérifier que la page s’ouvre'],
+  },
 ];

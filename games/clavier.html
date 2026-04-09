@@ -30,6 +30,20 @@
                   style="margin-top:12px;">⌨️ Mode Entraînement</button>
         </div>
 
+        <div class="keyboard-options fade-up delay-1" aria-label="Options de l'exercice clavier">
+          <label class="keyboard-option">
+            <span>Niveau</span>
+            <select id="level-select">
+              <option value="debutant">Débutant</option>
+              <option value="intermediaire">Intermédiaire</option>
+              <option value="avance">Avancé</option>
+              <option value="tous">Tous les niveaux</option>
+            </select>
+          </label>
+          <button class="btn btn-ghost btn-sm" id="btn-session-size" type="button">Session courte : oui</button>
+          <div class="keyboard-option-note" id="level-note">Phrases courtes pour commencer. Change de niveau quand tu veux.</div>
+        </div>
+
         <!-- KPI -->
         <div class="kpi-grid fade-up delay-1">
           <div class="kpi-card" style="display:none;">
@@ -52,6 +66,10 @@
             <div class="kpi-val" id="sc-xp">0 XP</div>
             <div class="kpi-lbl">XP gagné</div>
           </div>
+          <div class="kpi-card">
+            <div class="kpi-val" id="sc-skipped">0</div>
+            <div class="kpi-lbl">Passées</div>
+          </div>
         </div>
 
         <!-- Progression -->
@@ -73,8 +91,14 @@
         <div class="exercise-zone fade-up delay-2">
           <div class="feedback-text" id="feedback-text">&nbsp;</div>
           <div class="exercise-phrase" id="phrase-display"></div>
-          <input type="text" id="typing-input" placeholder="Commence à taper ici…"
+          <div class="typing-target-row" aria-live="polite">
+            <span>Prochain : <strong id="next-char-display">—</strong></span>
+            <span>Doigt : <strong id="finger-guide-display">—</strong></span>
+            <span>Reste dans la phrase : <strong id="remaining-char-display">0</strong></span>
+          </div>
+          <input type="text" id="typing-input" placeholder="Votre texte apparaît ici…"
             autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+          <div class="input-helper">Le texte correct reste dans cette case. En cas d'erreur, regarde le caractère bleu et recommence cette touche.</div>
           <div id="wpm-live"></div>
           <div id="shift-hint"></div>
           <div style="margin-top:14px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
@@ -179,7 +203,7 @@
           </div>
           <!-- Row 4: lower -->
           <div class="keyboard-row">
-            <div class="key wide-3" data-key="Shift">⇧ Maj</div>
+            <div class="key wide-3" data-key="Shift" data-side="left">⇧ Maj gauche</div>
             <div class="key duo" data-key="<" data-shift=">"><span class="key-top">&gt;</span><span class="key-btm">&lt;</span></div>
             <div class="key" data-key="y">y</div><div class="key" data-key="x">x</div>
             <div class="key" data-key="c">c</div><div class="key" data-key="v">v</div>
@@ -188,7 +212,7 @@
             <div class="key duo" data-key="," data-shift=";"><span class="key-top">;</span><span class="key-btm">,</span></div>
             <div class="key duo" data-key="." data-shift=":"><span class="key-top">:</span><span class="key-btm">.</span></div>
             <div class="key duo" data-key="-" data-shift="_"><span class="key-top">_</span><span class="key-btm">-</span></div>
-            <div class="key wide-3" data-key="Shift">⇧ Maj</div>
+            <div class="key wide-3" data-key="Shift" data-side="right">⇧ Maj</div>
           </div>
           <!-- Row 5: space -->
           <div class="keyboard-row">
@@ -228,6 +252,7 @@
         </div>
       </div>
       <div class="modal-text" id="resSubtitle"></div>
+      <div class="keyboard-result-details" id="keyboard-result-details"></div>
       <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:16px;">
         <a href="cliquer.html" class="btn btn-primary" id="btnNextExercise">Exercice suivant</a>
         <button class="btn btn-secondary" id="modal-restart" type="button">Rejouer</button>
@@ -253,11 +278,29 @@
   const CORPUS = Array.isArray(CORPUS_BY_LEVEL)
     ? CORPUS_BY_LEVEL
     : Object.values(CORPUS_BY_LEVEL).flat().filter(Boolean);
+  const SHORT_PHRASE_COUNT = 8;
+  const LEVEL_NOTES = {
+    debutant: 'Phrases courtes pour commencer. Change de niveau quand tu veux.',
+    intermediaire: 'Phrases plus longues avec e-mails, formulaires, rendez-vous et transports.',
+    avance: 'Phrases longues : précision, accents et vocabulaire professionnel.',
+    tous: 'Mélange de tous les niveaux. Les phrases faciles apparaissent aussi.'
+  };
 
   let phrases    = [];
   let phraseIdx  = 0;
   let inputPos   = 0;
   let totalCorrect = 0, totalTyped = 0, totalErrors = 0, totalXP = 0;
+  let totalSkipped = 0;
+  let wrongFlashIndex = -1;
+  let phraseHadError = false;
+  let perfectPhrases = 0;
+  let hardestPhrase = '';
+  let hardestPhraseErrors = 0;
+  let currentPhraseErrors = 0;
+  let phraseSkipped = false;
+  let errorByExpectedChar = {};
+  let currentLevel = 'debutant';
+  let shortSession = true;
   let startTime  = null;
   let phraseStartTime = null;
   let wpmInterval    = null;
@@ -286,6 +329,76 @@
     clearInterval(wpmInterval);
   }
 
+  function getLevelCorpus() {
+    if (currentLevel === 'tous' || Array.isArray(CORPUS_BY_LEVEL)) return CORPUS;
+    return CORPUS_BY_LEVEL[currentLevel] || CORPUS;
+  }
+
+  function buildPhraseSet() {
+    const source = shuffle(getLevelCorpus());
+    return shortSession ? source.slice(0, SHORT_PHRASE_COUNT) : source;
+  }
+
+  function formatExpectedChar(ch) {
+    if (!ch) return '—';
+    if (ch === ' ') return 'Espace';
+    return ch;
+  }
+
+  function fingerGuideForChar(ch) {
+    const normalized = normalizeApostrophe(ch || '').toLowerCase();
+    const guides = {
+      a: 'auriculaire gauche', q: 'auriculaire gauche', w: 'auriculaire gauche', y: 'auriculaire gauche',
+      s: 'annulaire gauche', x: 'annulaire gauche',
+      d: 'majeur gauche', e: 'majeur gauche', c: 'majeur gauche',
+      f: 'index gauche', g: 'index gauche', r: 'index gauche', t: 'index gauche', v: 'index gauche', b: 'index gauche',
+      h: 'index droit', j: 'index droit', z: 'index droit', u: 'index droit', n: 'index droit', m: 'index droit',
+      k: 'majeur droit', i: 'majeur droit',
+      l: 'annulaire droit', o: 'annulaire droit',
+      p: 'auriculaire droit',
+      'é': 'auriculaire droit', 'è': 'auriculaire droit', 'à': 'auriculaire droit',
+      ',': 'majeur droit', '.': 'annulaire droit', '-': 'auriculaire droit', "'": 'auriculaire droit'
+    };
+    if (ch === ' ') return 'pouce';
+    if (/[A-ZÀ-ÖØ-Þ]/.test(ch || '')) return 'Maj + ' + (guides[normalized] || 'doigt de la lettre');
+    if (/[0-9]/.test(ch || '')) return 'rangée des chiffres';
+    return guides[normalized] || 'regarde la touche bleue';
+  }
+
+  function keyLabel(ch) {
+    return ch === ' ' ? 'espace' : formatExpectedChar(ch);
+  }
+
+  function recordExpectedError(ch) {
+    const label = keyLabel(ch);
+    errorByExpectedChar[label] = (errorByExpectedChar[label] || 0) + 1;
+  }
+
+  function topProblemKeys() {
+    return Object.entries(errorByExpectedChar)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([label, count]) => label + ' (' + count + ')');
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function acceptedText() {
+    return (phrases[phraseIdx] || '').slice(0, inputPos);
+  }
+
+  function syncInputToAcceptedText() {
+    inputEl.value = acceptedText();
+    try { inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length); } catch (_) {}
+  }
+
   /* ── WPM live ── */
   function startWPMInterval() {
     clearInterval(wpmInterval);
@@ -306,8 +419,9 @@
     phraseEl.innerHTML = phrase.split('').map((ch, i) => {
       let cls = '';
       if (i < inputPos)      cls = 'correct';
+      else if (i === wrongFlashIndex) cls = 'wrong';
       else if (i === inputPos) cls = 'current';
-      return `<span class="char ${cls}" data-idx="${i}">${ch === ' ' ? '\u00a0' : ch}</span>`;
+      return `<span class="char ${cls}" data-idx="${i}">${ch === ' ' ? '\u00a0' : escapeHtml(ch)}</span>`;
     }).join('');
     highlightKey(phrase[inputPos]);
     updateCounters();
@@ -318,14 +432,21 @@
     document.getElementById('sc-phrase').textContent    = (phraseIdx + 1) + '/' + phrases.length;
     document.getElementById('sc-correct').textContent   = totalCorrect;
     document.getElementById('sc-errors').textContent    = totalErrors;
+    document.getElementById('sc-skipped').textContent   = totalSkipped;
     const acc = totalTyped > 0 ? Math.round(totalCorrect / totalTyped * 100) : 100;
     document.getElementById('sc-accuracy').textContent  = acc + '%';
     document.getElementById('sc-xp').textContent        = totalXP + ' XP';
     document.getElementById('qNum').textContent         = phrases.length > 0 ? Math.min(phraseIdx + 1, phrases.length) : 0;
     document.getElementById('qTotal').textContent       = phrases.length;
-    const pct = Math.round(phraseIdx / phrases.length * 100);
+    const pct = phrases.length > 0 ? Math.round(phraseIdx / phrases.length * 100) : 0;
     document.getElementById('prog-pct').textContent     = pct + '%';
     document.getElementById('progressFill').style.width = pct + '%';
+
+    const phrase = phrases[phraseIdx] || '';
+    const expected = phrase[inputPos] || '';
+    document.getElementById('next-char-display').textContent = formatExpectedChar(expected);
+    document.getElementById('finger-guide-display').textContent = fingerGuideForChar(expected);
+    document.getElementById('remaining-char-display').textContent = Math.max(0, phrase.length - inputPos);
   }
 
   /* ── Highlight key ── */
@@ -364,7 +485,7 @@
     if (isUpper) { shiftNeeded = true; baseHint = expectedChar.toLowerCase(); }
 
     if (shiftNeeded) {
-      document.querySelectorAll('.key[data-key="Shift"]').forEach(k => k.classList.add('highlight'));
+      document.querySelectorAll('.key[data-key="Shift"][data-side="left"]').forEach(k => k.classList.add('highlight', 'highlight-shift'));
       if (hintEl && baseHint) hintEl.textContent = 'Maj + ' + baseHint + ' → ' + expectedChar;
     }
   }
@@ -372,10 +493,34 @@
   /* ── Input handler ── */
   function onInput() {
     const phrase = phrases[phraseIdx];
-    const typed  = inputEl.value;
-    if (!typed.length) return;
+    if (!phrase) return;
 
-    const lastChar = typed[typed.length - 1];
+    const raw = inputEl.value;
+    const expectedPrefix = acceptedText();
+
+    if (!raw.startsWith(expectedPrefix)) {
+      syncInputToAcceptedText();
+      return;
+    }
+
+    const pending = raw.slice(inputPos);
+    if (!pending.length) {
+      syncInputToAcceptedText();
+      return;
+    }
+
+    for (const typedChar of pending) {
+      if (processTypedChar(typedChar)) {
+        return;
+      }
+    }
+
+    syncInputToAcceptedText();
+    renderPhrase();
+  }
+
+  function processTypedChar(lastChar) {
+    const phrase = phrases[phraseIdx];
     const expected = phrase[inputPos];
     const typedNormalized = normalizeApostrophe(lastChar);
     const expectedNormalized = normalizeApostrophe(expected);
@@ -383,6 +528,7 @@
     totalTyped++;
 
     if (typedNormalized === expectedNormalized) {
+      wrongFlashIndex = -1;
       totalCorrect++;
       totalXP++;
       inputPos++;
@@ -402,29 +548,28 @@
 
       // Phrase finie ?
       if (inputPos >= phrase.length) {
-        clearInterval(wpmInterval);
-        phraseIdx++;
-        inputPos = 0;
-        inputEl.value = '';
-        inputEl.classList.remove('correct', 'wrong');
-
-        if (phraseIdx >= phrases.length) {
-          finishExercise(); return;
-        }
-        feedbackEl.textContent = '🎉 Phrase suivante !';
-        feedbackEl.className   = 'feedback-text ok';
-        setTimeout(() => { feedbackEl.textContent = '\u00a0'; }, 1500);
-        phraseStartTime = performance.now();
-        startWPMInterval();
+        syncInputToAcceptedText();
+        advancePhrase('🎉 Phrase suivante !');
+        return true;
       }
     } else {
+      phraseHadError = true;
+      currentPhraseErrors++;
+      recordExpectedError(expected);
+      wrongFlashIndex = inputPos;
       totalErrors++;
       inputEl.classList.remove('correct');
       inputEl.classList.add('wrong');
-      feedbackEl.textContent = '❌ Erreur !';
+      feedbackEl.textContent = '❌ Attendu : ' + formatExpectedChar(expected) + ' · tapé : ' + formatExpectedChar(lastChar);
       feedbackEl.className   = 'feedback-text err';
       recordExerciseProgress(PAGE_ID, { correct: 0, typed: 1, errors: 1, xp: 0 });
-      setTimeout(() => inputEl.classList.remove('wrong'), 300);
+      setTimeout(() => {
+        inputEl.classList.remove('wrong');
+        if (wrongFlashIndex === inputPos) {
+          wrongFlashIndex = -1;
+          renderPhrase();
+        }
+      }, 450);
 
       // Flash error key
       document.querySelectorAll('.key').forEach(k => {
@@ -433,10 +578,49 @@
           setTimeout(() => k.classList.remove('error'), 200);
         }
       });
+      syncInputToAcceptedText();
+    }
+    return false;
+  }
+
+  function advancePhrase(message) {
+    clearInterval(wpmInterval);
+    const completedPhrase = phrases[phraseIdx] || '';
+    if (currentPhraseErrors > hardestPhraseErrors) {
+      hardestPhraseErrors = currentPhraseErrors;
+      hardestPhrase = completedPhrase;
+    }
+    if (completedPhrase && !phraseHadError && !phraseSkipped) {
+      const bonus = 5;
+      perfectPhrases++;
+      totalXP += bonus;
+      recordExerciseProgress(PAGE_ID, { correct: 1, typed: 1, errors: 0, xp: bonus });
+      message = 'Phrase parfaite ! Bonus +' + bonus + ' XP';
     }
 
+    phraseIdx++;
+    inputPos = 0;
+    wrongFlashIndex = -1;
+    phraseHadError = false;
+    phraseSkipped = false;
+    currentPhraseErrors = 0;
     inputEl.value = '';
+    inputEl.classList.remove('correct', 'wrong');
+
+    if (phraseIdx >= phrases.length) {
+      finishExercise();
+      return;
+    }
+
+    feedbackEl.textContent = message || 'Phrase suivante !';
+    feedbackEl.className = 'feedback-text ok';
+    setTimeout(() => {
+      if (!trainActive) feedbackEl.textContent = '\u00a0';
+    }, 1500);
+    phraseStartTime = performance.now();
+    startWPMInterval();
     renderPhrase();
+    inputEl.focus();
   }
 
   /* ── Finish ── */
@@ -457,7 +641,8 @@
     document.getElementById('result-ring-lbl').textContent = acc + '%';
 
     document.getElementById('resSubtitle').textContent =
-      `${totalCorrect} correctes · ${totalErrors} erreurs · Précision ${acc}% · ${wpm} mots/min · ${totalXP} XP`;
+      `${totalCorrect} correctes · ${totalErrors} erreurs · ${totalSkipped} passées · Précision ${acc}% · ${wpm} mots/min · ${totalXP} XP`;
+    renderResultDetails(acc);
 
     updateCounters();
     document.getElementById('prog-pct').textContent  = '100%';
@@ -469,22 +654,52 @@
     if (acc >= 80) launchConfetti();
   }
 
+  function renderResultDetails(acc) {
+    const details = document.getElementById('keyboard-result-details');
+    const keys = topProblemKeys();
+    const nextTip = keys.length
+      ? 'Recommence le mode entraînement avec ces touches : ' + keys.join(', ') + '.'
+      : 'Aucune touche difficile repérée dans cette session.';
+    const difficult = hardestPhrase
+      ? 'Phrase la plus difficile : "' + hardestPhrase + '" (' + hardestPhraseErrors + ' erreur' + (hardestPhraseErrors > 1 ? 's' : '') + ').'
+      : 'Aucune phrase difficile repérée.';
+
+    details.innerHTML = [
+      '<div><strong>Phrases parfaites :</strong> ' + perfectPhrases + ' / ' + phrases.length + '</div>',
+      '<div><strong>Touches à travailler :</strong> ' + (keys.length ? keys.join(', ') : 'aucune') + '</div>',
+      '<div><strong>À refaire :</strong> ' + escapeHtml(difficult) + '</div>',
+      '<div><strong>Prochaine étape :</strong> ' + escapeHtml(acc >= 90 ? 'Passe au niveau suivant ou essaie une session complète.' : nextTip) + '</div>'
+    ].join('');
+  }
+
   /* ── Restart ── */
   function restart() {
     stopTracking();
-    phrases      = shuffle(CORPUS);
+    phrases      = buildPhraseSet();
     phraseIdx    = 0;
     inputPos     = 0;
     totalCorrect = 0;
     totalTyped   = 0;
     totalErrors  = 0;
     totalXP      = 0;
+    totalSkipped = 0;
+    wrongFlashIndex = -1;
+    phraseHadError = false;
+    phraseSkipped = false;
+    perfectPhrases = 0;
+    hardestPhrase = '';
+    hardestPhraseErrors = 0;
+    currentPhraseErrors = 0;
+    errorByExpectedChar = {};
     inputEl.value = '';
     inputEl.classList.remove('correct', 'wrong');
     feedbackEl.textContent = '\u00a0';
     wpmEl.textContent      = '';
     document.getElementById('progressFill').style.width = '0%';
     document.getElementById('modal-success').classList.remove('show');
+    document.getElementById('btn-session-size').textContent = shortSession ? 'Session courte : oui' : 'Session courte : non';
+    document.getElementById('level-select').value = currentLevel;
+    document.getElementById('level-note').textContent = LEVEL_NOTES[currentLevel] || LEVEL_NOTES.debutant;
     promoteExerciseStatus(PAGE_ID, 'in_progress');
 
     // Afficher les règles XP seulement à la première session
@@ -506,6 +721,17 @@
     inputEl.focus();
   }
 
+  function skipCurrentPhrase() {
+    if (!phrases.length) return;
+    totalSkipped++;
+    totalErrors++;
+    phraseHadError = true;
+    phraseSkipped = true;
+    currentPhraseErrors++;
+    recordExerciseProgress(PAGE_ID, { correct: 0, typed: 1, errors: 1, xp: 0 });
+    advancePhrase('Phrase passée. On continue doucement.');
+  }
+
   /* ── Boot ── */
   document.addEventListener('DOMContentLoaded', () => {
     // Bouton "Exercice suivant recommandé"
@@ -522,18 +748,18 @@
     restart();
     inputEl.addEventListener('input', onInput);
 
-    document.getElementById('btn-skip').addEventListener('click', () => {
-      phraseIdx = (phraseIdx + 1) % phrases.length;
-      inputPos  = 0;
-      inputEl.value = '';
-      inputEl.classList.remove('correct', 'wrong');
-      phraseStartTime = performance.now();
-      renderPhrase();
-      inputEl.focus();
-    });
+    document.getElementById('btn-skip').addEventListener('click', skipCurrentPhrase);
 
     document.getElementById('btn-restart').addEventListener('click', restart);
     document.getElementById('modal-restart').addEventListener('click', restart);
+    document.getElementById('btn-session-size').addEventListener('click', () => {
+      shortSession = !shortSession;
+      restart();
+    });
+    document.getElementById('level-select').addEventListener('change', e => {
+      currentLevel = e.target.value;
+      restart();
+    });
 
     /* Boutons mode entraînement */
     document.getElementById('btn-train-start').addEventListener('click', () => {
@@ -785,9 +1011,13 @@
     });
 
     // Modificateurs
-    if (step.type === 'shift')
-      kb.querySelectorAll('.key[data-key="Shift"]').forEach(k =>
+    if (step.type === 'shift') {
+      const shiftSelector = /^[a-z]$/i.test(step.key)
+        ? '.key[data-key="Shift"][data-side="left"]'
+        : '.key[data-key="Shift"]';
+      kb.querySelectorAll(shiftSelector).forEach(k =>
         k.classList.add('highlight', 'highlight-shift'));
+    }
 
     if (step.type === 'altgr')
       kb.querySelectorAll('.key').forEach(k => {
@@ -921,11 +1151,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-

@@ -103,10 +103,10 @@ function renderEmailCase() {
 
   const feedback = document.getElementById('mailFeedback');
   feedback.className = 'mail-feedback';
-  feedback.textContent = 'Lis le message. Puis choisis la bonne reponse.';
+  feedback.textContent = 'Lisez le message, puis choisissez la réponse la plus adaptée.';
 
   document.getElementById('btnNext').style.display = 'none';
-  document.getElementById('btnNext').textContent = 'Suivant';
+  document.getElementById('btnNext').textContent = 'Continuer';
 
   const pct = Math.round((session.index / session.items.length) * 100);
   document.getElementById('progressFill').style.width = pct + '%';
@@ -166,15 +166,16 @@ function answer(selectedIndex) {
     session.xp += 3;
     allButtons[selectedIndex].classList.add('correct');
     recordExerciseProgress(PAGE_ID, { correct: 1, typed: 1, errors: 0, xp: 3 });
-    showFeedback(true, current.correctFeedback || 'C est la bonne reponse.');
+    showFeedback(true, current.correctFeedback || 'C’est la bonne réponse.');
   } else {
     session.errors += 1;
     allButtons[selectedIndex].classList.add('wrong');
     if (allButtons[current.answer]) allButtons[current.answer].classList.add('correct');
     recordExerciseProgress(PAGE_ID, { correct: 0, typed: 1, errors: 1, xp: 0 });
-    showFeedback(false, current.responses[selectedIndex].reasonIfWrong || 'Ce choix n est pas le bon.');
+    showFeedback(false, current.responses[selectedIndex].reasonIfWrong || 'Ce choix n’est pas le bon.');
   }
 
+  document.getElementById('btnNext').style.display = 'inline-flex';
   updateKPIs();
   scheduleAutoAdvance(nextEmail);
 }
@@ -182,7 +183,7 @@ function answer(selectedIndex) {
 function showFeedback(isCorrect, message) {
   const feedback = document.getElementById('mailFeedback');
   feedback.className = 'mail-feedback ' + (isCorrect ? 'ok' : 'err');
-  feedback.textContent = (isCorrect ? 'Bonne reponse. ' : 'Ce n est pas la bonne reponse. ') + message;
+  feedback.textContent = (isCorrect ? 'Bonne réponse. ' : 'Ce n’est pas la bonne réponse. ') + message;
 }
 
 function nextEmail() {
@@ -209,19 +210,19 @@ function finishSession() {
   let title = 'Continuez';
   if (accuracy >= 90) {
     emoji = '🏆';
-    title = 'Tres bien';
+    title = 'Très bien';
   } else if (accuracy >= 70) {
     emoji = '👍';
     title = 'Bien';
   } else if (accuracy >= 50) {
     emoji = '📈';
-    title = 'Bon debut';
+    title = 'Bon début';
   }
 
   document.getElementById('resEmoji').textContent = emoji;
   document.getElementById('resTitle').textContent = title;
   document.getElementById('resSubtitle').textContent =
-    session.correct + ' bonne reponse sur ' + session.items.length + ' e-mails.';
+    session.correct + ' bonne réponse' + (session.correct > 1 ? 's' : '') + ' sur ' + session.items.length + ' e-mail' + (session.items.length > 1 ? 's' : '') + '.';
   document.getElementById('resCorrect').textContent = session.correct;
   document.getElementById('resErrors').textContent = session.errors;
   document.getElementById('resXP').textContent = session.xp;
@@ -246,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnNextEx.addEventListener('click', () => {
       window.location.href = nextEx.href;
     });
-    btnNextEx.textContent = 'Suite : ' + nextEx.name;
+    btnNextEx.textContent = 'Exercice suivant : ' + nextEx.name;
   } else {
     btnNextEx.style.display = 'none';
   }
@@ -259,6 +260,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const map = { '1': 0, '2': 1, '3': 2, '4': 3 };
     if (!session.answered && Object.prototype.hasOwnProperty.call(map, e.key)) {
       answer(map[e.key]);
+    }
+    if (e.key === 'Enter' && session.answered) {
+      nextEmail();
     }
   });
 

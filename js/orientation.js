@@ -128,6 +128,24 @@ function buildLegend(){
 }
 function toggleLegend(){document.getElementById('legend-panel').classList.toggle('show');}
 
+function coordLabel(r,c){return COLS[c]+ROWS[r];}
+
+function updateRouteSummary(){
+  const start=document.getElementById('route-start');
+  const dest=document.getElementById('route-dest');
+  const actions=document.getElementById('route-actions');
+  if(start)start.textContent=coordLabel(player.r,player.c)+' '+ARR[player.d];
+  if(dest){
+    if(aDest!==null&&pts[aDest]){
+      const p=pts[aDest];
+      dest.textContent=coordLabel(p.r,p.c)+' '+getNear(p.r,p.c).n;
+    }else{
+      dest.textContent='A choisir';
+    }
+  }
+  if(actions)actions.textContent=queue.length;
+}
+
 // SCENARIO
 function shuf(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
 function gen(){
@@ -152,13 +170,17 @@ function gen(){
   queue=[];
   renderPts();renderTravChips();updTrav();renderC();updExecBtn();
   // Auto-activate and reveal the first point
-  if(pts.length){actPt(0);}else{aDest=null;updDest();}
-  setGuide(1,'Choisis une destination puis ajoute les actions.');
-  st(`✅ Parcours prêt : ${nbP} destinations, ${pl} obstacles !`,'ok');
+  if(pts.length){
+    actPt(0);
+    setGuide(2,'Destination prête. Avec les boutons du plan, ajoute les actions pour aller jusqu au badge Destination.');
+  }else{
+    aDest=null;updDest();setGuide(1,'Choisis une destination dans la liste de gauche.');
+  }
 }
 function clearAll(){
   pts=[];trav.clear();aDest=null;queue=[];
   renderPts();renderTravChips();updTrav();updDest();renderC();updExecBtn();
+  updateRouteSummary();
   document.getElementById('gwarn').style.display='none';st('🗑 Effacé.','');
 }
 function getNear(r,c){
@@ -183,7 +205,8 @@ function actPt(i){
   aDest=i;pts[i].rev=true; // always show destination
   renderPts();updDest();
   const p=pts[i];const binfo=getNear(p.r,p.c);
-  setGuide(2,'Destination choisie. Ajoute maintenant les actions de deplacement.');
+  updateRouteSummary();
+  setGuide(2,'Destination choisie. Clique sur les grands boutons du plan pour AJOUTER des actions, puis lance le trajet.');
   st('🎯 Destination : '+COLS[p.c]+ROWS[p.r]+' — '+binfo.i+' '+binfo.n,'ok');
 }
 function togRev(i){actPt(i);}
@@ -230,6 +253,7 @@ function updPl(anim){
   document.getElementById('cmp-arrow').style.transform=`rotate(${angles[player.d]}deg)`;
   document.getElementById('pos-dir').textContent=ARR[player.d];
   document.getElementById('pos-coord').textContent=COLS[player.c]+ROWS[player.r];
+  updateRouteSummary();
 }
 
 // START
@@ -239,6 +263,7 @@ function setStart(){
   startPos={r,c,d:1};
   if(!running){player.r=r;player.c=c;player.d=1;player.steps=0;updPl(false);}
   updStartMarker();
+  updateRouteSummary();
 }
 function randomStart(){
   const all=[];
@@ -252,7 +277,7 @@ function randomStart(){
     document.getElementById('s0r').value=picks[0][0];
     player.r=picks[0][0];player.c=picks[0][1];player.d=1;player.steps=0;updPl(false);
   }
-  updStartMarker();st('🎲 Départ au hasard !','ok');
+  updStartMarker();updateRouteSummary();st('🎲 Départ au hasard !','ok');
 }
 function updStartMarker(){}
 
@@ -260,20 +285,20 @@ function updStartMarker(){}
 function aC(t){
   if(IS_PLAN){try{window.opener.aC(t);}catch(e){}return;}
   if(running)return;queue.push({t,tx:CT[t],ic:CT_ICON[t]});renderC();updExecBtn();
-  setGuide(2,'Continue a ajouter des actions, puis clique sur Lancer.');
+  setGuide(2,'Action ajoutée dans la consigne. Ajoute la suite ou clique sur "Lancer le trajet".');
 }
 function aSteps(){
   if(IS_PLAN){try{window.opener.aSteps();}catch(e){}return;}
   if(running)return;const n=parseInt(document.getElementById('sn').value);
   queue.push({t:'steps',n,tx:'avancer de '+n+' rue'+(n>1?'s':''),ic:'⬆️',icn:n});renderC();updExecBtn();
-  setGuide(2,'Action ajoutee. Verifie la consigne puis lance le parcours.');
+  setGuide(2,'Action ajoutée dans la consigne. Vérifie la phrase, puis lance le trajet.');
 }
 function aNth(){
   if(IS_PLAN){try{window.opener.aNth();}catch(e){}return;}
   if(running)return;const n=parseInt(document.getElementById('nn').value);
   const d=document.getElementById('nd').value;
   queue.push({t:'nth',n,d,tx:'a la '+ord(n)+' rue, tourner à '+(d==='left'?'gauche':'droite'),ic:d==='left'?'⬅️':'➡️',icn:n});renderC();updExecBtn();
-  setGuide(2,'Action ajoutee. Termine la consigne puis lance.');
+  setGuide(2,'Action ajoutée dans la consigne. Termine la consigne puis lance le trajet.');
 }
 function delLast(){
   if(IS_PLAN){try{window.opener.delLast();}catch(e){}return;}
@@ -291,6 +316,7 @@ function renderC(){
   if(!queue.length){
     if(ph)ph.style.display='';cur.style.display='none';
     iconsBox.innerHTML='<span style="font-size:10px;color:var(--text3);font-style:italic">Appuie sur les flèches…</span>';
+    updateRouteSummary();
     return;
   }
   if(ph)ph.style.display='none';cur.style.display='inline-block';
@@ -306,12 +332,17 @@ function renderC(){
   });
   const spans=box.querySelectorAll('.w');
   if(spans.length){const l=spans[spans.length-1];if(!l.textContent.endsWith('.'))l.textContent+='.';}
+  updateRouteSummary();
 }
 function updHL(idx,state){
   document.querySelectorAll('#cb0 .w').forEach((s,i)=>{s.className='w '+(i===idx?state:i<idx?'do':'p');});
 }
 function updExecBtn(){
-  document.getElementById('exec0').disabled=running||!queue.length;
+  const btn=document.getElementById('exec0');
+  btn.disabled=running||!queue.length;
+  btn.textContent=queue.length
+    ? '▶ Lancer le trajet ('+queue.length+' action'+(queue.length>1?'s':'')+')'
+    : '▶ Lancer le trajet';
 }
 
 // EXECUTION
@@ -540,6 +571,7 @@ function resetAll(){
   player.r=startPos.r;player.c=startPos.c;player.d=startPos.d||1;player.steps=0;
   trail=[];optimalPath=[];
   queue=[];updPl(false);renderC();updExecBtn();st('↺ Recommencé.','');
+  updateRouteSummary();
   setGuide(1,'Choisis une destination puis ajoute les actions.');
 }
 
@@ -603,6 +635,22 @@ function updTimerDisplay(){
   const m=Math.floor(timerSec/60).toString().padStart(2,'0');
   const s=(timerSec%60).toString().padStart(2,'0');
   document.getElementById('timer-val').textContent=m+':'+s;
+}
+
+function isTypingControl(el){
+  return el&&['INPUT','SELECT','TEXTAREA','BUTTON'].includes(el.tagName);
+}
+
+function bindKeyboardShortcuts(){
+  document.addEventListener('keydown',e=>{
+    if(IS_PLAN||running||isTypingControl(document.activeElement))return;
+    if(e.key==='ArrowUp'){e.preventDefault();aC('forward');}
+    else if(e.key==='ArrowLeft'){e.preventDefault();aC('left');}
+    else if(e.key==='ArrowRight'){e.preventDefault();aC('right');}
+    else if(e.key==='ArrowDown'){e.preventDefault();aC('back');}
+    else if(e.key==='Backspace'&&queue.length){e.preventDefault();delLast();}
+    else if(e.key==='Enter'&&queue.length&&!document.getElementById('exec0').disabled){e.preventDefault();execPlayer();}
+  });
 }
 
 // ── CANVAS RENDER ────────────────────────────────────────────────
@@ -834,12 +882,15 @@ function syncFromOpener(){
 if(IS_PLAN){
   document.getElementById('root').classList.add('plan-mode');
   // Masquer les overlays résultat et classement inutiles dans la vue plan
-  document.getElementById('ov').remove();
-  document.getElementById('rv').remove();
+  const ov=document.getElementById('ov');
+  const rv=document.getElementById('rv');
+  if(ov)ov.remove();
+  if(rv)rv.remove();
   setTimeout(buildCity,80);
 }
 // ──────────────────────────────────────────────────────────
 initSels();buildCity();requestAnimationFrame(_tick);
+bindKeyboardShortcuts();
 gen();
 // Démarrer la session solo
 if(typeof startExerciseSession==='function')startExerciseSession(PAGE_ID);

@@ -7,6 +7,46 @@
     .kpi-val  { font-size: 22px; font-weight: 700; color: var(--accent); }
     .kpi-lbl  { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.6px; margin-top: 2px; }
 
+    .keyboard-options {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      padding: 16px;
+    }
+    .keyboard-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text3);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+    .keyboard-option select {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      color: var(--text);
+      font: inherit;
+      font-size: 13px;
+      letter-spacing: 0;
+      min-height: 36px;
+      padding: 6px 10px;
+      text-transform: none;
+    }
+    .keyboard-option-note {
+      color: var(--text2);
+      flex-basis: 100%;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
     /* ── Phrase display ── */
     .exercise-zone {
       background: var(--surface);
@@ -32,7 +72,8 @@
     /* ── Input ── */
     #typing-input {
       width: 100%; max-width: 500px; display: block; margin: 0 auto;
-      font-size: 18px; text-align: center; letter-spacing: 1.5px;
+      font-family: 'Courier New', monospace;
+      font-size: 18px; text-align: left; letter-spacing: 0.5px;
       padding: 10px 16px; border-radius: var(--r-lg);
       border: 2px solid var(--border); background: var(--bg2); color: var(--text1);
       outline: none; transition: border-color 0.2s;
@@ -41,6 +82,51 @@
     #typing-input.correct { border-color: var(--success); }
     #typing-input.wrong   { border-color: var(--danger); animation: shake-input 0.3s ease; }
     @keyframes shake-input { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+
+    .input-helper {
+      color: var(--text3);
+      font-size: 12px;
+      line-height: 1.4;
+      margin: 8px auto 0;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    .typing-target-row {
+      display: flex;
+      gap: 10px 18px;
+      justify-content: center;
+      flex-wrap: wrap;
+      color: var(--text2);
+      font-size: 13px;
+      margin: -6px 0 14px;
+      text-align: center;
+    }
+    .typing-target-row strong {
+      color: var(--accent);
+      font-family: 'Courier New', monospace;
+      font-size: 16px;
+    }
+
+    .keyboard-result-details {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      color: var(--text2);
+      display: grid;
+      gap: 8px;
+      font-size: 13px;
+      line-height: 1.45;
+      margin-top: 12px;
+      padding: 14px;
+      text-align: left;
+    }
+    .keyboard-result-details:empty {
+      display: none;
+    }
+    .keyboard-result-details strong {
+      color: var(--text);
+    }
 
     /* ── Virtual keyboard ── */
     .keyboard { margin-top: 20px; display: flex; flex-direction: column; gap: 4px; align-items: center; }
@@ -182,5 +268,26 @@
       .wide-2 { min-width: 80px; }
       .wide-3 { min-width: 92px; }
       .space-key { min-width: 280px; }
+    }
+
+    @media (max-width: 700px) {
+      .keyboard-options,
+      .keyboard-option {
+        align-items: stretch;
+        flex-direction: column;
+      }
+      .keyboard-options .btn,
+      .keyboard-option select {
+        width: 100%;
+      }
+      .exercise-phrase {
+        font-size: 18px;
+        letter-spacing: 1px;
+        word-break: break-word;
+      }
+      #typing-input {
+        font-size: 16px;
+        max-width: none;
+      }
     }
 

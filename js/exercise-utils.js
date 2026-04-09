@@ -623,3 +623,222 @@ function copyResultSummary(pageName, stats) {
     helper.remove();
   }
 }
+
+const EXERCISE_INTRO_COPY = {
+  alphabet: {
+    header: 'Remettez les mots dans l’ordre alphabétique, du haut vers le bas.',
+    steps: [
+      'Lisez tous les mots.',
+      'Faites glisser les lignes pour les remettre dans l’ordre.',
+      'Cliquez sur « Vérifier » quand la liste vous semble juste.'
+    ]
+  },
+  anagramme: {
+    header: 'Remettez les lettres dans le bon ordre pour former le mot attendu.',
+    steps: [
+      'Lisez les lettres mélangées.',
+      'Repérez les lettres qui vont ensemble.',
+      'Validez quand le mot vous semble correct.'
+    ]
+  },
+  apparier: {
+    header: 'Associez chaque élément avec la bonne réponse.',
+    steps: [
+      'Lisez les deux colonnes.',
+      'Repérez d’abord les associations évidentes.',
+      'Vérifiez vos paires avant de confirmer.'
+    ]
+  },
+  'cherche-clique': {
+    header: 'Repérez l’icône demandée et cliquez dessus.',
+    steps: [
+      'Lisez la cible.',
+      'Balayez la grille calmement.',
+      'Cliquez seulement quand vous êtes sûr.'
+    ]
+  },
+  classement: {
+    header: 'Rangez les éléments dans le bon ordre.',
+    steps: [
+      'Lisez tous les éléments.',
+      'Cherchez d’abord le premier et le dernier.',
+      'Replacez ensuite les éléments du milieu.'
+    ]
+  },
+  clavier: {
+    header: 'Appuyez sur la bonne touche au bon moment.',
+    steps: [
+      'Regardez la touche demandée.',
+      'Posez vos doigts calmement.',
+      'Appuyez, puis passez à la suivante.'
+    ]
+  },
+  cliquer: {
+    header: 'Suivez les consignes pour pratiquer les gestes de la souris.',
+    steps: [
+      'Lisez l’action demandée.',
+      'Faites le geste indiqué.',
+      'Observez le résultat avant de continuer.'
+    ]
+  },
+  completer: {
+    header: 'Choisissez le mot qui complète correctement la phrase.',
+    steps: [
+      'Lisez toute la phrase.',
+      'Comparez les propositions.',
+      'Validez quand le mot choisi convient.'
+    ]
+  },
+  demeler: {
+    header: 'Retrouvez le bon mot à partir des lettres mélangées.',
+    steps: [
+      'Lisez les lettres.',
+      'Cherchez les groupes qui vont ensemble.',
+      'Recomposez le mot complet.'
+    ]
+  },
+  ecouter: {
+    header: 'Écoutez attentivement, puis donnez la bonne réponse.',
+    steps: [
+      'Écoutez une première fois.',
+      'Repérez les mots importants.',
+      'Répondez après avoir tout entendu.'
+    ]
+  },
+  'email-ecrire': {
+    header: 'Lisez la situation, puis choisissez l’e-mail qui convient le mieux.',
+    steps: [
+      'Lisez bien la situation.',
+      'Comparez l’objet, le message et les pièces jointes.',
+      'Choisissez l’e-mail le plus adapté.'
+    ]
+  },
+  'email-pro': {
+    header: 'Lisez le message, puis choisissez la réponse la plus adaptée.',
+    steps: [
+      'Lisez l’e-mail reçu.',
+      'Repérez ce que la personne demande.',
+      'Choisissez la réponse la plus professionnelle.'
+    ]
+  },
+  formulaire: {
+    header: 'Lisez le profil, puis recopiez les mêmes informations dans le formulaire.',
+    steps: [
+      'Lisez le profil à gauche.',
+      'Copiez les mêmes informations à droite.',
+      'Vérifiez avant de continuer.'
+    ]
+  },
+  'mots-croises': {
+    header: 'Complétez la grille à l’aide des définitions.',
+    steps: [
+      'Lisez la définition.',
+      'Cherchez les lettres déjà disponibles.',
+      'Complétez la grille mot par mot.'
+    ]
+  },
+  'mots-meles': {
+    header: 'Trouvez les mots cachés dans la grille.',
+    steps: [
+      'Lisez la liste de mots.',
+      'Cherchez ligne par ligne puis colonne par colonne.',
+      'N’oubliez pas les diagonales.'
+    ]
+  },
+  paire: {
+    header: 'Retournez les cartes pour retrouver les paires.',
+    steps: [
+      'Retournez deux cartes.',
+      'Mémorisez leur position.',
+      'Reformez toutes les paires.'
+    ]
+  },
+  pendu: {
+    header: 'Trouvez le mot avant d’épuiser tous les essais.',
+    steps: [
+      'Commencez par les lettres fréquentes.',
+      'Observez le motif des lettres trouvées.',
+      'Essayez de deviner le mot complet.'
+    ]
+  },
+  quiz: {
+    header: 'Lisez la question, puis choisissez la bonne réponse.',
+    steps: [
+      'Lisez toute la question.',
+      'Comparez les réponses proposées.',
+      'Choisissez celle qui convient le mieux.'
+    ]
+  },
+  retaper: {
+    header: 'Retapez le texte affiché en faisant le moins d’erreurs possible.',
+    steps: [
+      'Lisez le texte une première fois.',
+      'Retapez-le sans vous presser.',
+      'Corrigez si besoin avant de continuer.'
+    ]
+  },
+  trier: {
+    header: 'Classez chaque élément dans la bonne catégorie.',
+    steps: [
+      'Lisez les catégories.',
+      'Prenez un élément à la fois.',
+      'Vérifiez tous les classements à la fin.'
+    ]
+  },
+  'vrai-faux': {
+    header: 'Lisez l’affirmation, puis choisissez vrai ou faux.',
+    steps: [
+      'Lisez l’affirmation jusqu’au bout.',
+      'Cherchez le mot important.',
+      'Choisissez vrai ou faux.'
+    ]
+  }
+};
+
+function buildExerciseMission(page) {
+  const copy = EXERCISE_INTRO_COPY[page];
+  if (!copy || !Array.isArray(copy.steps) || copy.steps.length === 0) return null;
+
+  const mission = document.createElement('div');
+  mission.className = 'exercise-mission fade-up delay-1';
+  copy.steps.forEach((step, index) => {
+    const item = document.createElement('div');
+    item.className = 'exercise-mission-item';
+
+    const badge = document.createElement('span');
+    badge.className = 'exercise-mission-step';
+    badge.textContent = String(index + 1);
+
+    const text = document.createElement('div');
+    text.className = 'exercise-mission-text';
+    text.textContent = step;
+
+    item.appendChild(badge);
+    item.appendChild(text);
+    mission.appendChild(item);
+  });
+  return mission;
+}
+
+function enhanceExerciseIntro() {
+  const page = (location.pathname.split('/').pop() || '').replace(/\.html$/i, '');
+  const copy = EXERCISE_INTRO_COPY[page];
+  if (!copy) return;
+
+  const header = document.querySelector('.page-header');
+  if (header && copy.header) {
+    const paragraph = header.querySelector('p');
+    if (paragraph) paragraph.textContent = copy.header;
+  }
+
+  const existingMission = document.querySelector(
+    '.exercise-mission, .mission-strip, .mail-mission, .alphabet-mission, .route-summary, .target-topline, .mission-card'
+  );
+  if (existingMission || !header) return;
+
+  const mission = buildExerciseMission(page);
+  if (!mission) return;
+  header.insertAdjacentElement('afterend', mission);
+}
+
+document.addEventListener('DOMContentLoaded', enhanceExerciseIntro);

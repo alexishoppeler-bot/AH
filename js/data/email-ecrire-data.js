@@ -110,5 +110,116 @@ window.EMAIL_ECRIRE_DATA = [
     ],
     answer: 0,
     correctFeedback: 'Exact : objet clair, ton professionnel, pièce jointe annoncée et signature complète.'
+  },
+
+  {
+    category: 'Entretien',
+    situation: 'Une entreprise vous propose un entretien mardi à 14h00. Vous devez confirmer votre présence.',
+    choices: [
+      {
+        subject: 'Confirmation de disponibilité pour l’entretien - Nadia Lopes',
+        body: 'Bonjour Madame,\n\nMerci pour votre message. Je confirme ma disponibilité pour l’entretien du mardi à 14h00.\n\nMeilleures salutations,\nNadia Lopes',
+        attachment: 'Aucune pièce jointe nécessaire',
+        signature: 'Signature complète',
+        reasonIfWrong: ''
+      },
+      {
+        subject: 'Disponibilité entretien',
+        body: 'Bonjour Madame,\n\nJe confirme ma disponibilité pour mardi à 14h00.\n\nCordialement,\nNadia Lopes',
+        attachment: 'Aucune pièce jointe nécessaire',
+        signature: 'Signature complète',
+        reasonIfWrong: 'Le message fonctionne, mais l’objet est moins précis et il manque un remerciement.'
+      },
+      {
+        subject: 'Confirmation entretien - Nadia Lopes',
+        body: 'Bonjour Madame,\n\nMerci pour votre message. Je confirme ma disponibilité pour mardi.\n\nMeilleures salutations,\nNadia Lopes',
+        attachment: 'Aucune pièce jointe nécessaire',
+        signature: 'Signature complète',
+        reasonIfWrong: 'La réponse ne reprend pas l’heure de 14h00.'
+      },
+      {
+        subject: 'Re: entretien',
+        body: 'Bonjour,\n\nJe serai là.\n\nNadia',
+        attachment: 'Aucune pièce jointe nécessaire',
+        signature: 'Prénom uniquement',
+        reasonIfWrong: 'La réponse est trop courte, peu professionnelle et la signature est incomplète.'
+      }
+    ],
+    answer: 0,
+    correctFeedback: 'Très bien : la réponse remercie, confirme clairement la date et l’heure, et reste professionnelle.'
+  },
+
+  {
+    category: 'Assurance',
+    situation: 'Votre assurance demande le formulaire signé en PDF. Vous devez l’envoyer par e-mail.',
+    choices: [
+      {
+        subject: 'Envoi du formulaire signé en PDF - Karim Haddad',
+        body: 'Bonjour,\n\nVeuillez trouver en pièce jointe mon formulaire signé au format PDF.\n\nJe vous remercie pour votre confirmation de réception.\n\nCordialement,\nKarim Haddad',
+        attachment: 'Formulaire signé PDF',
+        signature: 'Signature complète',
+        reasonIfWrong: ''
+      },
+      {
+        subject: 'Formulaire signé',
+        body: 'Bonjour,\n\nJe vous transmets mon formulaire signé.\n\nCordialement,\nKarim Haddad',
+        attachment: 'Format PDF non mentionné',
+        signature: 'Signature complète',
+        reasonIfWrong: 'Le message ne précise pas que le document est envoyé en PDF.'
+      },
+      {
+        subject: 'Envoi du formulaire - Karim Haddad',
+        body: 'Bonjour,\n\nVeuillez trouver en pièce jointe mon formulaire signé au format PDF.\n\nMerci.\n\nKarim Haddad',
+        attachment: 'Formulaire signé PDF',
+        signature: 'Signature simple',
+        reasonIfWrong: 'Le message est compréhensible, mais la formule de politesse et la signature sont plus faibles.'
+      },
+      {
+        subject: 'Document',
+        body: 'Bonjour,\n\nJe vous envoie le document demandé.\n\nCordialement,\nKarim Haddad',
+        attachment: 'Document trop vague',
+        signature: 'Signature complète',
+        reasonIfWrong: 'Le message est trop vague et ne précise ni le formulaire signé ni le format PDF.'
+      }
+    ],
+    answer: 0,
+    correctFeedback: 'Bonne réponse : le document demandé est clairement annoncé, avec le format PDF et une formule polie.'
+  },
+
+  {
+    category: 'Logement',
+    situation: 'La gérance vous demande votre copie de permis et vos trois dernières fiches de salaire pour compléter votre dossier.',
+    choices: [
+      {
+        subject: 'Envoi des documents demandés - Sofia Mendes',
+        body: 'Bonjour,\n\nSuite à votre demande, je vous transmets en pièces jointes une copie de mon permis ainsi que mes trois dernières fiches de salaire.\n\nJe reste à votre disposition pour tout complément.\n\nMeilleures salutations,\nSofia Mendes',
+        attachment: 'Permis + 3 fiches de salaire',
+        signature: 'Signature complète',
+        reasonIfWrong: ''
+      },
+      {
+        subject: 'Documents pour le dossier',
+        body: 'Bonjour,\n\nJe vous transmets une copie de mon permis en pièce jointe.\n\nMeilleures salutations,\nSofia Mendes',
+        attachment: 'Permis uniquement',
+        signature: 'Signature complète',
+        reasonIfWrong: 'Il manque les trois fiches de salaire demandées.'
+      },
+      {
+        subject: 'Envoi de documents - Sofia Mendes',
+        body: 'Bonjour,\n\nJe vous transmets les documents demandés pour mon dossier.\n\nCordialement,\nSofia Mendes',
+        attachment: 'Documents non détaillés',
+        signature: 'Signature complète',
+        reasonIfWrong: 'Le message est trop vague et ne détaille pas les pièces jointes.'
+      },
+      {
+        subject: 'Dossier location',
+        body: 'Bonjour,\n\nVous trouverez mes documents en pièce jointe.\n\nSofia',
+        attachment: 'Documents non détaillés',
+        signature: 'Prénom uniquement',
+        reasonIfWrong: 'La signature est incomplète et les documents ne sont pas précisés.'
+      }
+    ],
+    answer: 0,
+    correctFeedback: 'Exact : l’e-mail annonce clairement les deux types de documents et garde un ton professionnel.'
   }
 ];

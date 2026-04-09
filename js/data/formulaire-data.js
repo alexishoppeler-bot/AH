@@ -230,5 +230,143 @@ window.FORMULAIRE_DATA = [
     requiredFiles: [
       { type: 'cv', label: 'CV', formats: ['pdf', 'doc', 'docx'], required: true }
     ]
+  },
+  {
+    id: 'form-6',
+    tag: 'Hôtellerie',
+    profile: {
+      firstName: 'Ana',
+      lastName: 'Ferreira',
+      birthDate: '1992-01-29',
+      maritalStatus: 'Mariée',
+      email: 'ana.ferreira@email.com',
+      phone: '+41 78 666 77 88',
+      address: 'Rue du Lac 7',
+      npa: '1110',
+      city: 'Morges',
+      education: 'Formation de base',
+      experienceYears: '3',
+      experienceText: '3 ans comme employée d’étage',
+      drivingLicense: 'Non',
+      residencePermit: 'Permis B',
+      availability: 'Immédiate',
+      qualities: ['Discrétion', 'Soin', 'Organisation'],
+      skills: ['Nettoyage de chambres', 'Préparation du linge', 'Respect des standards hôteliers']
+    },
+    form: {
+      fields: [
+        { name: 'firstName', label: 'Prénom', expected: 'Ana', type: 'text' },
+        { name: 'lastName', label: 'Nom', expected: 'Ferreira', type: 'text' },
+        { name: 'birthDate', label: 'Date de naissance', expected: '29.01.1992', type: 'text' },
+        { name: 'maritalStatus', label: 'État civil', expected: 'Mariée', type: 'text' },
+        { name: 'email', label: 'E-mail', expected: 'ana.ferreira@email.com', type: 'email' },
+        { name: 'phone', label: 'Téléphone', expected: '+41 78 666 77 88', type: 'tel' },
+        { name: 'address', label: 'Adresse', expected: 'Rue du Lac 7', type: 'text' },
+        { name: 'npa', label: 'NPA', expected: '1110', type: 'text' },
+        { name: 'city', label: 'Ville', expected: 'Morges', type: 'text' },
+        { name: 'drivingLicense', label: 'Permis de conduire', expected: 'Non', type: 'text' },
+        { name: 'residencePermit', label: 'Permis de séjour', expected: 'Permis B', type: 'text' },
+        { name: 'availability', label: 'Disponibilité', expected: 'Immédiate', type: 'text' },
+        { name: 'experienceYears', label: "Années d'expérience", expected: '3', type: 'number' },
+        { name: 'qualities', label: 'Qualités personnelles', expected: 'Discrétion, Soin, Organisation', type: 'text' },
+        { name: 'skills', label: 'Compétences professionnelles', expected: 'Nettoyage de chambres, Préparation du linge, Respect des standards hôteliers', type: 'text' }
+      ]
+    },
+    requiredFiles: [
+      { type: 'cv', label: 'CV', formats: ['pdf', 'doc', 'docx'], required: true },
+      { type: 'photo', label: "Photo d'identité", formats: ['jpg', 'jpeg', 'png'], required: true }
+    ]
+  },
+  {
+    id: 'form-7',
+    tag: 'Aide à domicile',
+    profile: {
+      firstName: 'Khadija',
+      lastName: 'Bensaid',
+      birthDate: '1989-12-03',
+      maritalStatus: 'Célibataire',
+      email: 'khadija.bensaid@email.com',
+      phone: '+41 77 777 88 99',
+      address: 'Avenue de la Gare 15',
+      npa: '1023',
+      city: 'Crissier',
+      education: 'Formation de base',
+      experienceYears: '6',
+      experienceText: '6 ans dans l’aide à domicile',
+      drivingLicense: 'Oui',
+      residencePermit: 'Permis C',
+      availability: '2 semaines',
+      qualities: ['Patience', 'Écoute', 'Fiabilité'],
+      skills: ['Aide aux repas', 'Accompagnement quotidien', 'Entretien du logement']
+    },
+    form: {
+      fields: [
+        { name: 'firstName', label: 'Prénom', expected: 'Khadija', type: 'text' },
+        { name: 'lastName', label: 'Nom', expected: 'Bensaid', type: 'text' },
+        { name: 'birthDate', label: 'Date de naissance', expected: '03.12.1989', type: 'text' },
+        { name: 'maritalStatus', label: 'État civil', expected: 'Célibataire', type: 'text' },
+        { name: 'email', label: 'E-mail', expected: 'khadija.bensaid@email.com', type: 'email' },
+        { name: 'phone', label: 'Téléphone', expected: '+41 77 777 88 99', type: 'tel' },
+        { name: 'address', label: 'Adresse', expected: 'Avenue de la Gare 15', type: 'text' },
+        { name: 'npa', label: 'NPA', expected: '1023', type: 'text' },
+        { name: 'city', label: 'Ville', expected: 'Crissier', type: 'text' },
+        { name: 'drivingLicense', label: 'Permis de conduire', expected: 'Oui', type: 'text' },
+        { name: 'residencePermit', label: 'Permis de séjour', expected: 'Permis C', type: 'text' },
+        { name: 'availability', label: 'Disponibilité', expected: '2 semaines', type: 'text' },
+        { name: 'experienceYears', label: "Années d'expérience", expected: '6', type: 'number' },
+        { name: 'qualities', label: 'Qualités personnelles', expected: 'Patience, Écoute, Fiabilité', type: 'text' },
+        { name: 'skills', label: 'Compétences professionnelles', expected: 'Aide aux repas, Accompagnement quotidien, Entretien du logement', type: 'text' }
+      ]
+    },
+    requiredFiles: [
+      { type: 'cv', label: 'CV', formats: ['pdf', 'doc', 'docx'], required: true },
+      { type: 'letter', label: 'Lettre de motivation', formats: ['pdf', 'doc', 'docx'], required: false }
+    ]
+  },
+  {
+    id: 'form-8',
+    tag: 'Espaces verts',
+    profile: {
+      firstName: 'Luis',
+      lastName: 'Moreno',
+      birthDate: '1987-04-17',
+      maritalStatus: 'Marié',
+      email: 'luis.moreno@email.com',
+      phone: '+41 76 888 99 00',
+      address: 'Chemin des Fleurs 9',
+      npa: '1260',
+      city: 'Nyon',
+      education: 'École obligatoire',
+      experienceYears: '4',
+      experienceText: '4 ans en entretien d’espaces verts',
+      drivingLicense: 'Oui',
+      residencePermit: 'Permis B',
+      availability: 'Immédiate',
+      qualities: ['Ponctualité', 'Endurance', 'Précision'],
+      skills: ['Tonte', 'Taille de haies', 'Entretien extérieur']
+    },
+    form: {
+      fields: [
+        { name: 'firstName', label: 'Prénom', expected: 'Luis', type: 'text' },
+        { name: 'lastName', label: 'Nom', expected: 'Moreno', type: 'text' },
+        { name: 'birthDate', label: 'Date de naissance', expected: '17.04.1987', type: 'text' },
+        { name: 'maritalStatus', label: 'État civil', expected: 'Marié', type: 'text' },
+        { name: 'email', label: 'E-mail', expected: 'luis.moreno@email.com', type: 'email' },
+        { name: 'phone', label: 'Téléphone', expected: '+41 76 888 99 00', type: 'tel' },
+        { name: 'address', label: 'Adresse', expected: 'Chemin des Fleurs 9', type: 'text' },
+        { name: 'npa', label: 'NPA', expected: '1260', type: 'text' },
+        { name: 'city', label: 'Ville', expected: 'Nyon', type: 'text' },
+        { name: 'drivingLicense', label: 'Permis de conduire', expected: 'Oui', type: 'text' },
+        { name: 'residencePermit', label: 'Permis de séjour', expected: 'Permis B', type: 'text' },
+        { name: 'availability', label: 'Disponibilité', expected: 'Immédiate', type: 'text' },
+        { name: 'experienceYears', label: "Années d'expérience", expected: '4', type: 'number' },
+        { name: 'qualities', label: 'Qualités personnelles', expected: 'Ponctualité, Endurance, Précision', type: 'text' },
+        { name: 'skills', label: 'Compétences professionnelles', expected: 'Tonte, Taille de haies, Entretien extérieur', type: 'text' }
+      ]
+    },
+    requiredFiles: [
+      { type: 'cv', label: 'CV', formats: ['pdf', 'doc', 'docx'], required: true },
+      { type: 'certif', label: 'Certificat de travail', formats: ['pdf'], required: false }
+    ]
   }
 ];

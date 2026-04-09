@@ -832,3 +832,45 @@ body.accessible-ui .card-desc {
 .xp-rules-footer {
   padding: 0 24px 24px;
 }
+
+/* === EXERCISE MISSION === */
+.exercise-mission {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0 0 20px;
+}
+.exercise-mission-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+.exercise-mission-step {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(79, 142, 247, 0.12);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+.exercise-mission-text {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+@media (max-width: 760px) {
+  .exercise-mission {
+    grid-template-columns: 1fr;
+  }
+}

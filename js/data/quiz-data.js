@@ -281,6 +281,146 @@ window.QUIZ_DATA = [
     ],
     answer: 0,
     explication: 'À la fin, l’employeur peut demander si vous avez des questions.'
+  },
+
+  {
+    category: 'Formulaire',
+    difficulty: 'easy',
+    question: 'Que faut-il faire avant de signer un formulaire ?',
+    choices: [
+      'Le relire',
+      'Le plier',
+      'Le jeter',
+      'Changer son prénom'
+    ],
+    answer: 0,
+    explication: 'Il faut relire le formulaire pour vérifier les informations avant de signer.'
+  },
+
+  {
+    category: 'Formulaire',
+    difficulty: 'easy',
+    question: 'Que signifie “champ obligatoire” ?',
+    choices: [
+      'Un champ qu’on peut ignorer',
+      'Un champ qu’il faut remplir',
+      'Un champ réservé au médecin',
+      'Un champ pour écrire une blague'
+    ],
+    answer: 1,
+    explication: 'Un champ obligatoire doit être complété pour valider le formulaire.'
+  },
+
+  {
+    category: 'E-mail',
+    difficulty: 'easy',
+    question: 'Que faut-il écrire dans l’objet d’un e-mail professionnel ?',
+    choices: [
+      'Un sujet clair et précis',
+      'Seulement son prénom',
+      'Une phrase très longue',
+      'Rien du tout'
+    ],
+    answer: 0,
+    explication: 'L’objet doit aider la personne à comprendre immédiatement le sujet du message.'
+  },
+
+  {
+    category: 'E-mail',
+    difficulty: 'easy',
+    question: 'Que faut-il faire si une pièce jointe est demandée ?',
+    choices: [
+      'Joindre le document et le mentionner dans le message',
+      'Envoyer un message vide',
+      'Attendre plusieurs jours',
+      'Écrire seulement bonjour'
+    ],
+    answer: 0,
+    explication: 'Quand une pièce jointe est demandée, il faut l’ajouter et l’annoncer clairement.'
+  },
+
+  {
+    category: 'Transports',
+    difficulty: 'easy',
+    question: 'Que faut-il vérifier avant de prendre le train ?',
+    choices: [
+      'Le quai et l’horaire',
+      'La couleur des sièges',
+      'Le nom du voisin',
+      'Le prix du café'
+    ],
+    answer: 0,
+    explication: 'Il faut vérifier l’horaire et le bon quai avant de monter.'
+  },
+
+  {
+    category: 'ORP',
+    difficulty: 'medium',
+    question: 'Que faut-il faire si l’ORP demande un document avant une date précise ?',
+    choices: [
+      'L’envoyer dans le délai demandé',
+      'Attendre le mois suivant',
+      'Ne rien répondre',
+      'Changer l’objet du message'
+    ],
+    answer: 0,
+    explication: 'Il faut répondre dans le délai indiqué pour éviter un problème de dossier.'
+  },
+
+  {
+    category: 'Numérique',
+    difficulty: 'medium',
+    question: 'Que faut-il faire si un site affiche un message rouge indiquant qu’un champ manque ?',
+    choices: [
+      'Vérifier le formulaire et compléter le champ manquant',
+      'Éteindre l’ordinateur',
+      'Changer de langue',
+      'Imprimer la page'
+    ],
+    answer: 0,
+    explication: 'Le message rouge indique généralement qu’une information obligatoire manque.'
+  },
+
+  {
+    category: 'Administratif',
+    difficulty: 'medium',
+    question: 'Pourquoi faut-il garder une copie d’un document envoyé ?',
+    choices: [
+      'Pour pouvoir le retrouver si besoin',
+      'Pour le jeter plus tard',
+      'Pour l’envoyer à tout le monde',
+      'Parce que le document devient invalide'
+    ],
+    answer: 0,
+    explication: 'Garder une copie aide à retrouver l’information ou à prouver l’envoi.'
+  },
+
+  {
+    category: 'E-mail',
+    difficulty: 'medium',
+    question: 'Quelle phrase convient dans un e-mail avec un CV en pièce jointe ?',
+    choices: [
+      'Vous trouverez mon CV en pièce jointe.',
+      'Regardez plus tard.',
+      'Je n’ai rien mis.',
+      'Mon voisin a mon CV.'
+    ],
+    answer: 0,
+    explication: 'Cette phrase annonce clairement la pièce jointe attendue.'
+  },
+
+  {
+    category: 'Organisation',
+    difficulty: 'medium',
+    question: 'Que faut-il préparer la veille d’un rendez-vous important ?',
+    choices: [
+      'Les documents et le trajet',
+      'Seulement une bouteille d’eau',
+      'Rien du tout',
+      'Un autre rendez-vous'
+    ],
+    answer: 0,
+    explication: 'Préparer les documents et le trajet aide à arriver à l’heure et serein.'
   }
 
 ];

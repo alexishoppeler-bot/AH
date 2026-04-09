@@ -38,6 +38,12 @@
               <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
             </div>
 
+            <div class="session-strip" aria-label="Score de la session">
+              <span>Corrects <strong id="liveCorrect">0</strong></span>
+              <span>Erreurs <strong id="liveErrors">0</strong></span>
+              <span>XP <strong id="liveXP">0</strong></span>
+            </div>
+
             <!-- Phrase -->
             <div class="phrase-box" id="phraseBox"></div>
 
@@ -54,8 +60,8 @@
 
             <div class="action-row">
               <button class="btn btn-ghost btn-sm" id="btnHint" type="button">Indice</button>
-              <button class="btn btn-primary" id="btnValidate" type="button">Valider ?</button>
-              <button class="btn btn-secondary" id="btnNext" type="button" style="display:none;">Suivant ?</button>
+              <button class="btn btn-primary" id="btnValidate" type="button">Valider</button>
+              <button class="btn btn-secondary" id="btnNext" type="button" style="display:none;">Continuer</button>
             </div>
 
           </div>
@@ -154,6 +160,18 @@
 
   let xpRulesShown = false;
 
+  function updateSessionStrip() {
+    document.getElementById('liveCorrect').textContent = session.correct;
+    document.getElementById('liveErrors').textContent = session.errors;
+    document.getElementById('liveXP').textContent = session.xp;
+  }
+
+  function updateProgressFill(includeCurrentQuestion) {
+    const completed = session.index + (includeCurrentQuestion ? 1 : 0);
+    const pct = Math.round((completed / TOTAL) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+  }
+
   /* ===== UTILITAIRES ===== */
   function shuffle(arr) {
     const a = [...arr];
@@ -238,6 +256,7 @@
     session.hintUsed  = false;
     session.roundState = null;
 
+    updateSessionStrip();
     document.getElementById('resultZone').classList.remove('show');
     document.getElementById('gameZone').classList.remove('hidden');
 
@@ -271,12 +290,12 @@
     document.getElementById('hintBox').textContent       = '';
     document.getElementById('btnNext').style.display     = 'none';
     document.getElementById('btnValidate').style.display = 'inline-flex';
-    document.getElementById('btnValidate').disabled      = false;
+    document.getElementById('btnValidate').disabled      = !session.selectedChoice;
     document.getElementById('btnHint').disabled          = false;
     document.getElementById('btnHint').textContent       = 'Indice';
+    updateSessionStrip();
 
-    const pct = Math.round((session.index / TOTAL) * 100);
-    document.getElementById('progressFill').style.width = pct + '%';
+    updateProgressFill(session.answered);
 
     session.roundState = {
       index: session.index,
@@ -299,7 +318,7 @@
       hintBox.textContent = 'Indice: ' + q.hint;
       hintBox.classList.add('show');
       document.getElementById('btnHint').disabled    = true;
-      document.getElementById('btnHint').textContent = 'Indice utilise';
+      document.getElementById('btnHint').textContent = 'Indice utilisé';
     }
 
     if (session.answered) {
@@ -321,6 +340,7 @@
         const blank = document.createElement('span');
         blank.className = 'blank';
         blank.id = 'blank-' + i;
+        blank.setAttribute('aria-label', 'Mot manquant');
 
         const placeholder = document.createElement('span');
         placeholder.style.color      = 'var(--text3)';
@@ -348,7 +368,9 @@
     choices.forEach(c => {
       const btn = document.createElement('button');
       btn.className   = 'choice-btn';
+      btn.type        = 'button';
       btn.textContent = c;
+      btn.setAttribute('aria-pressed', 'false');
       btn.addEventListener('click', () => selectChoice(btn, c));
       grid.appendChild(btn);
     });
@@ -366,7 +388,9 @@
       placeholder.style.fontSize   = '17px';
     }
     document.querySelectorAll('.choice-btn').forEach(b => {
-      b.classList.toggle('selected', b.textContent === value);
+      const selected = b.textContent === value;
+      b.classList.toggle('selected', selected);
+      b.setAttribute('aria-pressed', selected ? 'true' : 'false');
     });
   }
 
@@ -376,11 +400,13 @@
       : normalize(session.selectedChoice) === normalize(q.answer);
 
     document.getElementById('btnValidate').style.display = 'none';
+    document.getElementById('btnNext').style.display     = 'inline-flex';
     document.getElementById('btnHint').disabled          = true;
     const fb = document.getElementById('feedbackMsg');
+    updateProgressFill(true);
 
     if (isOk) {
-      fb.textContent = '? Correct !';
+      fb.textContent = 'Correct. La réponse est bien "' + q.answer + '".';
       fb.className   = 'feedback-msg ok';
       document.querySelectorAll('.choice-btn').forEach(b => {
         if (b.textContent === session.selectedChoice) b.classList.add('correct');
@@ -389,7 +415,7 @@
       const ph = document.getElementById('blank-placeholder-0');
       if (ph) ph.style.color = 'var(--success)';
     } else {
-      fb.textContent = '? Incorrect. La réponse était : ' + q.answer;
+      fb.textContent = 'Incorrect. La réponse était : ' + q.answer;
       fb.className   = 'feedback-msg err';
       document.querySelectorAll('.choice-btn').forEach(b => {
         if (normalize(b.textContent) === normalize(q.answer)) b.classList.add('correct');
@@ -410,6 +436,9 @@
 
     // Mettre à jour l'affichage dans le trou
     applySelectionUI(value);
+    document.getElementById('btnValidate').disabled = false;
+    document.getElementById('feedbackMsg').textContent = 'Réponse choisie : ' + value;
+    document.getElementById('feedbackMsg').className = 'feedback-msg muted';
     if (session.roundState) {
       session.roundState.selectedChoice = value;
     }
@@ -419,6 +448,7 @@
   /* ===== VALIDER ===== */
   function validate() {
     if (session.answered) return;
+    clearAutoAdvance();
 
     const q = session.questions[session.index];
 
@@ -433,14 +463,16 @@
     const isOk = normalize(session.selectedChoice) === normalize(q.answer);
 
     document.getElementById('btnValidate').style.display = 'none';
+    document.getElementById('btnNext').style.display     = 'inline-flex';
     document.getElementById('btnHint').disabled          = true;
     const fb = document.getElementById('feedbackMsg');
+    updateProgressFill(true);
 
     if (isOk) {
       session.correct++;
       const xp = session.hintUsed ? 1 : 3;
       session.xp += xp;
-      fb.textContent = '? Correct ! +' + xp + ' XP';
+      fb.textContent = 'Correct ! +' + xp + ' XP';
       fb.className   = 'feedback-msg ok';
       showToast('Bonne réponse ! +' + xp + ' XP', 'success');
       recordExerciseProgress(PAGE_ID, { correct: 1, typed: 1, errors: 0, xp });
@@ -453,7 +485,7 @@
       if (ph) ph.style.color = 'var(--success)';
     } else {
       session.errors++;
-      fb.textContent = '? Incorrect. La réponse était : ' + q.answer;
+      fb.textContent = 'Incorrect. La réponse était : ' + q.answer;
       fb.className   = 'feedback-msg err';
       recordExerciseProgress(PAGE_ID, { correct: 0, typed: 1, errors: 1, xp: 0 });
 
@@ -465,6 +497,7 @@
       const ph = document.getElementById('blank-placeholder-0');
       if (ph) ph.style.color = 'var(--danger)';
     }
+    updateSessionStrip();
 
     if (session.roundState) {
       session.roundState.answered = true;
@@ -485,7 +518,7 @@
     hintBox.textContent = 'Indice: ' + q.hint;
     hintBox.classList.add('show');
     document.getElementById('btnHint').disabled    = true;
-    document.getElementById('btnHint').textContent = 'Indice utilise';
+    document.getElementById('btnHint').textContent = 'Indice utilisé';
     if (session.roundState) {
       session.roundState.hintUsed = true;
     }
@@ -494,6 +527,7 @@
 
   /* ===== SUIVANT ===== */
   function nextRound() {
+    clearAutoAdvance();
     session.index++;
     if (session.index >= TOTAL) {
       finishSession();
@@ -544,7 +578,9 @@
     }
 
     document.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && !session.answered) validate();
+      if (e.key !== 'Enter' || document.getElementById('gameZone').classList.contains('hidden')) return;
+      if (session.answered) nextRound();
+      else validate();
     });
 
     const restored = tryRestoreAutoSave();
@@ -558,10 +594,6 @@
   </script>
 </body>
 </html>
-
-
-
-
 
 
 

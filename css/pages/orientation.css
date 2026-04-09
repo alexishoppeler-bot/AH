@@ -67,6 +67,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 #dest-ico{font-size:clamp(22px,calc(var(--sp)*.3),42px);line-height:1;}
 #dest-name{font-size:clamp(14px,calc(var(--sp)*.19),28px);font-weight:700;color:#fff;font-family:var(--fn);white-space:nowrap;}
 #dest-label-sm{font-size:clamp(8px,calc(var(--sp)*.1),12px);color:var(--text3);font-weight:600;letter-spacing:.06em;text-transform:uppercase;}
+#map-help{
+  position:absolute;top:72px;left:50%;transform:translateX(-50%);z-index:24;
+  max-width:min(520px,calc(100% - 170px));padding:8px 14px;border-radius:12px;
+  background:rgba(13,16,24,.9);border:1px solid rgba(255,149,0,.35);
+  color:var(--text);font-size:12px;font-weight:700;line-height:1.45;text-align:center;
+  pointer-events:none;box-shadow:0 10px 28px rgba(0,0,0,.45);
+}
 
 /* DIRECTION BUTTONS — overlay sur le plan, taille proportionnelle à --sp */
 .dnav{
@@ -183,6 +190,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
   color:var(--acc);
   margin-bottom:7px;
 }
+.mission-card{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;}
+.mission-line{display:flex;gap:8px;align-items:flex-start;color:var(--text);font-size:12px;line-height:1.35;}
+.mission-line span{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(255,149,0,.16);border:1px solid rgba(255,149,0,.35);color:var(--acc);font-family:var(--fm);font-size:10px;}
+.mission-line strong{font-weight:700;}
 .guide-steps{
   display:flex;
   flex-direction:column;
@@ -275,6 +286,11 @@ input.ti:focus{border-color:var(--acc);}
 
 /* INSTRUCTION BOX */
 .ibox-wrap{display:flex;flex-direction:column;gap:3px;}
+.route-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:5px;}
+.route-summary div{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:6px 7px;min-width:0;}
+.route-summary span{display:block;font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:3px;}
+.route-summary strong{display:block;font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.route-summary #route-dest{color:var(--acc);}
 .ibox-label{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);display:flex;align-items:center;gap:5px;}
 .ibox-label::after{content:'';flex:1;height:1px;background:var(--border);}
 .cmd-icons{display:flex;flex-wrap:wrap;gap:3px;min-height:22px;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:3px 6px;}

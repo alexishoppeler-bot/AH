@@ -130,6 +130,23 @@
     arena.appendChild(el);
     setTimeout(() => el.remove(), 500);
   }
+  function pickBalancedDragItems(items, limit) {
+    const byCat = {};
+    [...items].sort(() => Math.random() - 0.5).forEach(item => {
+      if (!byCat[item.cat]) byCat[item.cat] = [];
+      byCat[item.cat].push(item);
+    });
+    const result = [];
+    while (result.length < limit) {
+      const addedThisRound = Object.keys(byCat).some(cat => {
+        if (!byCat[cat].length || result.length >= limit) return false;
+        result.push(byCat[cat].shift());
+        return true;
+      });
+      if (!addedThisRound) break;
+    }
+    return result;
+  }
 
   /* ══════════════════════════════════════════════════════
      DÉFINITION DES 5 ÉTAPES
@@ -342,6 +359,7 @@
             const errEl = document.getElementById('d-err');
 
             done = 0; errs = 0; active = true;
+            let singleClickTimer = null;
             okEl.textContent = 0; errEl.textContent = 0;
             promoteExerciseStatus(PAGE_ID, 'in_progress');
 
@@ -351,7 +369,20 @@
               tgt.style.display = 'flex';
               tgt.style.animation = 'none'; void tgt.offsetWidth; tgt.style.animation = '';
               cnt.textContent = `${done + 1}/${TOTAL}`;
+              tgt.onclick = () => {
+                clearTimeout(singleClickTimer);
+                singleClickTimer = setTimeout(() => {
+                  if (!active || tgt.style.display === 'none') return;
+                  errs++;
+                  errEl.textContent = errs;
+                  msg.style.display = 'flex';
+                  msg.textContent = 'Clique deux fois vite sur la même cible.';
+                  addGlobalScore(0, 1, -1);
+                  setTimeout(() => { if (active) msg.style.display = 'none'; }, 900);
+                }, 260);
+              };
               tgt.ondblclick = () => {
+                clearTimeout(singleClickTimer);
                 done++; okEl.textContent = done;
                 tgt.style.display = 'none';
                 msg.style.display = 'flex'; msg.textContent = '⚡ Super !';
@@ -377,27 +408,34 @@
       id: 'drag',
       build() {
         const ITEMS = window.CLIQUER_DATA.dragItems;
-        let draggingEl, total, placed;
+        const CATEGORIES = {
+          identite:  { icon: '👤', label: 'Identité' },
+          contact:  { icon: '📞', label: 'Contact' },
+          document: { icon: '📄', label: 'Document' },
+          action:   { icon: '✅', label: 'Action' },
+          emploi:   { icon: '💼', label: 'Emploi' },
+          transport:{ icon: '🚌', label: 'Transport' }
+        };
+        let draggingEl, selectedEl, total, placed;
+        const categoryZones = Object.entries(CATEGORIES).map(([cat, meta]) => `
+              <div>
+                <div class="drag-zone-label">${meta.icon} ${meta.label}</div>
+                <div class="drag-zone drop-zone" data-cat="${cat}"></div>
+              </div>`).join('');
 
         const html = `
           <div class="card step-card">
             <div class="card-title">🔀 Étape 4 — Glisser-déposer</div>
             <p class="mb-16" style="font-size:13px;color:var(--text2);">
-              Glisse chaque élément dans sa catégorie : <strong>Matériel</strong> ou <strong>Logiciel</strong>.
+              Glisse chaque élément dans sa catégorie. Astuce : tu peux aussi cliquer un élément, puis cliquer une catégorie.
             </p>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;">
+            <div class="drag-feedback" id="dr-feedback">Choisis un élément à classer.</div>
+            <div class="drag-layout">
               <div>
-                <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:8px;">À classer</div>
-                <div class="drag-zone" id="dr-src" style="flex-direction:column;"></div>
+                <div class="drag-zone-label">À classer</div>
+                <div class="drag-zone drag-source" id="dr-src"></div>
               </div>
-              <div>
-                <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:8px;">🖥️ Matériel</div>
-                <div class="drag-zone" id="dr-hw" data-cat="hw"></div>
-              </div>
-              <div>
-                <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;margin-bottom:8px;">💿 Logiciel</div>
-                <div class="drag-zone" id="dr-sw" data-cat="sw"></div>
-              </div>
+              <div class="drag-category-grid">${categoryZones}</div>
             </div>
             <div class="stat-bar mt-12">
               <span class="stat-pill">✅ <span id="dr-ok">0</span></span>
@@ -410,19 +448,20 @@
           html,
           start() {
             const src    = document.getElementById('dr-src');
-            const hwEl   = document.getElementById('dr-hw');
-            const swEl   = document.getElementById('dr-sw');
+            const zones  = document.querySelectorAll('.drop-zone[data-cat]');
             const okEl   = document.getElementById('dr-ok');
             const errEl  = document.getElementById('dr-err');
             const remEl  = document.getElementById('dr-remain');
+            const fbEl   = document.getElementById('dr-feedback');
 
-            draggingEl = null;
-            total = ITEMS.length; placed = 0;
+            draggingEl = null; selectedEl = null;
+            const practiceItems = pickBalancedDragItems(ITEMS, 12);
+            total = practiceItems.length; placed = 0;
             okEl.textContent = 0; errEl.textContent = 0;
             remEl.textContent = `0/${total} classés`;
             promoteExerciseStatus(PAGE_ID, 'in_progress');
 
-            const shuffled = [...ITEMS].sort(() => Math.random() - 0.5);
+            const shuffled = [...practiceItems].sort(() => Math.random() - 0.5);
             shuffled.forEach(item => {
               const el = document.createElement('div');
               el.className = 'drag-item';
@@ -437,36 +476,55 @@
                 if (draggingEl) draggingEl.classList.remove('dragging');
                 draggingEl = null;
               });
+              el.addEventListener('click', () => {
+                if (el.classList.contains('correct') || el.classList.contains('wrong')) return;
+                selectedEl = selectedEl === el ? null : el;
+                document.querySelectorAll('.drag-item.selected').forEach(itemEl => itemEl.classList.remove('selected'));
+                if (selectedEl) {
+                  selectedEl.classList.add('selected');
+                  fbEl.textContent = 'Sélectionné : ' + selectedEl.textContent + '. Clique maintenant la bonne catégorie.';
+                } else {
+                  fbEl.textContent = 'Choisis un élément à classer.';
+                }
+              });
               src.appendChild(el);
             });
 
-            [hwEl, swEl].forEach(zone => {
+            function placeItem(itemEl, zone) {
+              if (!itemEl || itemEl.dataset.placed === '1') return;
+              const correct = zone.dataset.cat === itemEl.dataset.cat;
+              itemEl.classList.remove('dragging', 'selected');
+              itemEl.dataset.placed = '1';
+              itemEl.draggable = false;
+              if (correct) {
+                itemEl.classList.add('correct');
+                okEl.textContent = +okEl.textContent + 1;
+                fbEl.textContent = 'Bien classé : ' + itemEl.textContent;
+                addGlobalScore(1, 0, 2);
+              } else {
+                itemEl.classList.add('wrong');
+                errEl.textContent = +errEl.textContent + 1;
+                fbEl.textContent = 'Classé ici. La prochaine fois, vérifie la catégorie.';
+                addGlobalScore(0, 1, -1);
+              }
+              zone.appendChild(itemEl);
+              draggingEl = null; selectedEl = null;
+              placed++;
+              remEl.textContent = `${placed}/${total} classés`;
+              if (placed >= total) {
+                const ok = +okEl.textContent, err = +errEl.textContent;
+                openStepModal('🔀', 'Classement terminé !',
+                  `${ok} corrects · ${err} erreurs`, ok >= total * 0.5);
+              }
+            }
+
+            zones.forEach(zone => {
               zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('over'); });
               zone.addEventListener('dragleave', ()  => zone.classList.remove('over'));
+              zone.addEventListener('click', () => placeItem(selectedEl, zone));
               zone.addEventListener('drop', e => {
                 e.preventDefault(); zone.classList.remove('over');
-                if (!draggingEl) return;
-                const correct = zone.dataset.cat === draggingEl.dataset.cat;
-                draggingEl.classList.remove('dragging');
-                draggingEl.draggable = false;
-                if (correct) {
-                  draggingEl.classList.add('correct');
-                  okEl.textContent = +okEl.textContent + 1;
-                  addGlobalScore(1, 0, 2);
-                } else {
-                  draggingEl.classList.add('wrong');
-                  errEl.textContent = +errEl.textContent + 1;
-                  addGlobalScore(0, 1, -1);
-                }
-                zone.appendChild(draggingEl);
-                draggingEl = null;
-                placed++;
-                remEl.textContent = `${placed}/${total} classés`;
-                if (placed >= total) {
-                  const ok = +okEl.textContent, err = +errEl.textContent;
-                  openStepModal('🔀', 'Glisser-déposer terminé !',
-                    `${ok} corrects · ${err} erreurs`, ok >= total * 0.5);
-                }
+                placeItem(draggingEl, zone);
               });
             });
           }
@@ -502,7 +560,7 @@
                   .replace(/[\u2019\u2018]/g, "'");
         }
 
-        let step, okCount, cooldown, selTimer;
+        let step, okCount, cooldown, selTimer, wrongCooldown, onSelectionChange;
 
         const html = `
           <div class="card step-card">
@@ -532,7 +590,7 @@
             const okEl   = document.getElementById('sel-ok');
             const scEl   = document.getElementById('sel-sc');
 
-            step = 0; okCount = 0; cooldown = false;
+            step = 0; okCount = 0; cooldown = false; wrongCooldown = false;
             okEl.textContent = 0;
             promoteExerciseStatus(PAGE_ID, 'in_progress');
 
@@ -564,6 +622,15 @@
                 setTimeout(() => block.classList.remove('flash'), 450);
                 step++;
                 setTimeout(() => { cooldown = false; showTask(); }, 900);
+              } else if (!wrongCooldown) {
+                wrongCooldown = true;
+                addGlobalScore(0, 1, -1);
+                fbEl.textContent = 'Sélection actuelle : « ' + norm(selStr) + ' ». Ajuste le début et la fin.';
+                fbEl.className = 'sel-feedback err';
+                setTimeout(() => {
+                  wrongCooldown = false;
+                  fbEl.className = 'sel-feedback';
+                }, 1100);
               }
             }
 
@@ -573,10 +640,11 @@
             });
 
             // selectionchange pour couvrir Ctrl+A et touch
-            document.addEventListener('selectionchange', () => {
+            onSelectionChange = () => {
               clearTimeout(selTimer);
               selTimer = setTimeout(check, 80);
-            });
+            };
+            document.addEventListener('selectionchange', onSelectionChange);
 
             // Ctrl+A → sélectionne uniquement le contenu du bloc
             block.addEventListener('keydown', e => {
@@ -593,7 +661,7 @@
             function finish() {
               promoteExerciseStatus(PAGE_ID, 'completed');
               // Fermer les listeners globaux proprement
-              document.removeEventListener('selectionchange', check);
+              document.removeEventListener('selectionchange', onSelectionChange);
               openFinalModal();
             }
 
@@ -701,4 +769,3 @@
   </script>
 </body>
 </html>
-

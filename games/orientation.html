@@ -127,11 +127,11 @@
   <div id="map-area">
     <button id="nav-fwd" class="dnav" onclick="aC('forward')">
       <span class="dnav-icon">⬆️</span>
-      <div><div class="dnav-label">Tout droit</div></div>
+      <div><div class="dnav-label">Ajouter<br>tout droit</div></div>
     </button>
     <button id="nav-left" class="dnav" onclick="aC('left')">
       <span class="dnav-icon">⬅️</span>
-      <div class="dnav-label">Tourner<br>à gauche</div>
+      <div class="dnav-label">Ajouter<br>gauche</div>
     </button>
     <div id="map-center">
       <span class="plan-banner">📺 VUE PROJECTEUR</span>
@@ -145,21 +145,22 @@
         <span id="dest-ico">🏥</span>
         <div><div id="dest-label-sm">Destination</div><div id="dest-name">—</div></div>
       </div>
+      <div id="map-help">Le point orange, c'est vous. Les boutons autour du plan ajoutent des actions; le trajet démarre avec "Lancer".</div>
       <button id="legend-btn" onclick="toggleLegend()">🏛 Légende</button>
       <div id="legend-panel" onclick="event.stopPropagation()"></div>
       <div id="exec-overlay"><div id="exec-who"></div><div id="exec-cmd"></div></div>
     </div>
     <button id="nav-right" class="dnav" onclick="aC('right')">
       <span class="dnav-icon">➡️</span>
-      <div class="dnav-label">Tourner<br>à droite</div>
+      <div class="dnav-label">Ajouter<br>droite</div>
     </button>
     <button id="nav-back" class="dnav" onclick="aC('back')">
       <span class="dnav-icon">⬇️</span>
-      <div class="dnav-label">Reculer</div>
+      <div class="dnav-label">Ajouter<br>reculer</div>
     </button>
     <button id="nav-uturn" class="dnav" onclick="aC('uturn')">
       <span class="dnav-icon">🔄</span>
-      <div class="dnav-label">Demi-<br>tour</div>
+      <div class="dnav-label">Ajouter<br>demi-tour</div>
     </button>
     <div id="nav-prec">
       <div class="prec-row">
@@ -186,7 +187,12 @@
 
       <div class="sec-label">📋 La consigne</div>
       <div class="guide-box" id="guide-box" aria-live="polite">
-        <div class="guide-title">Parcours guidé</div>
+        <div class="guide-title">Votre mission</div>
+        <div class="mission-card">
+          <div class="mission-line"><span>1</span><strong>Regardez le point orange : c'est vous.</strong></div>
+          <div class="mission-line"><span>2</span><strong>Repérez la destination affichée sur le plan.</strong></div>
+          <div class="mission-line"><span>3</span><strong>Ajoutez des actions, puis lancez le trajet.</strong></div>
+        </div>
         <div class="guide-steps">
           <span class="guide-step active" id="guide-step-1">1. Regarde la destination</span>
           <span class="guide-step" id="guide-step-2">2. Ajoute les actions</span>
@@ -195,6 +201,20 @@
         <div class="guide-text" id="guide-text">Choisis une destination pour commencer.</div>
       </div>
       <div class="ibox-wrap">
+        <div class="route-summary" aria-live="polite">
+          <div>
+            <span>Départ</span>
+            <strong id="route-start">A4</strong>
+          </div>
+          <div>
+            <span>Destination</span>
+            <strong id="route-dest">A choisir</strong>
+          </div>
+          <div>
+            <span>Actions</span>
+            <strong id="route-actions">0</strong>
+          </div>
+        </div>
         <div class="cmd-icons" id="ci0"><span style="font-size:10px;color:var(--text3);font-style:italic">Appuie sur les flèches…</span></div>
         <div class="cbox" id="cb0"><span class="cph">Appuie sur les flèches pour composer la consigne…</span></div>
       </div>
@@ -202,10 +222,10 @@
       <div id="acts">
         <button class="ab dl" onclick="delLast()">⌫ Effacer le dernier</button>
         <button class="ab rst" onclick="resetAll()">↺ Recommencer</button>
-        <button class="ab go" id="exec0" onclick="execPlayer()" disabled>▶ Lancer</button>
+        <button class="ab go" id="exec0" onclick="execPlayer()" disabled>▶ Lancer le trajet</button>
         <button class="ab arr" onclick="arriveManuel()">🏁 Arrivés !</button>
-        <button class="ab stp" id="step-btn" onclick="toggleStepMode()" style="grid-column:span 2">👣 Etape par etape : OFF</button>
-        <button class="ab nxt" id="step-next" onclick="nextStep()" style="grid-column:span 2;display:none">→ Etape suivante</button>
+        <button class="ab stp" id="step-btn" onclick="toggleStepMode()" style="grid-column:span 2">👣 Étape par étape : OFF</button>
+        <button class="ab nxt" id="step-next" onclick="nextStep()" style="grid-column:span 2;display:none">→ Action suivante</button>
       </div>
 
     </div>

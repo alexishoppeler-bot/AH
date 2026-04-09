@@ -53,5 +53,14 @@ window.ANAGRAMME_DATA = [
 
   // Vie quotidienne
   { word: 'COMMUNE', hint: "Administration locale", category: "Vie quotidienne", difficulty: 'medium' },
+  { word: 'DOSSIER', hint: "Ensemble de documents pour une démarche", category: "Documents", difficulty: 'medium' },
+  { word: 'GUICHET', hint: "Endroit où l’on est accueilli dans un service", category: "Vie quotidienne", difficulty: 'medium' },
+  { word: 'QUALITE', hint: "Exemple : sérieux, ponctualité, écoute", category: "Entretien", difficulty: 'medium' },
+  { word: 'DIPLOME', hint: "Document de fin de formation", category: "Documents", difficulty: 'medium' },
+  { word: 'FORMATION', hint: "Études ou apprentissage suivis", category: "Emploi", difficulty: 'hard' },
+  { word: 'EXPERIENCE', hint: "Temps déjà travaillé dans un métier", category: "Emploi", difficulty: 'hard' },
+  { word: 'DISPONIBLE', hint: "Libre pour commencer un travail", category: "Emploi", difficulty: 'hard' },
+  { word: 'ENTREPRISE', hint: "Lieu où l’on travaille", category: "Emploi", difficulty: 'hard' },
+  { word: 'LIVRAISON', hint: "Action d’apporter une commande", category: "Logistique", difficulty: 'hard' },
   { word: 'LAUSANNE', hint: "Grande ville de Suisse romande", category: "Villes", difficulty: 'medium' }
 ];

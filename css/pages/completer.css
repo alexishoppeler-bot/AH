@@ -20,6 +20,29 @@
 
     .series-progress { margin-bottom: 24px; }
 
+    .session-strip {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin: -8px 0 20px;
+      color: var(--text2);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .session-strip span {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 5px 12px;
+    }
+
+    .session-strip strong {
+      color: var(--accent);
+      margin-left: 4px;
+    }
+
     /* Phrase à trous */
     .phrase-box {
       background: var(--surface);
@@ -76,6 +99,11 @@
       border-color: var(--accent);
       color: var(--accent);
     }
+    .choice-btn:focus-visible {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(79,142,247,0.18);
+      outline: none;
+    }
     .choice-btn.selected {
       background: rgba(79,142,247,0.15);
       border-color: var(--accent);
@@ -104,8 +132,15 @@
       font-size: 15px;
       font-weight: 700;
     }
+    .feedback-msg.muted { color: var(--text2); }
     .feedback-msg.ok  { color: var(--success); }
     .feedback-msg.err { color: var(--danger); }
+
+    .btn:disabled {
+      cursor: default;
+      opacity: 0.55;
+      transform: none;
+    }
 
     .action-row {
       display: flex;

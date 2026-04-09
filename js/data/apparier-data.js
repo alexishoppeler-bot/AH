@@ -62,4 +62,34 @@ window.APPARIER_DATA = [
       { term: 'Contrat', def: 'Document signé pour le travail' },
     ]
   },
+  {
+    category: 'Documents officiels',
+    pairs: [
+      { term: 'Attestation', def: 'Document qui prouve une information' },
+      { term: 'Permis de séjour', def: 'Document autorisant à vivre en Suisse' },
+      { term: 'Certificat de travail', def: 'Document remis par un ancien employeur' },
+      { term: 'Convocation', def: 'Message qui demande de venir à un rendez-vous' },
+      { term: 'Justificatif', def: 'Document demandé comme preuve' },
+    ]
+  },
+  {
+    category: 'Outils numériques',
+    pairs: [
+      { term: 'Mot de passe', def: 'Code secret pour se connecter' },
+      { term: 'Identifiant', def: 'Nom ou numéro utilisé pour ouvrir un compte' },
+      { term: 'Pièce jointe', def: 'Fichier envoyé avec un e-mail' },
+      { term: 'Bouton envoyer', def: 'Commande pour transmettre un message' },
+      { term: 'Champ obligatoire', def: 'Case qui doit être remplie' },
+    ]
+  },
+  {
+    category: 'Vie quotidienne',
+    pairs: [
+      { term: 'Poste', def: 'Lieu où on envoie du courrier' },
+      { term: 'Commune', def: 'Administration locale' },
+      { term: 'Assurance', def: 'Service qui couvre certains frais' },
+      { term: 'Facture', def: 'Document qui demande un paiement' },
+      { term: 'Rendez-vous', def: 'Moment prévu pour rencontrer quelqu’un' },
+    ]
+  },
 ];

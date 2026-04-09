@@ -22,7 +22,7 @@
         <div class="page-header fade-up">
           <div class="page-icon">🔤</div>
           <h1>Ordre alphabétique</h1>
-          <p>Classe les mots en ordre alphabétique en les glissant. Drag & drop !</p>
+          <p>Remettez les mots dans l’ordre alphabétique, du haut vers le bas.</p>
         </div>
 
         <!-- KPI en temps réel -->
@@ -48,11 +48,17 @@
         <!-- Zone jeu -->
         <div class="fade-up delay-2" id="gameZone">
           <div class="alphabet-zone">
+            <div class="alphabet-mission">
+              <div class="alphabet-mission-item"><span>1</span><strong>Lisez tous les mots.</strong></div>
+              <div class="alphabet-mission-item"><span>2</span><strong>Faites glisser les lignes pour les remettre dans l’ordre.</strong></div>
+              <div class="alphabet-mission-item"><span>3</span><strong>Cliquez sur « Vérifier » quand la liste vous semble juste.</strong></div>
+            </div>
             <div class="alphabet-list" id="alphabetList"></div>
           </div>
+          <div class="alphabet-feedback" id="alphabetFeedback" aria-live="polite">Glissez les mots pour les remettre dans l’ordre alphabétique.</div>
           <div class="action-buttons">
             <button class="btn btn-primary" id="btnSubmit" type="button">✓ Vérifier</button>
-            <button class="btn btn-secondary" id="btnReset" type="button">↻ Réinitialiser</button>
+            <button class="btn btn-secondary" id="btnReset" type="button">↻ Remettre en mélange</button>
           </div>
         </div>
 
@@ -117,6 +123,12 @@
   let currentWords = [];
   let draggedElement = null;
 
+  function setFeedback(message, type) {
+    const box = document.getElementById('alphabetFeedback');
+    box.textContent = message;
+    box.className = 'alphabet-feedback' + (type ? ' ' + type : '');
+  }
+
   /* ── Mettre à jour les KPI ── */
   function updateKpi() {
     document.getElementById('alpCorrect').textContent = session.correct;
@@ -130,6 +142,7 @@
     alphabetData = window.ALPHABET_DATA || [];
     session = { correct: 0, errors: 0, xp: 0, questionCount: 0, active: true };
     updateKpi();
+    setFeedback('Glissez les mots pour les remettre dans l’ordre alphabétique.', '');
     nextQuestion();
     startExerciseSession(PAGE_ID);
   }
@@ -154,6 +167,7 @@
     const dataset = alphabetData[session.questionCount - 1] || alphabetData[0];
     currentWords = shuffle([...dataset.words]);
     renderItems();
+    setFeedback('Rangez les mots du haut vers le bas, puis cliquez sur « Vérifier ».', '');
     updateKpi();
   }
 
@@ -218,11 +232,11 @@
       session.correct++;
       session.xp += 5;
       recordExerciseProgress(PAGE_ID, { correct: 1, typed: 1, errors: 0, xp: 5 });
-      alert('✓ Correct !');
+      setFeedback('Bravo, la liste est dans le bon ordre. +5 XP.', 'ok');
     } else {
       session.errors++;
       recordExerciseProgress(PAGE_ID, { correct: 0, typed: 1, errors: 1, xp: 0 });
-      alert('✗ Pas le bon ordre. Essaie encore !');
+      setFeedback('Ce n’est pas encore le bon ordre. La liste a été remise en mélange pour réessayer.', 'err');
       renderItems();
       return;
     }
@@ -236,6 +250,7 @@
   /* ── Réinitialiser la question ── */
   function resetQuestion() {
     renderItems();
+    setFeedback('La liste a été remise en mélange. Recommencez le classement.', '');
   }
 
   /* ── Terminer la session ── */
@@ -307,4 +322,3 @@
   </script>
 </body>
 </html>
-

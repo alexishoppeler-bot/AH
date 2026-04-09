@@ -47,8 +47,17 @@
 
         <!-- Zone cible -->
         <div class="target-zone fade-up delay-2">
-          <div class="target-label">Cliquez sur :</div>
+          <div class="target-topline">
+            <div class="target-step" id="targetStep">Question 1/10</div>
+            <button class="target-hint" id="btnHint" type="button">Indice</button>
+          </div>
+          <div class="progress-bar cc-progress" aria-label="Progression">
+            <div class="progress-fill" id="ccProgressFill" style="width:0%"></div>
+          </div>
+          <div class="target-label">Cliquez sur l'icône qui représente :</div>
           <div class="target-text" id="targetName">Loupe</div>
+          <div class="target-clue" id="targetClue" aria-live="polite"></div>
+          <div class="target-feedback" id="targetFeedback" aria-live="polite">Choisissez une icône dans la grille.</div>
         </div>
 
         <!-- Grille de jeu -->
@@ -116,12 +125,16 @@
     correct: 0,
     errors: 0,
     xp: 0,
-    questionCount: 0,
-    active: true
+    currentNumber: 0,
+    total: TOTAL_QUESTIONS,
+    active: true,
+    locked: false,
+    errorsOnCurrent: 0
   };
 
-  let itemOrder = [];
-  let targetIndex = -1;
+  let allItems = [];
+  let targetQueue = [];
+  let currentTarget = null;
 
   /* ── Mettre à jour les KPI ── */
   function updateKpi() {
@@ -141,11 +154,22 @@
       console.error('CHERCHE_CLIQUE_DATA not loaded');
       return;
     }
-    itemOrder = shuffle(data);
-    session = { correct: 0, errors: 0, xp: 0, questionCount: 0, active: true };
+    allItems = shuffle(data);
+    targetQueue = allItems.slice(0, Math.min(TOTAL_QUESTIONS, allItems.length));
+    session = {
+      correct: 0,
+      errors: 0,
+      xp: 0,
+      currentNumber: 0,
+      total: targetQueue.length,
+      active: true,
+      locked: false,
+      errorsOnCurrent: 0
+    };
     updateKpi();
-    nextQuestion(); // Initialiser targetIndex d'abord
-    renderGrid();   // Puis afficher la grille
+    document.getElementById('resultZone').classList.remove('show');
+    document.getElementById('gameZone').classList.remove('hidden');
+    showQuestion();
     startExerciseSession(PAGE_ID);
   }
 
@@ -164,65 +188,91 @@
     const grid = document.getElementById('gameGrid');
     grid.innerHTML = '';
 
-    // S'assurer que la cible est dans la grille
-    const target = itemOrder[targetIndex];
-    if (!target) return; // Sécurité
+    if (!currentTarget) return;
 
-    // Créer subset de 15 items différents de la cible
-    let subset = shuffle(itemOrder.filter(item => item.id !== target.id)).slice(0, 15);
+    const target = currentTarget;
+    const columns = window.matchMedia('(max-width: 600px)').matches ? 3
+      : window.matchMedia('(min-width: 1200px)').matches ? 5
+      : 4;
+    const wantedCount = columns * 4;
 
-    // Ajouter la cible à la fin
+    // Remplir des lignes complètes: la cible + des distracteurs.
+    let subset = shuffle(allItems.filter(item => item.id !== target.id)).slice(0, Math.max(0, wantedCount - 1));
     subset.push(target);
-
-    // Re-shuffle pour position aléatoire
     subset = shuffle(subset);
 
     subset.forEach((item) => {
-      const el = document.createElement('div');
+      const el = document.createElement('button');
+      el.type = 'button';
       el.className = 'game-item';
-      el.innerHTML = `<div>${item.icon}</div>`;
+      el.setAttribute('aria-label', item.label);
+      el.innerHTML = `<span class="game-icon" aria-hidden="true">${item.icon}</span>`;
       el.addEventListener('click', () => handleClick(item, el));
       grid.appendChild(el);
     });
   }
 
   /* ── Question suivante ── */
-  function nextQuestion() {
-    if (session.questionCount >= TOTAL_QUESTIONS) {
+  function showQuestion() {
+    if (session.currentNumber >= session.total) {
       endSession();
       return;
     }
-    session.questionCount++;
-    targetIndex = Math.floor(Math.random() * itemOrder.length);
-    const target = itemOrder[targetIndex];
-    if (!target) {
-      console.error('Target not found at index', targetIndex, 'itemOrder length:', itemOrder.length);
+    session.currentNumber++;
+    session.locked = false;
+    session.errorsOnCurrent = 0;
+    currentTarget = targetQueue[session.currentNumber - 1];
+    if (!currentTarget) {
+      console.error('Target not found at question', session.currentNumber);
       return;
     }
-    document.getElementById('targetName').textContent = target.label;
+    document.getElementById('targetName').textContent = currentTarget.label;
+    document.getElementById('targetClue').textContent = '';
+    document.getElementById('targetFeedback').textContent = 'Choisissez une icône dans la grille.';
+    document.getElementById('targetFeedback').className = 'target-feedback';
+    document.getElementById('btnHint').disabled = false;
+    updateProgress();
+    renderGrid();
+  }
+
+  function updateProgress() {
+    const stepText = `${session.currentNumber}/${session.total}`;
+    document.getElementById('targetStep').textContent = 'Question ' + stepText;
+    document.getElementById('ccProgressFill').style.width =
+      Math.round(((session.currentNumber - 1) / session.total) * 100) + '%';
   }
 
   /* ── Gérer le clic ── */
   function handleClick(item, element) {
-    if (!session.active) return;
-    const target = itemOrder[targetIndex];
+    if (!session.active || session.locked || !currentTarget) return;
+    const target = currentTarget;
 
     if (item.id === target.id) {
       // Correct !
+      session.locked = true;
       session.correct++;
       session.xp += 3;
       element.classList.add('correct');
+      document.getElementById('targetFeedback').textContent = 'Correct. Nouvelle cible...';
+      document.getElementById('targetFeedback').className = 'target-feedback ok';
+      document.getElementById('ccProgressFill').style.width =
+        Math.round((session.currentNumber / session.total) * 100) + '%';
       recordExerciseProgress(PAGE_ID, { correct: 1, typed: 1, errors: 0, xp: 3 });
       updateKpi();
       setTimeout(() => {
         element.classList.remove('correct');
-        nextQuestion();
-        renderGrid();
+        showQuestion();
       }, 600);
     } else {
       // Erreur
       session.errors++;
+      session.errorsOnCurrent++;
       element.classList.add('wrong');
+      document.getElementById('targetFeedback').textContent =
+        session.errorsOnCurrent >= 2
+          ? 'Pas celle-ci. Utilisez Indice si vous êtes bloqué.'
+          : 'Pas celle-ci. Essayez encore.';
+      document.getElementById('targetFeedback').className = 'target-feedback err';
       recordExerciseProgress(PAGE_ID, { correct: 0, typed: 1, errors: 1, xp: 0 });
       updateKpi();
       setTimeout(() => {
@@ -235,6 +285,8 @@
   function endSession() {
     session.active = false;
     document.getElementById('gameZone').classList.add('hidden');
+    document.getElementById('ccProgressFill').style.width = '100%';
+    document.getElementById('targetFeedback').textContent = 'Session terminée.';
     document.getElementById('resultZone').classList.add('show');
 
     const accuracy = session.correct + session.errors > 0
@@ -251,7 +303,7 @@
     document.getElementById('resEmoji').textContent = emoji;
     document.getElementById('resTitle').textContent = title;
     document.getElementById('resSubtitle').textContent =
-      `Tu as trouvé ${session.correct}/${TOTAL_QUESTIONS} icônes. Précision : ${accuracy}%`;
+      `Tu as trouvé ${session.correct}/${session.total} icônes. Précision : ${accuracy}%`;
 
     document.getElementById('resFinal').textContent = session.correct;
     document.getElementById('resFinalErr').textContent = session.errors;
@@ -280,6 +332,16 @@
     initGame();
   });
 
+  /* ── Indice ── */
+  document.getElementById('btnHint').addEventListener('click', () => {
+    if (!session.active || session.locked || !currentTarget) return;
+    document.getElementById('targetClue').textContent =
+      'Indice : regardez du côté "' + currentTarget.category + '".';
+    document.getElementById('targetFeedback').textContent = 'Continuez à chercher la bonne icône.';
+    document.getElementById('targetFeedback').className = 'target-feedback';
+    document.getElementById('btnHint').disabled = true;
+  });
+
   /* ── Lancer le jeu au démarrage ── */
   document.addEventListener('DOMContentLoaded', () => {
     if (typeof StageManager !== 'undefined' && typeof ScoreManager !== 'undefined') {
@@ -296,4 +358,3 @@
   </script>
 </body>
 </html>
-

@@ -68,13 +68,40 @@
     }
     .drag-item:hover    { transform: translateY(-2px); box-shadow: var(--shadow-md); }
     .drag-item.dragging { opacity: 0.4; cursor: grabbing; }
+    .drag-item.selected { outline: 3px solid color-mix(in srgb,var(--accent) 55%,transparent); transform: translateY(-2px); }
     .drag-item.correct  { background: var(--success); color: #fff; border-color: var(--success); cursor: default; }
     .drag-item.wrong    { background: var(--danger);  color: #fff; border-color: var(--danger);  cursor: default; }
+    .drag-layout {
+      display: grid;
+      grid-template-columns: minmax(180px, 0.9fr) minmax(0, 2fr);
+      gap: 16px;
+    }
+    .drag-category-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .drag-zone-label {
+      color: var(--text3);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    .drag-feedback {
+      color: var(--text2);
+      font-size: 13px;
+      font-weight: 600;
+      margin: -4px 0 14px;
+      min-height: 20px;
+    }
     .drag-zone {
       min-height: 100px; border: 2px dashed var(--border); border-radius: var(--r-lg);
       padding: 12px; display: flex; flex-wrap: wrap; gap: 8px; background: var(--bg2);
       transition: border-color 0.2s, background 0.2s;
     }
+    .drag-source { align-content: flex-start; flex-direction: column; }
     .drag-zone.over { border-color: var(--accent); background: color-mix(in srgb,var(--accent) 8%,var(--bg2)); }
 
     /* ── Stat bar ── */
@@ -127,6 +154,7 @@
       margin-top: 10px; min-height: 20px;
       font-size: 13px; font-weight: 600; color: var(--success);
     }
+    .sel-feedback.err { color: var(--danger); }
     @keyframes flash-green {
       0%,100% { background: var(--bg2); }
       40%     { background: color-mix(in srgb, var(--success) 18%, var(--bg2)); }
@@ -167,3 +195,26 @@
       }
     }
 
+    @media (max-width: 780px) {
+      .drag-layout {
+        grid-template-columns: 1fr;
+      }
+      .drag-category-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .drag-source {
+        flex-direction: row;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+      .drag-category-grid {
+        grid-template-columns: 1fr;
+      }
+      .arena {
+        height: 260px;
+      }
+    }

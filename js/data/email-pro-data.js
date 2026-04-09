@@ -251,5 +251,131 @@ window.EMAIL_PRO_DATA = [
     ],
     answer: 0,
     correctFeedback: 'Exact : la réponse est claire, polie, et la pièce jointe est correctement annoncée.'
+  },
+
+  {
+    category: 'Logement',
+    received: {
+      from: 'De : Gérance du Lac',
+      subject: 'Merci de transmettre une copie de votre permis',
+      body: 'Bonjour Madame,\n\nAfin de compléter votre dossier, merci de nous envoyer une copie de votre permis de séjour en pièce jointe.\n\nMeilleures salutations,\nGérance du Lac',
+      request: 'Action attendue : répondre poliment et annoncer la copie du permis jointe.'
+    },
+    responses: [
+      {
+        subject: 'Re: Merci de transmettre une copie de votre permis',
+        body: 'Bonjour,\n\nVeuillez trouver en pièce jointe une copie de mon permis de séjour.\n\nJe reste à votre disposition pour toute information complémentaire.\n\nMeilleures salutations,\nSamira Azzouz',
+        attachment: 'Copie du permis jointe',
+        signature: 'Signature complète',
+        reasonIfWrong: ''
+      },
+      {
+        subject: 'Copie du permis',
+        body: 'Bonjour,\n\nJe vous transmets mon permis en pièce jointe.\n\nCordialement,\nSamira Azzouz',
+        attachment: 'Permis joint',
+        signature: 'Signature complète',
+        reasonIfWrong: 'La réponse est correcte, mais la meilleure garde l’objet reçu et ajoute une formule finale plus complète.'
+      },
+      {
+        subject: 'Re: Merci de transmettre une copie de votre permis',
+        body: 'Bonjour,\n\nJe vous transmets mon document demandé.\n\nMeilleures salutations,\nSamira Azzouz',
+        attachment: 'Document trop vague',
+        signature: 'Signature complète',
+        reasonIfWrong: 'Le message ne précise pas clairement qu’il s’agit du permis de séjour.'
+      },
+      {
+        subject: 'Re: Merci de transmettre une copie de votre permis',
+        body: 'Bonjour,\n\nJe vous envoie mon permis.\n\nSamira',
+        attachment: 'Permis joint',
+        signature: 'Prénom uniquement',
+        reasonIfWrong: 'La signature est incomplète et le message reste trop court.'
+      }
+    ],
+    answer: 0,
+    correctFeedback: 'Bonne réponse : la copie du permis est clairement annoncée et le ton reste professionnel.'
+  },
+
+  {
+    category: 'Rendez-vous',
+    received: {
+      from: 'De : Commune de Prilly',
+      subject: 'Confirmation de rendez-vous',
+      body: 'Bonjour,\n\nNous vous proposons un rendez-vous mercredi 8h30 au guichet population. Merci de confirmer votre présence.\n\nCordialement,\nCommune de Prilly',
+      request: 'Action attendue : confirmer clairement sa présence avec le jour et l’heure.'
+    },
+    responses: [
+      {
+        subject: 'Re: Confirmation de rendez-vous',
+        body: 'Bonjour,\n\nJe vous confirme ma présence au rendez-vous du mercredi à 8h30 au guichet population.\n\nMeilleures salutations,\nMourad Benali',
+        attachment: 'Aucune pièce jointe nécessaire',
+        signature: 'Signature complète',
+        reasonIfWrong: ''
+      },
+      {
+        subject: 'Confirmation rendez-vous mercredi',
+        body: 'Bonjour,\n\nJe confirme ma présence mercredi à 8h30.\n\nCordialement,\nMourad Benali',
+        attachment: 'Aucune pièce jointe nécessaire',
+        signature: 'Signature complète',
+        reasonIfWrong: 'La réponse est correcte, mais la meilleure reprend plus précisément le contexte du rendez-vous.'
+      },
+      {
+        subject: 'Re: Confirmation de rendez-vous',
+        body: 'Bonjour,\n\nJe confirme ma présence mercredi.\n\nMeilleures salutations,\nMourad Benali',
+        attachment: 'Aucune pièce jointe nécessaire',
+        signature: 'Signature complète',
+        reasonIfWrong: 'La réponse oublie l’heure de 8h30.'
+      },
+      {
+        subject: 'Re: Confirmation de rendez-vous',
+        body: 'Bonjour,\n\nJe serai là.\n\nMourad Benali',
+        attachment: 'Aucune pièce jointe nécessaire',
+        signature: 'Signature simple',
+        reasonIfWrong: 'Le message est trop court et ne reprend ni le jour ni l’heure.'
+      }
+    ],
+    answer: 0,
+    correctFeedback: 'Correct : la confirmation est complète, claire et reprend bien le rendez-vous proposé.'
+  },
+
+  {
+    category: 'Emploi',
+    received: {
+      from: 'De : Agence FlexiJob',
+      subject: 'Merci d’indiquer vos disponibilités',
+      body: 'Bonjour,\n\nPour la suite de votre dossier, merci de nous indiquer vos disponibilités pour travailler cette semaine.\n\nCordialement,\nAgence FlexiJob',
+      request: 'Action attendue : répondre avec des disponibilités claires.'
+    },
+    responses: [
+      {
+        subject: 'Re: Merci d’indiquer vos disponibilités',
+        body: 'Bonjour,\n\nMerci pour votre message. Je suis disponible cette semaine du lundi au vendredi, le matin et l’après-midi.\n\nCordialement,\nPaulo Ferreira',
+        attachment: 'Aucune pièce jointe nécessaire',
+        signature: 'Signature complète',
+        reasonIfWrong: ''
+      },
+      {
+        subject: 'Disponibilités semaine',
+        body: 'Bonjour,\n\nJe suis disponible cette semaine du lundi au vendredi.\n\nMeilleures salutations,\nPaulo Ferreira',
+        attachment: 'Aucune pièce jointe nécessaire',
+        signature: 'Signature complète',
+        reasonIfWrong: 'La réponse est correcte, mais la meilleure précise aussi les moments de la journée.'
+      },
+      {
+        subject: 'Re: Merci d’indiquer vos disponibilités',
+        body: 'Bonjour,\n\nJe suis disponible cette semaine.\n\nCordialement,\nPaulo Ferreira',
+        attachment: 'Aucune pièce jointe nécessaire',
+        signature: 'Signature complète',
+        reasonIfWrong: 'La réponse reste trop vague et ne donne pas de détails utiles.'
+      },
+      {
+        subject: 'Re: Merci d’indiquer vos disponibilités',
+        body: 'Bonjour,\n\nJe peux travailler.\n\nPaulo',
+        attachment: 'Aucune pièce jointe nécessaire',
+        signature: 'Prénom uniquement',
+        reasonIfWrong: 'Le message est trop vague et la signature est incomplète.'
+      }
+    ],
+    answer: 0,
+    correctFeedback: 'Bonne pratique : la disponibilité est formulée clairement et avec un ton professionnel.'
   }
 ];

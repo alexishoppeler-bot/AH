@@ -18,16 +18,21 @@
       background: var(--surface);
       border: 2px solid var(--border);
       border-radius: var(--r-lg);
+      appearance: none;
       cursor: pointer;
       user-select: none;
       transition: all 0.2s;
       font-size: 36px;
+      font-family: inherit;
+      line-height: 1;
     }
 
-    .game-item:hover {
+    .game-item:hover,
+    .game-item:focus-visible {
       border-color: var(--accent);
       box-shadow: var(--shadow-md);
       transform: translateY(-2px);
+      outline: none;
     }
 
     .game-item:active {
@@ -97,6 +102,51 @@
       text-align: center;
     }
 
+    .target-topline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+
+    .target-step {
+      color: var(--text2);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+
+    .target-hint {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      color: var(--text2);
+      cursor: pointer;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 10px;
+    }
+
+    .target-hint:hover:not(:disabled),
+    .target-hint:focus-visible {
+      border-color: var(--accent);
+      color: var(--accent);
+      outline: none;
+    }
+
+    .target-hint:disabled {
+      cursor: default;
+      opacity: 0.55;
+    }
+
+    .cc-progress {
+      margin-bottom: 16px;
+    }
+
     .target-label {
       font-size: 13px;
       color: var(--text2);
@@ -107,6 +157,33 @@
       font-size: 20px;
       font-weight: 700;
       color: var(--accent);
+    }
+
+    .target-clue,
+    .target-feedback {
+      font-size: 13px;
+      min-height: 20px;
+    }
+
+    .target-clue {
+      color: var(--text2);
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    .target-feedback {
+      color: var(--text3);
+      margin-top: 10px;
+    }
+
+    .target-feedback.ok {
+      color: var(--success);
+      font-weight: 700;
+    }
+
+    .target-feedback.err {
+      color: var(--danger);
+      font-weight: 700;
     }
 
     /* ── Result zone ── */

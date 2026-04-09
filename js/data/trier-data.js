@@ -80,5 +80,35 @@ window.TRIER_DATA = [
       { label: 'Travail', emoji: '🏢', items: ['Poste', 'Entreprise', 'Équipe', 'Horaire'] },
       { label: 'Contrat', emoji: '📑', items: ['Salaire', 'Temps plein', 'Temps partiel', 'Disponibilité'] },
     ],
+  },
+
+  {
+    theme: 'Formulaire administratif',
+    groups: [
+      { label: 'Identité', emoji: '🪪', items: ['Nom', 'Prénom', 'Date de naissance', 'État civil'] },
+      { label: 'Coordonnées', emoji: '📍', items: ['Adresse', 'NPA', 'Ville', 'Téléphone'] },
+      { label: 'Documents', emoji: '📄', items: ['CV', 'Permis', 'Attestation', 'Photo'] },
+      { label: 'Actions', emoji: '✍️', items: ['Écrire', 'Cocher', 'Relire', 'Signer'] },
+    ],
+  },
+
+  {
+    theme: 'Envoyer un e-mail professionnel',
+    groups: [
+      { label: 'Début du message', emoji: '📨', items: ['Destinataire', 'Objet', 'Salutation', 'Présentation courte'] },
+      { label: 'Corps du message', emoji: '📝', items: ['Expliquer la demande', 'Préciser le document', 'Rester poli', 'Être clair'] },
+      { label: 'Pièces jointes', emoji: '📎', items: ['CV', 'Lettre', 'Attestation', 'Formulaire signé'] },
+      { label: 'Fin du message', emoji: '🤝', items: ['Remercier', 'Rester disponible', 'Signature complète', 'Envoyer'] },
+    ],
+  },
+
+  {
+    theme: 'Vie quotidienne',
+    groups: [
+      { label: 'Logement', emoji: '🏠', items: ['Gérance', 'Loyer', 'Appartement', 'État des lieux'] },
+      { label: 'Santé', emoji: '🩺', items: ['Médecin', 'Assurance', 'Ordonnance', 'Rendez-vous'] },
+      { label: 'Administration', emoji: '🏢', items: ['Commune', 'Guichet', 'Attestation', 'Formulaire'] },
+      { label: 'Déplacements', emoji: '🚌', items: ['Bus', 'Tram', 'Train', 'Quai'] },
+    ],
   }
 ];

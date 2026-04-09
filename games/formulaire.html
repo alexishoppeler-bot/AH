@@ -21,7 +21,7 @@
         <div class="page-header fade-up">
           <div class="page-icon">📝</div>
           <h1>Remplir un formulaire</h1>
-          <p>Lisez le profil. Puis ecrivez la meme chose dans le formulaire.</p>
+          <p>Lisez le profil, puis recopiez les mêmes informations dans le formulaire.</p>
         </div>
 
         <div class="kpi-grid fade-up delay-1">
@@ -42,6 +42,18 @@
               <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
             </div>
 
+            <div class="mission-strip" aria-live="polite">
+              <div class="mission-item"><span>1</span><strong>Lisez le profil à gauche.</strong></div>
+              <div class="mission-item"><span>2</span><strong>Copiez les mêmes informations à droite.</strong></div>
+              <div class="mission-item"><span>3</span><strong>Vérifiez, puis passez au profil suivant.</strong></div>
+            </div>
+
+            <div class="session-strip" aria-live="polite">
+              <span>Champs à remplir <strong id="fieldsCount">0</strong></span>
+              <span>Champs remplis <strong id="fieldsDone">0</strong></span>
+              <span>Profil <strong id="profileStatus">En cours</strong></span>
+            </div>
+
             <div class="form-grid">
               <article class="profile-card" aria-live="polite">
                 <h2 id="profileTitle">Profil</h2>
@@ -60,8 +72,8 @@
 
             <div class="form-actions">
               <button class="btn btn-ghost btn-sm" id="btnHint" type="button">Aide</button>
-              <button class="btn btn-primary" id="btnValidate" type="button">Verifier</button>
-              <button class="btn btn-secondary" id="btnNext" type="button" style="display:none;">Suivant</button>
+              <button class="btn btn-primary" id="btnValidate" type="button">Vérifier</button>
+              <button class="btn btn-secondary" id="btnNext" type="button" style="display:none;">Continuer</button>
             </div>
           </section>
         </div>
@@ -69,17 +81,17 @@
         <div class="result-zone fade-up" id="resultZone">
           <div class="card card-accent card-lg" style="text-align:center;">
             <div style="font-size:56px;margin-bottom:12px;" id="resEmoji">📝</div>
-            <h2 style="font-family:var(--font-head);font-size:24px;font-weight:800;margin-bottom:8px;" id="resTitle">Session terminee</h2>
+            <h2 style="font-family:var(--font-head);font-size:24px;font-weight:800;margin-bottom:8px;" id="resTitle">Session terminée</h2>
             <p style="color:var(--text2);margin-bottom:24px;" id="resSubtitle"></p>
             <div class="kpi-grid" style="margin-bottom:24px;">
               <div class="kpi-card"><div class="kpi-value" id="resCorrect">0</div><div class="kpi-label">Justes</div></div>
               <div class="kpi-card"><div class="kpi-value" id="resErrors">0</div><div class="kpi-label">Erreurs</div></div>
               <div class="kpi-card"><div class="kpi-value" id="resXP">0</div><div class="kpi-label">Points</div></div>
-              <div class="kpi-card"><div class="kpi-value" id="resAccuracy">0%</div><div class="kpi-label">Precision</div></div>
+              <div class="kpi-card"><div class="kpi-value" id="resAccuracy">0%</div><div class="kpi-label">Précision</div></div>
             </div>
             <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-              <button class="btn btn-ghost btn-sm btn-share" type="button">Copier mon resume</button>
-              <button class="btn btn-primary btn-lg" id="btnNextExercise" type="button">Suite</button>
+              <button class="btn btn-ghost btn-sm btn-share" type="button">Copier mon résumé</button>
+              <button class="btn btn-primary btn-lg" id="btnNextExercise" type="button">Exercice suivant</button>
               <button class="btn btn-secondary btn-lg" id="btnRestart" type="button">Rejouer</button>
               <a href="accueil.html" class="btn btn-secondary btn-lg">← Accueil</a>
             </div>

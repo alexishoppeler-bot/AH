@@ -362,7 +362,10 @@ window.CH_FR_KEYMAP = (function () {
 
     // Surligner Shift si nécessaire
     if (firstStep.type === 'shift') {
-      kb.querySelectorAll('.key[data-key="Shift"]').forEach(k => k.classList.add('highlight', 'highlight-shift'));
+      const shiftSelector = /^[a-z]$/i.test(firstStep.key)
+        ? '.key[data-key="Shift"][data-side="left"]'
+        : '.key[data-key="Shift"]';
+      kb.querySelectorAll(shiftSelector).forEach(k => k.classList.add('highlight', 'highlight-shift'));
     }
 
     // Surligner AltGr si nécessaire
