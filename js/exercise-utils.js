@@ -167,6 +167,122 @@ const EXERCISE_COACH_TIPS_BY_CATEGORY = {
   ]
 };
 
+/* ===== SESSION SAMPLER — tirage par niveau et thème ===== */
+
+const LIFE_THEMES = ['emploi', 'orp', 'logement', 'santé', 'transports', 'numérique'];
+
+const LIFE_THEME_LABELS = {
+  emploi:     { label: 'Emploi',      icon: '💼' },
+  orp:        { label: 'ORP',         icon: '🏢' },
+  logement:   { label: 'Logement',    icon: '🏠' },
+  santé:      { label: 'Santé',       icon: '🩺' },
+  transports: { label: 'Transports',  icon: '🚌' },
+  numérique:  { label: 'Numérique',   icon: '💻' }
+};
+
+const SessionSampler = {
+  /* Retourne le thème de vie d'un item (supporte 'theme' et 'topic') */
+  getTheme(item) {
+    return (item && (item.theme || item.topic)) || null;
+  },
+
+  /* Retourne le niveau de difficulté d'un item */
+  getDifficulty(item) {
+    return (item && item.difficulty) || 'easy';
+  },
+
+  /* Niveau adaptatif basé sur le score de la page */
+  getAdaptiveLevel(page) {
+    const m = window.ScoreManager ? window.ScoreManager.readMetrics(page) : {};
+    const acc = m.typed > 0 ? Math.round((m.correct / m.typed) * 100) : 0;
+    if (acc >= 85) return 'hard';
+    if (acc >= 60) return 'medium';
+    return 'easy';
+  },
+
+  /* Filtre par niveau : easy → easy seulement ; medium → easy+medium ; hard → tout */
+  filterByLevel(items, level) {
+    if (!level || level === 'hard') return items;
+    if (level === 'medium') return items.filter(i => this.getDifficulty(i) !== 'hard');
+    return items.filter(i => this.getDifficulty(i) === 'easy');
+  },
+
+  /* Filtre par thème de vie */
+  filterByTheme(items, theme) {
+    if (!theme) return items;
+    return items.filter(i => this.getTheme(i) === theme);
+  },
+
+  /* Tire N items depuis le pool avec évitement des récents (localStorage) */
+  pick(pool, options) {
+    const { n = 10, level = null, theme = null, page = '', avoidRecent = true } = options || {};
+
+    let filtered = pool.slice();
+    if (level) {
+      const byLevel = this.filterByLevel(filtered, level);
+      if (byLevel.length > 0) filtered = byLevel;
+    }
+    if (theme) {
+      const byTheme = this.filterByTheme(filtered, theme);
+      if (byTheme.length > 0) filtered = byTheme;
+    }
+
+    if (!avoidRecent || !page || typeof localStorage === 'undefined') {
+      return shuffleArray(filtered).slice(0, Math.min(n, filtered.length));
+    }
+
+    /* Lire les indices récemment vus */
+    const storageKey = 'session:recent:' + page;
+    let recentIndices;
+    try {
+      recentIndices = new Set(JSON.parse(localStorage.getItem(storageKey) || '[]'));
+    } catch (_) {
+      recentIndices = new Set();
+    }
+
+    /* Séparer frais et déjà vus en conservant l'indice original dans pool */
+    const fresh = [], seen = [];
+    filtered.forEach(item => {
+      const origIdx = pool.indexOf(item);
+      (recentIndices.has(origIdx) ? seen : fresh).push({ item, origIdx });
+    });
+
+    const combined = [...shuffleArray(fresh), ...shuffleArray(seen)];
+    const selected = combined.slice(0, Math.min(n, combined.length));
+
+    /* Mettre à jour la fenêtre glissante (~70 % du pool) */
+    const maxRecent = Math.max(1, Math.floor(pool.length * 0.7));
+    const newRecent = [...recentIndices, ...selected.map(x => x.origIdx)];
+    const trimmed = [...new Set(newRecent)].slice(-maxRecent);
+    try { localStorage.setItem(storageKey, JSON.stringify(trimmed)); } catch (_) {}
+
+    return selected.map(x => x.item);
+  },
+
+  /* Réinitialise l'historique de session pour une page */
+  resetRecent(page) {
+    if (typeof localStorage !== 'undefined') {
+      try { localStorage.removeItem('session:recent:' + page); } catch (_) {}
+    }
+  }
+};
+
+/* Helper interne shuffle (evite conflit avec d'eventuels shuffle locaux) */
+function shuffleArray(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+window.SessionSampler = SessionSampler;
+window.LIFE_THEMES = LIFE_THEMES;
+window.LIFE_THEME_LABELS = LIFE_THEME_LABELS;
+
+/* ===== FIN SESSION SAMPLER ===== */
+
 const EXERCISE_COACH = {
   byPage: {},
   minToastGapMs: 5000,

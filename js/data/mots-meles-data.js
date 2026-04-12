@@ -1,9 +1,11 @@
-﻿/* ===== JS/DATA/MOTS-MELES-DATA.JS ===== */
+/* ===== JS/DATA/MOTS-MELES-DATA.JS ===== */
 'use strict';
 
 window.MOTS_MELES_DATA = [
   {
     name: 'Formulaire',
+    difficulty: 'easy',
+    theme: 'numérique',
     size: 12,
     words: [
       { word: 'FORMULAIRE', r: 0, c: 0, dir: 'H' },
@@ -21,6 +23,8 @@ window.MOTS_MELES_DATA = [
 
   {
     name: 'Identité et contact',
+    difficulty: 'easy',
+    theme: 'numérique',
     size: 12,
     words: [
       { word: 'TELEPHONE',  r: 0, c: 0, dir: 'H' },
@@ -38,6 +42,8 @@ window.MOTS_MELES_DATA = [
 
   {
     name: 'Actions',
+    difficulty: 'easy',
+    theme: 'numérique',
     size: 12,
     words: [
       { word: 'ECRIRE',     r: 0, c: 0, dir: 'H' },
@@ -55,6 +61,8 @@ window.MOTS_MELES_DATA = [
 
   {
     name: 'Emploi et ORP',
+    difficulty: 'medium',
+    theme: 'emploi',
     size: 12,
     words: [
       { word: 'EMPLOI',      r: 0, c: 0, dir: 'H' },
@@ -72,6 +80,8 @@ window.MOTS_MELES_DATA = [
 
   {
     name: 'Transports et villes',
+    difficulty: 'easy',
+    theme: 'transports',
     size: 12,
     words: [
       { word: 'LAUSANNE', r: 0, c: 0, dir: 'H' },
@@ -87,11 +97,3 @@ window.MOTS_MELES_DATA = [
     ],
   },
 ];
-
-
-
-
-
-
-
-

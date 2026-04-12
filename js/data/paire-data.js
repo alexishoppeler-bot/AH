@@ -5,6 +5,8 @@ window.PAIRE_DATA = [
   // === VRAIES PAIRES ===
   {
     category: 'Formulaire',
+    difficulty: 'easy',
+    theme: 'numérique',
     isPair: true,
     card1: { emoji: '👤', text: 'Nom' },
     card2: { emoji: '📝', text: 'Nom de famille' },
@@ -12,6 +14,8 @@ window.PAIRE_DATA = [
   },
   {
     category: 'Formulaire',
+    difficulty: 'easy',
+    theme: 'numérique',
     isPair: true,
     card1: { emoji: '🧍', text: 'Prénom' },
     card2: { emoji: '🙂', text: 'Nom personnel' },
@@ -19,13 +23,17 @@ window.PAIRE_DATA = [
   },
   {
     category: 'Adresse',
+    difficulty: 'easy',
+    theme: 'numérique',
     isPair: true,
     card1: { emoji: '🏠', text: 'Adresse' },
-    card2: { emoji: '📍', text: 'Lieu où j’habite' },
-    explication: 'L’adresse indique le lieu où la personne habite.'
+    card2: { emoji: '📍', text: 'Lieu où j'habite' },
+    explication: 'L'adresse indique le lieu où la personne habite.'
   },
   {
     category: 'Adresse',
+    difficulty: 'easy',
+    theme: 'numérique',
     isPair: true,
     card1: { emoji: '📮', text: 'Code postal' },
     card2: { emoji: '🔢', text: 'Numéro de la commune' },
@@ -33,20 +41,26 @@ window.PAIRE_DATA = [
   },
   {
     category: 'Contact',
+    difficulty: 'easy',
+    theme: 'numérique',
     isPair: true,
     card1: { emoji: '📞', text: 'Téléphone' },
     card2: { emoji: '☎️', text: 'Numéro pour appeler' },
-    explication: 'Le téléphone permet d’appeler une personne.'
+    explication: 'Le téléphone permet d'appeler une personne.'
   },
   {
     category: 'Contact',
+    difficulty: 'easy',
+    theme: 'numérique',
     isPair: true,
     card1: { emoji: '✉️', text: 'E-mail' },
     card2: { emoji: '📧', text: 'Adresse électronique' },
-    explication: 'L’e-mail est l’adresse électronique utilisée pour recevoir des messages.'
+    explication: 'L'e-mail est l'adresse électronique utilisée pour recevoir des messages.'
   },
   {
     category: 'Document',
+    difficulty: 'easy',
+    theme: 'numérique',
     isPair: true,
     card1: { emoji: '✍️', text: 'Signature' },
     card2: { emoji: '✅', text: 'Nom écrit à la main' },
@@ -54,6 +68,8 @@ window.PAIRE_DATA = [
   },
   {
     category: 'Action',
+    difficulty: 'easy',
+    theme: 'numérique',
     isPair: true,
     card1: { emoji: '☑️', text: 'Cocher' },
     card2: { emoji: '📦', text: 'Choisir une case' },
@@ -61,13 +77,17 @@ window.PAIRE_DATA = [
   },
   {
     category: 'Action',
+    difficulty: 'easy',
+    theme: 'numérique',
     isPair: true,
     card1: { emoji: '👀', text: 'Vérifier' },
     card2: { emoji: '🔎', text: 'Relire avant envoyer' },
-    explication: 'Il faut vérifier les informations avant d’envoyer le formulaire.'
+    explication: 'Il faut vérifier les informations avant d'envoyer le formulaire.'
   },
   {
     category: 'Action',
+    difficulty: 'easy',
+    theme: 'numérique',
     isPair: true,
     card1: { emoji: '📨', text: 'Envoyer' },
     card2: { emoji: '📤', text: 'Transmettre le document' },
@@ -77,6 +97,8 @@ window.PAIRE_DATA = [
   // === FAUSSES PAIRES ===
   {
     category: 'Formulaire',
+    difficulty: 'easy',
+    theme: 'numérique',
     isPair: false,
     card1: { emoji: '👤', text: 'Nom' },
     card2: { emoji: '📅', text: 'Date' },
@@ -84,6 +106,8 @@ window.PAIRE_DATA = [
   },
   {
     category: 'Formulaire',
+    difficulty: 'easy',
+    theme: 'numérique',
     isPair: false,
     card1: { emoji: '🧍', text: 'Prénom' },
     card2: { emoji: '🏙️', text: 'Ville' },
@@ -91,27 +115,35 @@ window.PAIRE_DATA = [
   },
   {
     category: 'Adresse',
+    difficulty: 'easy',
+    theme: 'numérique',
     isPair: false,
     card1: { emoji: '🏠', text: 'Adresse' },
     card2: { emoji: '✍️', text: 'Signature' },
-    explication: 'L’adresse indique où on habite, la signature sert à valider le document.'
+    explication: 'L'adresse indique où on habite, la signature sert à valider le document.'
   },
   {
     category: 'Adresse',
+    difficulty: 'easy',
+    theme: 'numérique',
     isPair: false,
     card1: { emoji: '📮', text: 'Code postal' },
     card2: { emoji: '📞', text: 'Téléphone' },
-    explication: 'Le code postal concerne l’adresse, pas le téléphone.'
+    explication: 'Le code postal concerne l'adresse, pas le téléphone.'
   },
   {
     category: 'Contact',
+    difficulty: 'easy',
+    theme: 'numérique',
     isPair: false,
     card1: { emoji: '✉️', text: 'E-mail' },
     card2: { emoji: '🛣️', text: 'Rue' },
-    explication: 'L’e-mail est une adresse électronique, la rue fait partie de l’adresse postale.'
+    explication: 'L'e-mail est une adresse électronique, la rue fait partie de l'adresse postale.'
   },
   {
     category: 'Document',
+    difficulty: 'easy',
+    theme: 'numérique',
     isPair: false,
     card1: { emoji: '✍️', text: 'Signature' },
     card2: { emoji: '📞', text: 'Téléphone' },
@@ -119,6 +151,8 @@ window.PAIRE_DATA = [
   },
   {
     category: 'Action',
+    difficulty: 'easy',
+    theme: 'numérique',
     isPair: false,
     card1: { emoji: '☑️', text: 'Cocher' },
     card2: { emoji: '✉️', text: 'E-mail' },
@@ -126,13 +160,17 @@ window.PAIRE_DATA = [
   },
   {
     category: 'Action',
+    difficulty: 'easy',
+    theme: 'numérique',
     isPair: false,
     card1: { emoji: '📨', text: 'Envoyer' },
     card2: { emoji: '❌', text: 'Formulaire vide' },
-    explication: 'On n’envoie pas un formulaire vide.'
+    explication: 'On n'envoie pas un formulaire vide.'
   },
   {
     category: 'Action',
+    difficulty: 'easy',
+    theme: 'numérique',
     isPair: false,
     card1: { emoji: '👀', text: 'Vérifier' },
     card2: { emoji: '⚡', text: 'Aller vite sans lire' },
@@ -141,35 +179,45 @@ window.PAIRE_DATA = [
 
   // === VRAIES PAIRES : Emploi / ORP ===
   {
-    category: 'Recherche d’emploi',
+    category: 'Recherche d'emploi',
+    difficulty: 'medium',
+    theme: 'emploi',
     isPair: true,
     card1: { emoji: '🏢', text: 'ORP' },
-    card2: { emoji: '💼', text: 'Office pour l’emploi' },
-    explication: 'L’ORP aide les personnes à chercher un emploi.'
+    card2: { emoji: '💼', text: 'Office pour l'emploi' },
+    explication: 'L'ORP aide les personnes à chercher un emploi.'
   },
   {
-    category: 'Recherche d’emploi',
+    category: 'Recherche d'emploi',
+    difficulty: 'medium',
+    theme: 'emploi',
     isPair: true,
     card1: { emoji: '📋', text: 'CV' },
     card2: { emoji: '📄', text: 'Document avec mon expérience' },
-    explication: 'Le CV présente la formation, l’expérience et les compétences.'
+    explication: 'Le CV présente la formation, l'expérience et les compétences.'
   },
   {
-    category: 'Recherche d’emploi',
+    category: 'Recherche d'emploi',
+    difficulty: 'medium',
+    theme: 'emploi',
     isPair: true,
     card1: { emoji: '🤝', text: 'Entretien' },
-    card2: { emoji: '🗣️', text: 'Rencontre avec l’employeur' },
-    explication: 'L’entretien est une rencontre avec l’employeur.'
+    card2: { emoji: '🗣️', text: 'Rencontre avec l'employeur' },
+    explication: 'L'entretien est une rencontre avec l'employeur.'
   },
   {
     category: 'Transports',
+    difficulty: 'easy',
+    theme: 'transports',
     isPair: true,
     card1: { emoji: '🚌', text: 'Bus' },
     card2: { emoji: '🛑', text: 'Arrêt' },
-    explication: 'On attend le bus à l’arrêt.'
+    explication: 'On attend le bus à l'arrêt.'
   },
   {
     category: 'Transports',
+    difficulty: 'easy',
+    theme: 'transports',
     isPair: true,
     card1: { emoji: '🎫', text: 'Billet' },
     card2: { emoji: '🚍', text: 'Ticket pour voyager' },
@@ -178,14 +226,18 @@ window.PAIRE_DATA = [
 
   // === FAUSSES PAIRES : Emploi / ORP ===
   {
-    category: 'Recherche d’emploi',
+    category: 'Recherche d'emploi',
+    difficulty: 'medium',
+    theme: 'emploi',
     isPair: false,
     card1: { emoji: '🏢', text: 'ORP' },
     card2: { emoji: '📮', text: 'Code postal' },
-    explication: 'L’ORP est un office pour l’emploi, pas une information d’adresse.'
+    explication: 'L'ORP est un office pour l'emploi, pas une information d'adresse.'
   },
   {
-    category: 'Recherche d’emploi',
+    category: 'Recherche d'emploi',
+    difficulty: 'medium',
+    theme: 'emploi',
     isPair: false,
     card1: { emoji: '📋', text: 'CV' },
     card2: { emoji: '🎫', text: 'Billet de train' },
@@ -193,6 +245,8 @@ window.PAIRE_DATA = [
   },
   {
     category: 'Transports',
+    difficulty: 'easy',
+    theme: 'transports',
     isPair: false,
     card1: { emoji: '🚌', text: 'Bus' },
     card2: { emoji: '✍️', text: 'Signature' },

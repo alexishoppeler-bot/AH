@@ -3,6 +3,8 @@
 window.MOTS_CROISES_DATA = [
   {
     name: 'Grille 1 — Formulaire',
+    difficulty: 'easy',
+    theme: 'numérique',
     rows: 7,
     cols: 8,
     layout: [
@@ -26,6 +28,8 @@ window.MOTS_CROISES_DATA = [
 
   {
     name: 'Grille 2 — Identite',
+    difficulty: 'easy',
+    theme: 'numérique',
     rows: 6,
     cols: 7,
     layout: [
@@ -47,6 +51,8 @@ window.MOTS_CROISES_DATA = [
 
   {
     name: 'Grille 3 — Coordonnees',
+    difficulty: 'easy',
+    theme: 'numérique',
     rows: 6,
     cols: 7,
     layout: [
@@ -68,6 +74,8 @@ window.MOTS_CROISES_DATA = [
 
   {
     name: 'Grille 4 — Emploi',
+    difficulty: 'medium',
+    theme: 'emploi',
     rows: 7,
     cols: 8,
     layout: [
@@ -91,6 +99,8 @@ window.MOTS_CROISES_DATA = [
 
   {
     name: 'Grille 5 — Transports',
+    difficulty: 'easy',
+    theme: 'transports',
     rows: 7,
     cols: 8,
     layout: [

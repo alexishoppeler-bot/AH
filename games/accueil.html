@@ -149,6 +149,10 @@
             </div>
             <div class="category-chips" id="categoryChips"></div>
           </div>
+
+          <!-- Filtres par thème de vie -->
+          <div class="theme-filter-bar" id="themeFilterBar" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;"></div>
+
           <div class="level-cards" id="exerciseCards"></div>
         </section>
 
@@ -174,6 +178,8 @@
       renderAccueil();
     });
 
+    let activeThemeFilter = null;
+
     function renderAccueil() {
       const config = window.EXERCISE_CONFIG || {};
       const orderedPages = Array.isArray(config.orderedPages) ? config.orderedPages : [];
@@ -186,7 +192,48 @@
       renderApps(config);
       renderActivities(config, orderedPages);
       renderCategoryChips(config, orderedPages);
+      renderThemeFilterBar(config, orderedPages);
       renderGameCards(config, orderedPages, nextExercise);
+    }
+
+    function renderThemeFilterBar(config, orderedPages) {
+      const bar = document.getElementById('themeFilterBar');
+      if (!bar) return;
+
+      const labels = (window.LIFE_THEME_LABELS) || {};
+      const themes = (window.LIFE_THEMES) || [];
+
+      /* Ne garder que les thèmes qui ont au moins un exercice */
+      const presentThemes = themes.filter(t =>
+        orderedPages.some(p => {
+          const m = config.meta && config.meta[p];
+          return m && Array.isArray(m.themes) && m.themes.includes(t);
+        })
+      );
+
+      if (presentThemes.length === 0) { bar.style.display = 'none'; return; }
+
+      const allBtn = '<button class="theme-chip' + (!activeThemeFilter ? ' active' : '') +
+        '" data-theme="" type="button">Tous</button>';
+
+      const themeBtns = presentThemes.map(t => {
+        const info = labels[t] || { label: t, icon: '●' };
+        const isActive = activeThemeFilter === t;
+        return '<button class="theme-chip' + (isActive ? ' active' : '') +
+          '" data-theme="' + escapeHTML(t) + '" type="button">' +
+          escapeHTML(info.icon) + ' ' + escapeHTML(info.label) + '</button>';
+      }).join('');
+
+      bar.innerHTML = allBtn + themeBtns;
+
+      bar.querySelectorAll('.theme-chip').forEach(btn => {
+        btn.addEventListener('click', () => {
+          activeThemeFilter = btn.dataset.theme || null;
+          renderThemeFilterBar(config, orderedPages);
+          renderGameCards(config, orderedPages,
+            (window.StageManager && StageManager.getNextRecommendedExercise()) || null);
+        });
+      });
     }
 
     function renderApps(config) {
@@ -262,7 +309,7 @@
       const container = document.getElementById('categoryChips');
       if (!container) return;
       const sectionMap = buildSectionMap(config, orderedPages);
-      const sectionOrder = ['Bureautique', 'Recherche d\'emploi', 'Français'];
+      const sectionOrder = ['Emploi & ORP', 'Numérique', 'Français'];
       const sections = sectionOrder.filter((s) => sectionMap[s]);
       Object.keys(sectionMap).forEach((s) => { if (!sections.includes(s)) sections.push(s); });
       container.innerHTML = sections.map((section) => {
@@ -276,8 +323,16 @@
 
       cardsContainer.innerHTML = '';
 
-      const sectionOrder = ['Bureautique', 'Recherche d\'emploi', 'Français'];
-      const sectionMap = buildSectionMap(config, orderedPages);
+      /* Filtrer par thème actif */
+      const filteredPages = activeThemeFilter
+        ? orderedPages.filter(p => {
+            const m = config.meta && config.meta[p];
+            return m && Array.isArray(m.themes) && m.themes.includes(activeThemeFilter);
+          })
+        : orderedPages;
+
+      const sectionOrder = ['Emploi & ORP', 'Numérique', 'Français'];
+      const sectionMap = buildSectionMap(config, filteredPages);
       const sections = sectionOrder.filter((s) => sectionMap[s]);
       Object.keys(sectionMap).forEach((s) => { if (!sections.includes(s)) sections.push(s); });
 

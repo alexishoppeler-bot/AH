@@ -14,6 +14,8 @@ window.ECOUTER_DATA = [
     type: 'histoire',
     title: 'Le formulaire de Nadia',
     category: 'Remplir un formulaire',
+    difficulty: 'easy',
+    theme: 'numérique',
     transcript: `Nadia est dans un centre administratif. Elle doit remplir un formulaire d’inscription. Elle prend un stylo et lit les questions calmement. Dans la première partie, elle écrit son nom, son prénom et sa date de naissance. Ensuite, elle complète son adresse avec la rue, le numéro, le code postal et la ville. Après, elle écrit son numéro de téléphone et son adresse e-mail. Avant de finir, elle relit toutes les informations. Elle voit une erreur dans son numéro de téléphone et elle la corrige. À la fin, elle signe le document et le remet à l’accueil.`,
     questions: [
       {
@@ -48,6 +50,8 @@ window.ECOUTER_DATA = [
     type: 'dialogue',
     title: 'Au guichet',
     category: 'Formulaire papier',
+    difficulty: 'easy',
+    theme: 'numérique',
     lines: [
       { speaker: 'Agent', gender: 'f', text: 'Bonjour madame, vous avez le formulaire ?' },
       { speaker: 'Amina', gender: 'f', text: 'Bonjour. Oui, mais je ne comprends pas une question.' },
@@ -93,6 +97,8 @@ window.ECOUTER_DATA = [
     type: 'histoire',
     title: 'Le formulaire en ligne',
     category: 'Formulaire numérique',
+    difficulty: 'easy',
+    theme: 'numérique',
     transcript: `Youssef doit remplir un formulaire en ligne pour une inscription. Il ouvre la page sur l’ordinateur et commence à compléter les champs. Il écrit son nom, son prénom, sa date de naissance et son adresse e-mail. Ensuite, il choisit sa nationalité dans une liste. Puis il coche une case pour confirmer que les informations sont correctes. Quand il clique sur envoyer, un message rouge apparaît : champ obligatoire manquant. Youssef regarde de nouveau le formulaire et voit qu’il a oublié son numéro de téléphone. Il l’ajoute, puis il clique encore une fois sur envoyer. Cette fois, le formulaire est accepté.`,
     questions: [
       {
@@ -127,6 +133,8 @@ window.ECOUTER_DATA = [
     type: 'dialogue',
     title: 'Avec le formateur',
     category: 'Aide / Compréhension',
+    difficulty: 'easy',
+    theme: 'numérique',
     lines: [
       { speaker: 'Formateur', gender: 'm', text: 'Tu as presque fini ?' },
       { speaker: 'Rosa', gender: 'f', text: 'Pas encore. Je ne sais pas où écrire mon e-mail.' },
@@ -172,6 +180,8 @@ window.ECOUTER_DATA = [
     type: 'histoire',
     title: 'Une erreur dans le formulaire',
     category: 'Vérification',
+    difficulty: 'medium',
+    theme: 'numérique',
     transcript: `Samir remplit un formulaire rapidement. Il écrit son nom, son prénom, son adresse et son téléphone. Ensuite, il signe sans relire. Quand l’employée regarde le document, elle remarque un problème : le code postal n’est pas correct. Samir regarde encore une fois son adresse et comprend son erreur. Il barre le mauvais numéro, écrit le bon code postal et vérifie aussi la ville. Après cela, le formulaire est correct. Samir comprend qu’il est important de prendre son temps et de vérifier avant de signer.`,
     questions: [
       {
@@ -206,6 +216,8 @@ window.ECOUTER_DATA = [
     type: 'dialogue',
     title: 'Envoyer le formulaire',
     category: 'Fin de tâche',
+    difficulty: 'easy',
+    theme: 'numérique',
     lines: [
       { speaker: 'Nora', gender: 'f', text: 'J’ai fini le formulaire.' },
       { speaker: 'Employé', gender: 'm', text: 'Très bien. Vous avez signé ?' },
@@ -247,10 +259,12 @@ window.ECOUTER_DATA = [
   },
 
   {
-    id: 'ep07',
-    type: 'dialogue',
-    title: 'À l’ORP',
-    category: 'Recherche d’emploi',
+    id: ‘ep07’,
+    type: ‘dialogue’,
+    title: ‘À l’ORP’,
+    category: ‘Recherche d’emploi’,
+    difficulty: ‘medium’,
+    theme: ‘orp’,
     lines: [
       { speaker: 'Conseillère', gender: 'f', text: 'Bonjour Monsieur Diallo. Asseyez-vous, je vous en prie.' },
       { speaker: 'Mamadou', gender: 'm', text: 'Bonjour Madame. Merci.' },
@@ -296,6 +310,8 @@ window.ECOUTER_DATA = [
     type: 'histoire',
     title: 'Prendre le bus à Lausanne',
     category: 'Transports publics',
+    difficulty: 'easy',
+    theme: 'transports',
     transcript: `Fatima doit aller à Renens pour un entretien d’embauche. Elle habite à Pully. Elle regarde l’horaire des bus sur son téléphone. Le bus numéro 9 part à 8h15 de l’arrêt Pully-Gare. Fatima va à l’arrêt et achète un billet à la machine. Elle vérifie que son billet est valable pour deux zones. Le bus arrive à l’heure. Fatima monte et s’assoit. Elle regarde les noms des arrêts sur l’écran. À la gare de Lausanne, elle change de bus. Elle prend un bus direction Renens-Gare. Elle descend à l’arrêt Renens-Gare et arrive cinq minutes avant l’entretien.`,
     questions: [
       {

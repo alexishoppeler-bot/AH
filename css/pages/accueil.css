@@ -362,6 +362,38 @@
   flex-wrap: wrap;
 }
 
+/* === FILTRES THÈME DE VIE === */
+.theme-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.theme-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1.5px solid var(--border, #e2e8f0);
+  background: var(--surface, #fff);
+  color: var(--text2, #475569);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.theme-chip:hover {
+  border-color: var(--accent, #4f8ef7);
+  color: var(--accent, #4f8ef7);
+}
+.theme-chip.active {
+  background: var(--accent, #4f8ef7);
+  border-color: var(--accent, #4f8ef7);
+  color: #fff;
+}
+
 .level-cards {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

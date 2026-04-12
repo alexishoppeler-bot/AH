@@ -1,9 +1,11 @@
-﻿/* ===== JS/DATA/APPARIER-DATA.JS ===== */
+/* ===== JS/DATA/APPARIER-DATA.JS ===== */
 'use strict';
 
 window.APPARIER_DATA = [
   {
     category: 'Identité',
+    difficulty: 'easy',
+    theme: 'numérique',
     pairs: [
       { term: 'Nom', def: 'Nom de famille' },
       { term: 'Prénom', def: 'Nom personnel' },
@@ -14,6 +16,8 @@ window.APPARIER_DATA = [
   },
   {
     category: 'Coordonnées',
+    difficulty: 'easy',
+    theme: 'numérique',
     pairs: [
       { term: 'Adresse', def: 'Lieu où la personne habite' },
       { term: 'Code postal', def: 'Numéro de la commune' },
@@ -24,6 +28,8 @@ window.APPARIER_DATA = [
   },
   {
     category: 'Formulaire et documents',
+    difficulty: 'easy',
+    theme: 'numérique',
     pairs: [
       { term: 'Formulaire', def: 'Document à remplir' },
       { term: 'Case', def: 'Petit espace à remplir ou à cocher' },
@@ -33,27 +39,33 @@ window.APPARIER_DATA = [
     ]
   },
   {
-    category: 'Recherche d’emploi',
+    category: 'Recherche d'emploi',
+    difficulty: 'medium',
+    theme: 'emploi',
     pairs: [
       { term: 'ORP', def: 'Office qui aide à chercher un emploi' },
-      { term: 'CV', def: 'Document avec la formation et l’expérience' },
-      { term: 'Entretien', def: 'Rencontre avec l’employeur' },
+      { term: 'CV', def: 'Document avec la formation et l'expérience' },
+      { term: 'Entretien', def: 'Rencontre avec l'employeur' },
       { term: 'Candidature', def: 'Demande pour obtenir un poste' },
       { term: 'Employeur', def: 'Personne ou entreprise qui donne du travail' },
     ]
   },
   {
     category: 'Transports publics',
+    difficulty: 'easy',
+    theme: 'transports',
     pairs: [
-      { term: 'Arrêt', def: 'Endroit où le bus ou le tram s’arrête' },
-      { term: 'Horaire', def: 'Heures de départ et d’arrivée' },
+      { term: 'Arrêt', def: 'Endroit où le bus ou le tram s'arrête' },
+      { term: 'Horaire', def: 'Heures de départ et d'arrivée' },
       { term: 'Billet', def: 'Ticket pour voyager' },
       { term: 'Quai', def: 'Endroit où attendre le train' },
       { term: 'Correspondance', def: 'Changement de bus ou de train' },
     ]
   },
   {
-    category: 'Entretien d’embauche',
+    category: 'Entretien d'embauche',
+    difficulty: 'medium',
+    theme: 'emploi',
     pairs: [
       { term: 'Poste', def: 'Travail proposé' },
       { term: 'Compétence', def: 'Ce que je sais faire' },
@@ -64,6 +76,8 @@ window.APPARIER_DATA = [
   },
   {
     category: 'Documents officiels',
+    difficulty: 'hard',
+    theme: 'orp',
     pairs: [
       { term: 'Attestation', def: 'Document qui prouve une information' },
       { term: 'Permis de séjour', def: 'Document autorisant à vivre en Suisse' },
@@ -74,6 +88,8 @@ window.APPARIER_DATA = [
   },
   {
     category: 'Outils numériques',
+    difficulty: 'medium',
+    theme: 'numérique',
     pairs: [
       { term: 'Mot de passe', def: 'Code secret pour se connecter' },
       { term: 'Identifiant', def: 'Nom ou numéro utilisé pour ouvrir un compte' },
@@ -84,12 +100,14 @@ window.APPARIER_DATA = [
   },
   {
     category: 'Vie quotidienne',
+    difficulty: 'easy',
+    theme: 'numérique',
     pairs: [
       { term: 'Poste', def: 'Lieu où on envoie du courrier' },
       { term: 'Commune', def: 'Administration locale' },
       { term: 'Assurance', def: 'Service qui couvre certains frais' },
       { term: 'Facture', def: 'Document qui demande un paiement' },
-      { term: 'Rendez-vous', def: 'Moment prévu pour rencontrer quelqu’un' },
+      { term: 'Rendez-vous', def: 'Moment prévu pour rencontrer quelqu'un' },
     ]
   },
 ];
