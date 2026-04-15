@@ -140,7 +140,7 @@ const EXERCISE_COACH_TIPS_BY_CATEGORY = {
     'Privilégie précision et orthographe avant la vitesse.',
     'Valide mentalement la réponse avant de confirmer.'
   ],
-  Compétences: [
+  Competences: [
     'Décompose la tâche en micro-actions.',
     'Vérifie un résultat à la fois avant de passer au suivant.',
     'Corrige immédiatement la première erreur repérée.'
@@ -165,6 +165,41 @@ const EXERCISE_COACH_TIPS_BY_CATEGORY = {
     'Priorise les exercices au plus faible score de précision.',
     'Lance une courte session de correction ciblée.'
   ]
+};
+
+const EXERCISE_PEDAGOGY_BY_CATEGORY = {
+  Navigation: {
+    skill: 'vous reperez mieux ou cliquer et quoi ouvrir',
+    check: 'la bonne zone de l ecran avant d agir'
+  },
+  Langue: {
+    skill: 'vous lisez, ecoutez ou tapez plus clairement',
+    check: 'les mots importants et les lettres qui comptent'
+  },
+  Competences: {
+    skill: 'vous faites une action utile sur ordinateur',
+    check: 'une action a la fois, dans le bon ordre'
+  },
+  Jeu: {
+    skill: 'vous utilisez une logique simple pour repondre',
+    check: 'la regle du jeu avant de valider'
+  },
+  Communication: {
+    skill: 'vous formulez mieux un message simple et utile',
+    check: 'le sujet, le ton et les informations importantes'
+  },
+  Candidature: {
+    skill: 'vous remplissez mieux des informations utiles pour postuler',
+    check: 'les champs sensibles comme le nom, l e-mail et le telephone'
+  },
+  Suivi: {
+    skill: 'vous commencez a lire vos resultats pour progresser',
+    check: 'le point faible principal avant de continuer'
+  },
+  default: {
+    skill: 'vous avancez dans une activite utile',
+    check: 'la consigne et une action a la fois'
+  }
 };
 
 /* ===== SESSION SAMPLER — tirage par niveau et thème ===== */
@@ -339,6 +374,157 @@ function finalizeExerciseSession(page) {
   });
 }
 
+function buildExercisePedagogicalSummary(page) {
+  const session = EXERCISE_SESSION.byPage[page];
+  const metrics = window.ScoreManager ? window.ScoreManager.readMetrics(page) : null;
+  const meta = (window.EXERCISE_CONFIG || {}).meta || {};
+  const pageMeta = meta[page] || {};
+  const pageName = pageMeta.name || page;
+  const accuracy = session && session.typed > 0
+    ? calcAccuracy(session.correct, session.typed)
+    : calcAccuracy(metrics && metrics.correct, metrics && metrics.typed);
+  const typed = session ? session.typed : ((metrics && metrics.typed) || 0);
+  const correct = session ? session.correct : ((metrics && metrics.correct) || 0);
+  const xp = session ? session.xp : ((metrics && metrics.xp) || 0);
+  const profile = getPedagogyProfile(page);
+  const nextExercise = getNextExercise(page);
+
+  let badgeLabel = 'A reprendre';
+  let badgeClass = 'badge-yellow';
+  let acquiredText = 'Vous commencez a pratiquer ' + profile.skill + '.';
+  let focusText = 'Refaites une petite serie doucement. Cherchez d abord ' + profile.check + '.';
+  let actionHref = pageMeta.href || (page + '.html');
+  let actionLabel = 'Refaire cet exercice';
+  let actionText = 'Restez sur le meme exercice pour consolider la base.';
+
+  if (accuracy >= 85) {
+    badgeLabel = 'Pret pour la suite';
+    badgeClass = 'badge-green';
+    acquiredText = 'Tres bien. Vous montrez que ' + profile.skill + '.';
+    focusText = 'Gardez cette precision sans aller plus vite que necessaire.';
+    if (nextExercise && nextExercise.href) {
+      actionHref = nextExercise.href;
+      actionLabel = 'Ouvrir la suite';
+      actionText = 'Vous pouvez maintenant passer a ' + nextExercise.name + '.';
+    } else {
+      actionText = 'Continuez avec une nouvelle manche pour stabiliser ce resultat.';
+    }
+  } else if (accuracy >= 60) {
+    badgeLabel = 'Bases en cours';
+    badgeClass = 'badge-blue';
+    acquiredText = 'Les bases arrivent. Vous savez deja faire une partie de la tache sur ' + pageName + '.';
+    focusText = 'Pour consolider, refaites une manche en verifiant ' + profile.check + '.';
+    actionText = 'Encore une courte serie sur ' + pageName + ', puis vous pourrez passer a la suite.';
+  } else if (typed === 0) {
+    badgeLabel = 'Session vide';
+    badgeClass = 'badge-gray';
+    acquiredText = 'Commencez par une premiere serie pour voir ou vous en etes.';
+    focusText = 'Lisez la consigne jusqu au bout avant de faire la premiere action.';
+  }
+
+  if (typed > 0) {
+    acquiredText += ' ' + correct + ' reussites sur ' + typed + ' essais, ' + xp + ' XP gagnes.';
+  }
+
+  return {
+    badgeLabel,
+    badgeClass,
+    acquiredText,
+    focusText,
+    actionHref,
+    actionLabel,
+    actionText
+  };
+}
+
+function findExercisePedagogyContainer() {
+  return document.querySelector('.result-zone .card')
+    || document.querySelector('#modal-success .modal')
+    || document.querySelector('.result-banner')
+    || null;
+}
+
+function findExercisePedagogyInsertBefore(container) {
+  if (!container) return null;
+
+  const nextButton = container.querySelector('#btnNextExercise');
+  if (nextButton && nextButton.parentElement) return nextButton.parentElement;
+
+  const restartButton = container.querySelector('#btnRestart, #modal-restart');
+  if (restartButton && restartButton.parentElement) return restartButton.parentElement;
+
+  const shareButton = container.querySelector('.btn-share');
+  if (shareButton && shareButton.parentElement) return shareButton.parentElement;
+
+  return null;
+}
+
+function renderExercisePedagogicalPanel(page) {
+  if (typeof document === 'undefined') return;
+
+  const container = findExercisePedagogyContainer();
+  if (!container) return;
+
+  const summary = buildExercisePedagogicalSummary(page);
+  const existing = container.querySelector('.exercise-pedagogy-panel');
+  if (existing) existing.remove();
+
+  const panel = document.createElement('section');
+  panel.className = 'exercise-pedagogy-panel';
+
+  const head = document.createElement('div');
+  head.className = 'exercise-pedagogy-head';
+
+  const title = document.createElement('div');
+  title.className = 'exercise-pedagogy-title';
+  title.textContent = 'Retour pedagogique';
+
+  const badge = document.createElement('span');
+  badge.className = 'badge ' + summary.badgeClass;
+  badge.textContent = summary.badgeLabel;
+
+  head.appendChild(title);
+  head.appendChild(badge);
+
+  const grid = document.createElement('div');
+  grid.className = 'exercise-pedagogy-grid';
+
+  const acquired = document.createElement('article');
+  acquired.className = 'exercise-pedagogy-card';
+  acquired.innerHTML = '<strong>Ce qui est deja la</strong><p></p>';
+  acquired.querySelector('p').textContent = summary.acquiredText;
+
+  const focus = document.createElement('article');
+  focus.className = 'exercise-pedagogy-card';
+  focus.innerHTML = '<strong>A refaire doucement</strong><p></p>';
+  focus.querySelector('p').textContent = summary.focusText;
+
+  const next = document.createElement('article');
+  next.className = 'exercise-pedagogy-card exercise-pedagogy-card-accent';
+  next.innerHTML = '<strong>Prochaine etape</strong><p></p>';
+  next.querySelector('p').textContent = summary.actionText;
+
+  const action = document.createElement('a');
+  action.className = 'btn btn-primary btn-sm exercise-pedagogy-link';
+  action.href = summary.actionHref;
+  action.textContent = summary.actionLabel;
+  next.appendChild(action);
+
+  grid.appendChild(acquired);
+  grid.appendChild(focus);
+  grid.appendChild(next);
+
+  panel.appendChild(head);
+  panel.appendChild(grid);
+
+  const insertBefore = findExercisePedagogyInsertBefore(container);
+  if (insertBefore) {
+    container.insertBefore(panel, insertBefore);
+  } else {
+    container.appendChild(panel);
+  }
+}
+
 function getExerciseName(page) {
   const meta = (window.EXERCISE_CONFIG || {}).meta || {};
   return (meta[page] && meta[page].name) || page;
@@ -361,6 +547,14 @@ function getCoachTips(page) {
 function getCoachContextLabel(page) {
   const category = getExerciseCategory(page);
   return category || 'General';
+}
+
+function getPedagogyProfile(page) {
+  const category = getExerciseCategory(page);
+  if (category && EXERCISE_PEDAGOGY_BY_CATEGORY[category]) {
+    return EXERCISE_PEDAGOGY_BY_CATEGORY[category];
+  }
+  return EXERCISE_PEDAGOGY_BY_CATEGORY.default;
 }
 
 function getCoachState(page) {
@@ -394,6 +588,17 @@ function pickCoachTip(page, errorStreak) {
   };
 }
 
+function buildPedagogicalAccuracyMessage(page, accuracy) {
+  const profile = getPedagogyProfile(page);
+  if (accuracy >= 85) {
+    return 'Progression ' + getExerciseName(page) + ' : ' + accuracy + '%. La base est solide. Vous pouvez bientot passer a la suite.';
+  }
+  if (accuracy >= 65) {
+    return 'Progression ' + getExerciseName(page) + ' : ' + accuracy + '%. Les bases arrivent. Continuez en verifiant ' + profile.check + '.';
+  }
+  return 'Progression ' + getExerciseName(page) + ' : ' + accuracy + '%. Reprenez plus doucement et gardez une action a la fois.';
+}
+
 function maybeShowCoachToast(page, delta) {
   const state = getCoachState(page);
   const typed = Math.max(1, Number(delta.typed) || 0);
@@ -414,7 +619,7 @@ function maybeShowCoachToast(page, delta) {
       const now = Date.now();
       if (now - state.lastToastAt >= EXERCISE_COACH.minToastGapMs) {
         state.lastToastAt = now;
-        showToast(`C est mieux sur ${getExerciseName(page)}. Continue.`, 'success');
+        showToast('C est mieux sur ' + getExerciseName(page) + '. Continuez comme ca.', 'success');
       }
       return;
     }
@@ -429,8 +634,7 @@ function maybeShowCoachToast(page, delta) {
 
   state.lastToastAt = now;
   const choice = pickCoachTip(page, state.errorStreak);
-  const context = getCoachContextLabel(page);
-  showToast(`Aide ${getExerciseName(page)} (${context}): ${choice.tip}`, 'info');
+  showToast('Conseil ' + getExerciseName(page) + ' : ' + choice.tip, 'info');
 }
 
 function maybeShowAccuracyToast(page, state, now) {
@@ -446,16 +650,16 @@ function maybeShowAccuracyToast(page, state, now) {
 
   if (accuracy >= 85) {
     state.lastToastAt = now;
-    showToast(`Reussite ${getExerciseName(page)} : ${accuracy}%. Tres bien.`, 'success');
+    showToast(buildPedagogicalAccuracyMessage(page, accuracy), 'success');
     return;
   }
   if (accuracy >= 65) {
     state.lastToastAt = now;
-    showToast(`Reussite ${getExerciseName(page)} : ${accuracy}%. Bien.`, 'info');
+    showToast(buildPedagogicalAccuracyMessage(page, accuracy), 'info');
     return;
   }
   state.lastToastAt = now;
-  showToast(`Reussite ${getExerciseName(page)} : ${accuracy}%. Va plus doucement.`, 'info');
+  showToast(buildPedagogicalAccuracyMessage(page, accuracy), 'info');
 }
 
 function setExerciseCoachOptions(options) {
@@ -521,6 +725,10 @@ function recordExerciseProgress(page, delta) {
 
   ScoreManager.updateMetrics(page, delta);
   ScoreManager.promoteStatus(page, 'in_progress');
+
+  const state = getCoachState(page);
+  maybeShowCoachToast(page, delta);
+  maybeShowAccuracyToast(page, state, Date.now());
 }
 
 /**
@@ -544,6 +752,7 @@ function promoteExerciseStatus(page, status) {
   }
   if (status === 'completed') {
     finalizeExerciseSession(page);
+    renderExercisePedagogicalPanel(page);
   }
   if (status === 'not_started') {
     delete EXERCISE_COACH.byPage[page];
@@ -568,6 +777,7 @@ function startExerciseSession(page) {
 function endExerciseSession(page) {
   ScoreManager.promoteStatus(page, 'completed');
   finalizeExerciseSession(page);
+  renderExercisePedagogicalPanel(page);
   delete EXERCISE_COACH.byPage[page];
 }
 
@@ -696,6 +906,88 @@ function getPrevExercise(currentPage) {
     name: metaData.name || prevPage,
     href: metaData.href || `${prevPage}.html`
   };
+}
+
+/**
+ * Configurer automatiquement le bouton "exercice suivant"
+ * @param {string} currentPage
+ * @param {object} options
+ * @returns {object|null}
+ */
+function setupNextExerciseButton(currentPage, options) {
+  const opts = options || {};
+  const buttonId = opts.buttonId || 'btnNextExercise';
+  const button = document.getElementById(buttonId);
+  if (!button) return null;
+
+  const nextEx = getNextExercise(currentPage);
+  if (!nextEx || !nextEx.name || !nextEx.href) {
+    button.style.display = 'none';
+    return null;
+  }
+
+  const prefix = opts.labelPrefix || 'Exercice suivant';
+  const suffix = opts.labelSuffix || '';
+  button.textContent = prefix + ' : ' + nextEx.name + suffix;
+
+  if (button.tagName === 'A') {
+    button.href = nextEx.href;
+  } else {
+    button.onclick = function() {
+      window.location.href = nextEx.href;
+    };
+  }
+
+  return nextEx;
+}
+
+/**
+ * Configurer automatiquement le bouton "recommencer"
+ * @param {Function} restartHandler
+ * @param {object} options
+ * @returns {HTMLElement|null}
+ */
+function setupRestartButton(restartHandler, options) {
+  if (typeof restartHandler !== 'function') return null;
+
+  const opts = options || {};
+  const buttonId = opts.buttonId || 'btnRestart';
+  const button = document.getElementById(buttonId);
+  if (!button) return null;
+
+  button.onclick = function(event) {
+    if (event && typeof event.preventDefault === 'function') {
+      event.preventDefault();
+    }
+    restartHandler(event);
+  };
+
+  return button;
+}
+
+function setExerciseMetricText(elementId, value) {
+  const element = document.getElementById(elementId);
+  if (!element) return null;
+  element.textContent = value;
+  return element;
+}
+
+function updateExerciseScoreKpis(options) {
+  const opts = options || {};
+  setExerciseMetricText(opts.correctId || 'kpiCorrect', opts.correct ?? 0);
+  setExerciseMetricText(opts.errorsId || 'kpiErrors', opts.errors ?? 0);
+  setExerciseMetricText(opts.xpId || 'kpiXP', opts.xp ?? 0);
+
+  if (opts.includeAccuracy === false) {
+    return;
+  }
+
+  const accuracyBase = Number(opts.accuracyBase != null ? opts.accuracyBase : opts.typed);
+  const accuracyValue = opts.accuracy != null
+    ? opts.accuracy
+    : calcAccuracy(opts.correct ?? 0, opts.typed ?? 0);
+  const accuracyText = accuracyBase > 0 ? accuracyValue + '%' : '—';
+  setExerciseMetricText(opts.accuracyId || 'kpiAccuracy', accuracyText);
 }
 
 /**

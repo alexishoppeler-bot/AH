@@ -22,7 +22,7 @@
         <div class="page-header fade-up">
           <div class="page-icon">🃏</div>
           <h1>Jeu des paires</h1>
-          <p>Ces deux cartes forment-elles une paire correcte ?</p>
+          <p>Retrouvez si les deux cartes vont ensemble.</p>
         </div>
 
         <!-- KPIs -->
@@ -358,30 +358,16 @@
 
   /* ===== KPIs ===== */
   function updateKPIs() {
-    document.getElementById('kpiCorrect').textContent  = session.correct;
-    document.getElementById('kpiErrors').textContent   = session.errors;
-    document.getElementById('kpiXP').textContent       = session.xp;
-    const acc = calcAccuracy(session.correct, session.typed);
-    document.getElementById('kpiAccuracy').textContent = session.typed > 0 ? acc + '%' : '—';
+    updateExerciseScoreKpis(session);
   }
 
   /* ===== EVENTS ===== */
   document.addEventListener('DOMContentLoaded', () => {
-    // Bouton "Exercice suivant recommandé"
-        const btnNextEx = document.getElementById('btnNextExercise');
-        const nextEx = getNextExercise(PAGE_ID);
-        if (nextEx && nextEx.name && nextEx.href) {
-          btnNextEx.addEventListener('click', () => {
-            window.location.href = nextEx.href;
-          });
-          btnNextEx.textContent = 'Exercice suivant : ' + nextEx.name;
-        } else {
-          btnNextEx.style.display = 'none';
-        }
+    setupNextExerciseButton(PAGE_ID);
     document.getElementById('btnOui').addEventListener('click', () => answer(true));
     document.getElementById('btnNon').addEventListener('click', () => answer(false));
     document.getElementById('btnNext').addEventListener('click', nextRound);
-    document.getElementById('btnRestart').addEventListener('click', startSession);
+    setupRestartButton(startSession);
 
     document.addEventListener('keydown', e => {
       if (e.target.tagName === 'INPUT') return;
@@ -395,7 +381,3 @@
   </script>
 </body>
 </html>
-
-
-
-

@@ -276,6 +276,78 @@
 .auto-progress-box.warn  { background: #fff7ed; }
 .auto-progress-box.alert { background: #fef2f2; }
 
+/* ── Parcours recommande ── */
+.auto-path-list {
+  display: grid;
+  gap: 12px;
+}
+
+.auto-path-card {
+  display: block;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: linear-gradient(135deg, var(--surface2), var(--surface));
+  text-decoration: none;
+  color: inherit;
+  transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+.auto-path-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+  border-color: var(--accent);
+}
+
+.auto-path-step {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 8px;
+}
+
+.auto-path-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(50, 93, 169, 0.10);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.auto-path-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.auto-path-card p {
+  margin: 0 0 12px;
+  color: var(--text2);
+  line-height: 1.65;
+  font-size: 14px;
+}
+
+.auto-path-link {
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.auto-path-empty {
+  padding: 16px;
+  border: 1px dashed var(--border);
+  border-radius: var(--r-lg);
+  color: var(--text3);
+  background: var(--surface2);
+  font-size: 14px;
+}
+
 /* ── Export ── */
 .auto-copy-box {
   display: none;
@@ -347,4 +419,5 @@
 @media (max-width: 560px) {
   .auto-options { grid-template-columns: 1fr; }
   .auto-question-top { flex-direction: column; }
+  .auto-path-name { font-size: 18px; }
 }

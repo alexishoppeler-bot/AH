@@ -22,7 +22,7 @@
         <div class="page-header fade-up">
           <div class="page-icon">🔍</div>
           <h1>Mots mêlés</h1>
-          <p>Trouve les mots cachés dans la grille.</p>
+          <p>Trouvez les mots caches dans la grille.</p>
         </div>
 
         <!-- KPIs -->
@@ -625,17 +625,7 @@
      EVENTS
   ========================================================= */
   document.addEventListener('DOMContentLoaded', () => {
-    // Bouton "Exercice suivant recommandé"
-        const btnNextEx = document.getElementById('btnNextExercise');
-        const nextEx = getNextExercise(PAGE_ID);
-        if (nextEx && nextEx.name && nextEx.href) {
-          btnNextEx.addEventListener('click', () => {
-            window.location.href = nextEx.href;
-          });
-          btnNextEx.textContent = 'Exercice suivant : ' + nextEx.name;
-        } else {
-          btnNextEx.style.display = 'none';
-        }
+    setupNextExerciseButton(PAGE_ID);
         
     document.getElementById('gridSelector').style.display = 'none';
     startSession();
@@ -652,6 +642,4 @@
   </script>
 </body>
 </html>
-
-
 

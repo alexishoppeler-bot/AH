@@ -21,8 +21,8 @@
 
         <div class="page-header fade-up">
           <div class="page-icon">📈</div>
-          <h1>Espace Évaluations</h1>
-          <p>Tableau de bord de votre progression globale. Les données sont mises à jour en temps réel depuis vos exercices.</p>
+          <h1>Mes evaluations</h1>
+          <p>Vue simple de votre progression. Les resultats se mettent a jour avec vos exercices.</p>
         </div>
         <div class="mb-24 fade-up delay-1 flex gap-8 flex-wrap items-center">
           <a href="accueil.html" class="btn btn-secondary btn-sm">Accueil</a>
@@ -80,6 +80,28 @@
 
         </div>
 
+        <div class="card mb-24 fade-up delay-2 pedagogical-card">
+          <div class="card-title mb-4">Priorite pedagogique</div>
+          <div class="pedagogical-grid">
+            <div class="pedagogical-box">
+              <div class="pedagogical-label">Point fort</div>
+              <div class="pedagogical-value" id="ped-strength-title">En cours</div>
+              <p id="ped-strength-text">Le point fort apparait ici.</p>
+            </div>
+            <div class="pedagogical-box">
+              <div class="pedagogical-label">A travailler</div>
+              <div class="pedagogical-value" id="ped-priority-title">En cours</div>
+              <p id="ped-priority-text">La priorite apparait ici.</p>
+            </div>
+            <div class="pedagogical-box pedagogical-box-accent">
+              <div class="pedagogical-label">Prochaine etape</div>
+              <div class="pedagogical-value" id="ped-next-title">En cours</div>
+              <p id="ped-next-text">La suite apparait ici.</p>
+              <a class="link-cell" id="ped-next-link" href="accueil.html">Ouvrir</a>
+            </div>
+          </div>
+        </div>
+
         <!-- ═══════════════════════════
              HISTORIQUE SESSIONS
         ═══════════════════════════ -->
@@ -96,7 +118,7 @@
                 </tr>
               </thead>
               <tbody id="session-tbody">
-                <tr><td colspan="4" style="text-align:center;padding:16px;color:var(--text3);">Aucune session enregistrée.</td></tr>
+                <tr><td colspan="4" style="text-align:center;padding:16px;color:var(--text3);">Aucune session pour le moment.</td></tr>
               </tbody>
             </table>
           </div>
@@ -104,7 +126,7 @@
 
         <!-- Toggle Details Button -->
         <div class="text-center mb-24 fade-up delay-2">
-          <button class="btn btn-secondary btn-sm" id="btn-toggle-details" type="button">Voir les détails complets</button>
+          <button class="btn btn-secondary btn-sm" id="btn-toggle-details" type="button">Voir plus de details</button>
         </div>
 
         <!-- ═══════════════════════════
@@ -415,7 +437,7 @@
 
     if (sessions.length === 0) {
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td colspan="4" style="text-align:center;padding:16px;color:var(--text3);">Aucune session enregistrée.</td>`;
+      tr.innerHTML = `<td colspan="4" style="text-align:center;padding:16px;color:var(--text3);">Aucune session pour le moment.</td>`;
       tbody.appendChild(tr);
       return;
     }
@@ -432,6 +454,119 @@
       `;
       tbody.appendChild(tr);
     });
+  }
+
+  function getSectionPedagogy(allData) {
+    const labels = {
+      'Emploi & ORP': 'Emploi',
+      'Numérique': 'Bureautique',
+      'Français': 'Francais'
+    };
+    const sections = {};
+
+    ALL_PAGES.forEach((page) => {
+      const meta = PAGE_META[page] || {};
+      const section = meta.section || 'Autres';
+      if (!sections[section]) {
+        sections[section] = {
+          key: section,
+          label: labels[section] || section,
+          total: 0,
+          completed: 0,
+          xp: 0,
+          accuracyTotal: 0,
+          played: 0
+        };
+      }
+
+      const metrics = allData[page] || {};
+      sections[section].total += 1;
+      sections[section].xp += Number(metrics.xp) || 0;
+      if (metrics.status === 'completed') sections[section].completed += 1;
+      if ((Number(metrics.typed) || 0) > 0) {
+        sections[section].played += 1;
+        sections[section].accuracyTotal += Math.round((metrics.correct / metrics.typed) * 100);
+      }
+    });
+
+    const items = Object.values(sections).map((section) => {
+      const completionPct = section.total > 0 ? Math.round((section.completed / section.total) * 100) : 0;
+      const avgAccuracy = section.played > 0 ? Math.round(section.accuracyTotal / section.played) : 0;
+      return {
+        key: section.key,
+        label: section.label,
+        total: section.total,
+        completed: section.completed,
+        xp: section.xp,
+        completionPct: completionPct,
+        avgAccuracy: avgAccuracy,
+        score: Math.round((completionPct * 0.6) + (avgAccuracy * 0.4))
+      };
+    });
+
+    const sorted = items.slice().sort((a, b) => a.score - b.score);
+    return {
+      weakest: sorted[0] || null,
+      strongest: sorted[sorted.length - 1] || null
+    };
+  }
+
+  function getNextExerciseForSection(sectionKey) {
+    if (!sectionKey) return null;
+    for (const page of ALL_PAGES) {
+      const meta = PAGE_META[page] || {};
+      if (meta.section !== sectionKey) continue;
+      const metrics = ScoreManager.readMetrics(page);
+      if (metrics.status !== 'completed') {
+        return {
+          page,
+          name: meta.name || page,
+          href: meta.href || (page + '.html')
+        };
+      }
+    }
+    return null;
+  }
+
+  function renderPedagogicalPriority(allData) {
+    const pedagogy = getSectionPedagogy(allData);
+    const weakest = pedagogy.weakest;
+    const strongest = pedagogy.strongest;
+    const nextExercise = weakest ? getNextExerciseForSection(weakest.key) : null;
+
+    setText('ped-strength-title', strongest ? strongest.label : 'Aucune donnee');
+    setText(
+      'ped-strength-text',
+      strongest
+        ? strongest.completed > 0
+          ? 'C est le domaine le plus stable pour le moment. Vous pouvez vous appuyer dessus pour reprendre confiance.'
+          : 'Aucun domaine n est encore bien installe, ce qui est normal au debut.'
+        : 'Pas assez de donnees pour identifier un point fort.'
+    );
+
+    setText('ped-priority-title', weakest ? weakest.label : 'Commencer');
+    setText(
+      'ped-priority-text',
+      weakest
+        ? weakest.completed === 0
+          ? 'Ce domaine n est pas encore lance. Un premier exercice court fera deja progresser.'
+          : 'C est le domaine a consolider en priorite pour rendre la progression plus reguliere.'
+        : 'La priorite apparaitra apres quelques exercices.'
+    );
+
+    setText('ped-next-title', nextExercise ? nextExercise.name : 'Voir l accueil');
+    setText(
+      'ped-next-text',
+      nextExercise
+        ? 'Bonne prochaine etape : faire cet exercice calmement, puis verifier si la precision monte.'
+        : 'Tous les parcours semblent deja avances. Refaire un exercice utile peut renforcer l autonomie.'
+    );
+
+    const link = document.getElementById('ped-next-link');
+    if (link) {
+      link.href = nextExercise ? nextExercise.href : 'accueil.html';
+      link.textContent = nextExercise ? 'Ouvrir l exercice' : 'Retour accueil';
+    }
   }
 
   /* ═══════════════════════════════════════════
@@ -496,6 +631,7 @@
 
     /* ── Sparkline ── */
     renderSparkline(allData);
+    renderPedagogicalPriority(allData);
 
     /* ── Phase 3 rendus ── */
     renderMilestoneBadges();
@@ -645,7 +781,7 @@
     const section = document.getElementById('detail-section');
     const btn = document.getElementById('btn-toggle-details');
     const isShown = section.classList.toggle('show');
-    btn.textContent = isShown ? 'Masquer les détails' : 'Voir les détails complets';
+    btn.textContent = isShown ? 'Masquer les details' : 'Voir plus de details';
   }
 
   /* ═══════════════════════════════════════════
@@ -659,6 +795,3 @@
   </script>
 </body>
 </html>
-
-
-

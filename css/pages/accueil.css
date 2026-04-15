@@ -11,6 +11,7 @@
 .hero-panel,
 .intro-card,
 .activities-section,
+.session-focus-section,
 .focus-panel,
 .parcours-section {
   border: 1px solid var(--border);
@@ -65,6 +66,9 @@
 
 .hero-panel {
   padding: 24px;
+  display: grid;
+  gap: 16px;
+  align-content: start;
 }
 
 .hero-panel-title {
@@ -78,7 +82,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
-  margin-bottom: 18px;
+  margin-bottom: 0;
 }
 
 .hero-metric {
@@ -110,6 +114,33 @@
   border: 1px solid rgba(50, 93, 169, 0.12);
 }
 
+.diagnostic-box {
+  padding: 18px;
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(circle at top right, rgba(131, 189, 69, 0.12), transparent 36%),
+    rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(131, 189, 69, 0.22);
+}
+
+.refresh-alert-box {
+  padding: 18px;
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(circle at top left, rgba(244, 180, 0, 0.12), transparent 34%),
+    rgba(255, 249, 235, 0.92);
+  border: 1px solid rgba(217, 119, 6, 0.22);
+}
+
+.rhythm-box {
+  padding: 18px;
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(circle at bottom right, rgba(50, 93, 169, 0.10), transparent 34%),
+    rgba(248, 250, 252, 0.94);
+  border: 1px solid rgba(50, 93, 169, 0.16);
+}
+
 .next-step-name {
   margin-bottom: 6px;
   color: var(--text);
@@ -117,7 +148,83 @@
   font-weight: 800;
 }
 
+.diagnostic-topline {
+  margin-bottom: 6px;
+  color: var(--text3);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.diagnostic-level {
+  margin-bottom: 8px;
+  color: #567d22;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.refresh-alert-title {
+  margin-bottom: 8px;
+  color: #9a5b00;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+.rhythm-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.rhythm-card {
+  padding: 14px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.rhythm-card-accent {
+  background: linear-gradient(135deg, rgba(50, 93, 169, 0.08), rgba(255, 255, 255, 0.98));
+}
+
+.rhythm-label {
+  margin-bottom: 8px;
+  color: var(--text3);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.rhythm-value {
+  margin-bottom: 8px;
+  color: var(--text);
+  font-size: 19px;
+  font-weight: 800;
+}
+
 .next-step-box p {
+  margin-bottom: 12px;
+  color: var(--text2);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.diagnostic-box p {
+  margin-bottom: 12px;
+  color: var(--text2);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.refresh-alert-box p {
+  margin-bottom: 12px;
+  color: var(--text2);
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.rhythm-box p {
   margin-bottom: 12px;
   color: var(--text2);
   font-size: 14px;
@@ -163,9 +270,142 @@
 }
 
 .activities-section,
+.session-focus-section,
+.daily-plan-section,
 .parcours-section {
   margin-bottom: 28px;
   padding: 28px;
+}
+
+.session-focus-section {
+  background:
+    radial-gradient(circle at top right, rgba(131, 189, 69, 0.14), transparent 34%),
+    linear-gradient(135deg, rgba(50, 93, 169, 0.05), rgba(255, 255, 255, 0.98));
+}
+
+.daily-plan-section {
+  background:
+    radial-gradient(circle at bottom left, rgba(244, 180, 0, 0.10), transparent 30%),
+    linear-gradient(135deg, rgba(50, 93, 169, 0.04), rgba(255, 255, 255, 0.98));
+}
+
+.session-focus-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.daily-plan-intro {
+  color: var(--text2);
+  line-height: 1.7;
+}
+
+.daily-plan-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.daily-plan-card {
+  display: block;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(50, 93, 169, 0.04));
+  color: var(--text);
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.daily-plan-card:hover {
+  opacity: 1;
+  transform: translateY(-3px);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-md);
+}
+
+.daily-plan-step,
+.daily-plan-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.daily-plan-step {
+  margin-bottom: 10px;
+  background: rgba(50, 93, 169, 0.10);
+  color: var(--accent);
+}
+
+.daily-plan-badge {
+  margin-bottom: 12px;
+  background: rgba(131, 189, 69, 0.16);
+  color: #567d22;
+}
+
+.daily-plan-name {
+  margin-bottom: 8px;
+  color: var(--text);
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.daily-plan-card p {
+  min-height: 72px;
+  margin-bottom: 14px;
+  color: var(--text2);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.daily-plan-cta {
+  margin-top: auto;
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.session-focus-card {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.session-focus-card-accent {
+  background:
+    radial-gradient(circle at top right, rgba(131, 189, 69, 0.18), transparent 44%),
+    rgba(255, 255, 255, 0.9);
+}
+
+.session-focus-title {
+  margin-bottom: 10px;
+  color: var(--text3);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.session-focus-value {
+  margin-bottom: 8px;
+  color: var(--text);
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.session-focus-card p {
+  min-height: 60px;
+  margin-bottom: 14px;
+  color: var(--text2);
+  line-height: 1.65;
 }
 
 .activities-grid {
@@ -547,6 +787,8 @@
   .intro-card,
   .focus-panel,
   .activities-section,
+  .session-focus-section,
+  .daily-plan-section,
   .parcours-section {
     padding: 30px;
   }
@@ -593,7 +835,10 @@
 @media (max-width: 900px) {
   .hero-section,
   .intro-grid,
-  .focus-grid {
+  .focus-grid,
+  .session-focus-grid,
+  .daily-plan-grid,
+  .rhythm-grid {
     grid-template-columns: 1fr;
   }
 
@@ -608,6 +853,8 @@
   .intro-card,
   .focus-panel,
   .activities-section,
+  .session-focus-section,
+  .daily-plan-section,
   .parcours-section {
     padding: 20px;
   }

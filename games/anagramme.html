@@ -22,7 +22,7 @@
         <div class="page-header fade-up">
           <div class="page-icon">🔤</div>
           <h1>Anagrammes</h1>
-          <p>Reconstitue le mot à partir des lettres mélangées.</p>
+          <p>Remettez les lettres dans le bon ordre pour former le mot.</p>
         </div>
 
         <!-- KPIs -->
@@ -443,31 +443,17 @@
 
   /* ===== KPIs ===== */
   function updateKPIs() {
-    document.getElementById('kpiCorrect').textContent  = session.correct;
-    document.getElementById('kpiErrors').textContent   = session.errors;
-    document.getElementById('kpiXP').textContent       = session.xp;
-    const acc = calcAccuracy(session.correct, session.typed);
-    document.getElementById('kpiAccuracy').textContent = session.typed > 0 ? acc + '%' : '—';
+    updateExerciseScoreKpis(session);
   }
 
   /* ===== EVENTS ===== */
   document.addEventListener('DOMContentLoaded', () => {
-    // Bouton "Exercice suivant recommandé"
-    const btnNextEx = document.getElementById('btnNextExercise');
-    const nextEx = getNextExercise(PAGE_ID);
-    if (nextEx && nextEx.name && nextEx.href) {
-      btnNextEx.textContent = 'Exercice suivant : ' + nextEx.name;
-      btnNextEx.addEventListener('click', () => {
-        window.location.href = nextEx.href;
-      });
-    } else {
-      btnNextEx.style.display = 'none';
-    }
+    setupNextExerciseButton(PAGE_ID);
     document.getElementById('btnValidate').addEventListener('click', validate);
     document.getElementById('btnErase').addEventListener('click', eraseAll);
     document.getElementById('btnHint').addEventListener('click', giveHint);
     document.getElementById('btnSkip').addEventListener('click', nextRound);
-    document.getElementById('btnRestart').addEventListener('click', startSession);
+    setupRestartButton(startSession);
 
     // Raccourci clavier : Entrée pour valider
     document.addEventListener('keydown', e => {
@@ -480,5 +466,3 @@
   </script>
 </body>
 </html>
-
-

@@ -22,7 +22,7 @@
         <div class="page-header fade-up">
           <div class="page-icon">&#128256;</div>
           <h1>Lettres m&eacute;lang&eacute;es</h1>
-          <p>Remets les mots dans le bon ordre pour reconstituer la phrase correcte.</p>
+          <p>Remettez les mots dans le bon ordre pour refaire la phrase.</p>
         </div>
 
         <!-- KPI -->
@@ -510,17 +510,7 @@
 
   /* ── Init ── */
   document.addEventListener('DOMContentLoaded', () => {
-    // Bouton "Exercice suivant recommandé"
-        const btnNextEx = document.getElementById('btnNextExercise');
-        const nextEx = getNextExercise(PAGE_ID);
-        if (nextEx && nextEx.name && nextEx.href) {
-          btnNextEx.addEventListener('click', () => {
-            window.location.href = nextEx.href;
-          });
-          btnNextEx.textContent = 'Exercice suivant : ' + nextEx.name;
-        } else {
-          btnNextEx.style.display = 'none';
-        }
+    setupNextExerciseButton(PAGE_ID);
     buildSession();
     loadSentence();
     setupDrop();

@@ -45,7 +45,7 @@
     const groupBars = GROUP_SECTIONS.map((g) =>
       '<div class="header-progress-wrap">' +
       '<span class="header-progress-label">' + g.label + '</span>' +
-      '<span class="header-progress-pct" id="groupPct-' + g.id + '">0%</span>' +
+      '<span class="header-progress-pct" id="groupPct-' + g.id + '">0 XP</span>' +
       '<div class="header-progress-bar"><div class="header-progress-fill" id="groupFill-' + g.id + '" style="width:0%"></div></div>' +
       '</div>'
     ).join('');
@@ -145,22 +145,20 @@
     if (fill) fill.style.width = pct + '%';
 
     // Per-group progress
-    const groupTotals = {};
-    const groupCompleted = {};
+    const groupXp = {};
     for (const page of orderedPages) {
       const section = meta[page] && meta[page].section;
       if (!section) continue;
-      groupTotals[section] = (groupTotals[section] || 0) + 1;
-      const status = window.ScoreManager.readMetrics(page).status;
-      if (status === 'completed') groupCompleted[section] = (groupCompleted[section] || 0) + 1;
+      const metrics = window.ScoreManager.readMetrics(page);
+      groupXp[section] = (groupXp[section] || 0) + (Number(metrics.xp) || 0);
     }
+    const maxGroupXp = Math.max(1, ...GROUP_SECTIONS.map((g) => groupXp[g.key] || 0));
     for (const g of GROUP_SECTIONS) {
-      const t = groupTotals[g.key] || 1;
-      const c = groupCompleted[g.key] || 0;
-      const gPct = Math.round((c / t) * 100);
+      const xp = groupXp[g.key] || 0;
+      const gPct = Math.round((xp / maxGroupXp) * 100);
       const gText = document.getElementById('groupPct-' + g.id);
       const gFill = document.getElementById('groupFill-' + g.id);
-      if (gText) gText.textContent = gPct + '%';
+      if (gText) gText.textContent = xp + ' XP';
       if (gFill) gFill.style.width = gPct + '%';
     }
   }

@@ -22,7 +22,7 @@
         <div class="page-header fade-up">
           <div class="page-icon">🪝</div>
           <h1>Le Pendu</h1>
-          <p>Devine le mot lettre par lettre avant d'être pendu !</p>
+          <p>Trouvez le mot lettre par lettre avant la fin des essais.</p>
         </div>
 
         <!-- KPIs -->
@@ -507,28 +507,24 @@
 
   /* ===== KPIs ===== */
   function updateKPIs() {
-    document.getElementById('kpiWon').textContent  = session.won;
-    document.getElementById('kpiLost').textContent = session.lost;
-    document.getElementById('kpiXP').textContent   = session.xp;
     const total = session.won + session.lost;
     const acc   = total > 0 ? Math.round((session.won / total) * 100) : 0;
-    document.getElementById('kpiAccuracy').textContent = total > 0 ? acc + '%' : '—';
+    updateExerciseScoreKpis({
+      correctId: 'kpiWon',
+      errorsId: 'kpiLost',
+      correct: session.won,
+      errors: session.lost,
+      xp: session.xp,
+      typed: total,
+      accuracy: acc,
+      accuracyBase: total
+    });
     updateProgressUI(total, session.words.length);
   }
 
   /* ===== EVENTS ===== */
   document.addEventListener('DOMContentLoaded', () => {
-    // Bouton "Exercice suivant recommandé"
-        const btnNextEx = document.getElementById('btnNextExercise');
-        const nextEx = getNextExercise(PAGE_ID);
-        if (nextEx && nextEx.name && nextEx.href) {
-          btnNextEx.addEventListener('click', () => {
-            window.location.href = nextEx.href;
-          });
-          btnNextEx.textContent = 'Exercice suivant : ' + nextEx.name;
-        } else {
-          btnNextEx.style.display = 'none';
-        }
+    setupNextExerciseButton(PAGE_ID);
         
     // Phase 5: Quick Play toggle
     document.getElementById('btnModeComplete').addEventListener('click', () => {
@@ -545,7 +541,7 @@
     document.getElementById('btnHint').addEventListener('click', giveHint);
     document.getElementById('btnNext').addEventListener('click', nextWord);
     document.getElementById('btnSkip').addEventListener('click', skipWord);
-    document.getElementById('btnRestart').addEventListener('click', startSession);
+    setupRestartButton(startSession);
 
     // Clavier physique
     document.addEventListener('keydown', e => {
@@ -559,4 +555,3 @@
   </script>
 </body>
 </html>
-

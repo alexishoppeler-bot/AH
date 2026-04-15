@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <link rel="icon" href="../assets/logo.png" type="image/png">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Memory - AH</title>
+  <title>Apparier - AH</title>
   <link rel="stylesheet" href="../css/theme.css">
   <link rel="stylesheet" href="../css/layout.css">
   <link rel="stylesheet" href="../css/components.css">
@@ -21,8 +21,8 @@
 
         <div class="page-header fade-up">
           <div class="page-icon">🔗</div>
-          <h1>Memory</h1>
-          <p>Associe chaque terme à sa définition.</p>
+          <h1>Apparier</h1>
+          <p>Associez chaque element avec la bonne reponse.</p>
         </div>
 
         <!-- KPIs -->
@@ -407,28 +407,14 @@
 
   /* ===== KPIs ===== */
   function updateKPIs() {
-    document.getElementById('kpiCorrect').textContent  = session.correct;
-    document.getElementById('kpiErrors').textContent   = session.errors;
-    document.getElementById('kpiXP').textContent       = session.xp;
-    const acc = calcAccuracy(session.correct, session.typed);
-    document.getElementById('kpiAccuracy').textContent = session.typed > 0 ? acc + '%' : '—';
+    updateExerciseScoreKpis(session);
     const doneRounds = session.roundIdx + ((session.total > 0 && session.matched === session.total) ? 1 : 0);
     updateProgressUI(doneRounds, session.groups.length);
   }
 
   /* ===== EVENTS ===== */
   document.addEventListener('DOMContentLoaded', () => {
-    // Bouton "Exercice suivant recommandé"
-        const btnNextEx = document.getElementById('btnNextExercise');
-        const nextEx = getNextExercise(PAGE_ID);
-        if (nextEx && nextEx.name && nextEx.href) {
-          btnNextEx.addEventListener('click', () => {
-            window.location.href = nextEx.href;
-          });
-          btnNextEx.textContent = 'Exercice suivant : ' + nextEx.name;
-        } else {
-          btnNextEx.style.display = 'none';
-        }
+    setupNextExerciseButton(PAGE_ID);
     // Phase 5: Quick Play toggle
     document.getElementById('btnModeComplete').addEventListener('click', () => {
       quickPlayMode = false;
@@ -442,7 +428,7 @@
     });
 
     document.getElementById('btnNext').addEventListener('click', nextRound);
-    document.getElementById('btnRestart').addEventListener('click', startSession);
+    setupRestartButton(startSession);
     document.getElementById('btnShuffle').addEventListener('click', () => {
       // Mélanger uniquement les cartes non appariées
       if (session.matched === session.total) return;
@@ -476,9 +462,4 @@
   </script>
 </body>
 </html>
-
-
-
-
-
 

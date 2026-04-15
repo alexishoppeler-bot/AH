@@ -234,26 +234,20 @@ function finishSession() {
 function updateKPIs() {
   const total = session.items.length || 1;
   const progress = Math.round((session.index / total) * 100);
-  document.getElementById('kpiCorrect').textContent = session.correct;
-  document.getElementById('kpiErrors').textContent = session.errors;
-  document.getElementById('kpiXP').textContent = session.xp;
+  updateExerciseScoreKpis({
+    correct: session.correct,
+    errors: session.errors,
+    xp: session.xp,
+    includeAccuracy: false
+  });
   document.getElementById('kpiProgress').textContent = progress + '%';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const btnNextEx = document.getElementById('btnNextExercise');
-  const nextEx = getNextExercise(PAGE_ID);
-  if (nextEx && nextEx.name && nextEx.href) {
-    btnNextEx.addEventListener('click', () => {
-      window.location.href = nextEx.href;
-    });
-    btnNextEx.textContent = 'Exercice suivant : ' + nextEx.name;
-  } else {
-    btnNextEx.style.display = 'none';
-  }
+  setupNextExerciseButton(PAGE_ID);
 
   document.getElementById('btnNext').addEventListener('click', nextEmail);
-  document.getElementById('btnRestart').addEventListener('click', startSession);
+  setupRestartButton(startSession);
 
   document.addEventListener('keydown', (e) => {
     if (e.target && e.target.tagName === 'INPUT') return;

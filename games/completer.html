@@ -22,7 +22,7 @@
         <div class="page-header fade-up">
           <div class="page-icon">&#129513;</div>
           <h1>Texte &agrave; trous</h1>
-          <p>Compl&eacute;tez les phrases avec le bon mot.</p>
+          <p>Choisissez le bon mot pour completer la phrase.</p>
         </div>
 
         <!-- Zone de jeu -->
@@ -565,17 +565,7 @@
       startSession();
     });
 
-    // Bouton "Exercice suivant recommandé"
-    const btnNextEx = document.getElementById('btnNextExercise');
-    const nextEx = getNextExercise(PAGE_ID);
-    if (nextEx && nextEx.name && nextEx.href) {
-      btnNextEx.addEventListener('click', () => {
-        window.location.href = nextEx.href;
-      });
-      btnNextEx.textContent = 'Exercice suivant : ' + nextEx.name;
-    } else {
-      btnNextEx.style.display = 'none';
-    }
+    setupNextExerciseButton(PAGE_ID);
 
     document.addEventListener('keydown', e => {
       if (e.key !== 'Enter' || document.getElementById('gameZone').classList.contains('hidden')) return;
@@ -594,8 +584,6 @@
   </script>
 </body>
 </html>
-
-
 
 
 

@@ -455,28 +455,22 @@ function updateKPIs() {
   const total = session.items.length || 1;
   const progress = Math.round((session.index / total) * 100);
 
-  document.getElementById('kpiCorrect').textContent = String(session.correct);
-  document.getElementById('kpiErrors').textContent = String(session.errors);
-  document.getElementById('kpiXP').textContent = String(session.xp);
+  updateExerciseScoreKpis({
+    correct: String(session.correct),
+    errors: String(session.errors),
+    xp: String(session.xp),
+    includeAccuracy: false
+  });
   document.getElementById('kpiProgress').textContent = `${progress}%`;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  const btnNextEx = document.getElementById('btnNextExercise');
-  const nextEx = getNextExercise(PAGE_ID);
-  if (nextEx && nextEx.name && nextEx.href) {
-    btnNextEx.textContent = `Exercice suivant : ${nextEx.name}`;
-    btnNextEx.addEventListener('click', () => {
-      window.location.href = nextEx.href;
-    });
-  } else {
-    btnNextEx.style.display = 'none';
-  }
+  setupNextExerciseButton(PAGE_ID);
 
   document.getElementById('btnHint').addEventListener('click', showHint);
   document.getElementById('btnValidate').addEventListener('click', validateRound);
   document.getElementById('btnNext').addEventListener('click', nextRound);
-  document.getElementById('btnRestart').addEventListener('click', startSession);
+  setupRestartButton(startSession);
 
   document.addEventListener('keydown', (event) => {
     const tag = event.target && event.target.tagName;

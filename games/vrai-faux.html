@@ -22,7 +22,7 @@
         <div class="page-header fade-up">
           <div class="page-icon">✅</div>
           <h1>Vrai ou Faux</h1>
-          <p>Détermine si chaque affirmation est vraie ou fausse.</p>
+          <p>Lisez l affirmation, puis choisissez vrai ou faux.</p>
         </div>
 
         <!-- KPIs -->
@@ -413,17 +413,7 @@
 
   /* ===== EVENTS ===== */
   document.addEventListener('DOMContentLoaded', () => {
-    // Bouton "Exercice suivant recommandé"
-        const btnNextEx = document.getElementById('btnNextExercise');
-        const nextEx = getNextExercise(PAGE_ID);
-        if (nextEx && nextEx.name && nextEx.href) {
-          btnNextEx.addEventListener('click', () => {
-            window.location.href = nextEx.href;
-          });
-          btnNextEx.textContent = 'Exercice suivant : ' + nextEx.name;
-        } else {
-          btnNextEx.style.display = 'none';
-        }
+    setupNextExerciseButton(PAGE_ID);
         
     // Phase 5: Quick Play toggle
     document.getElementById('btnModeComplete').addEventListener('click', () => {
@@ -440,7 +430,7 @@
     document.getElementById('btnVrai').addEventListener('click', () => answer(true));
     document.getElementById('btnFaux').addEventListener('click', () => answer(false));
     document.getElementById('btnNext').addEventListener('click', nextQuestion);
-    document.getElementById('btnRestart').addEventListener('click', startSession);
+    setupRestartButton(startSession);
 
     document.addEventListener('keydown', e => {
       if (e.target.tagName === 'INPUT') return;
@@ -454,5 +444,3 @@
   </script>
 </body>
 </html>
-
-

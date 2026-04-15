@@ -25,7 +25,7 @@
         <div class="page-header fade-up">
           <div class="page-icon">⌨️</div>
           <h1>Dactylographie</h1>
-          <p>Tape les phrases exactement comme elles apparaissent. Précision et vitesse sont évaluées.</p>
+          <p>Tapez la phrase comme elle apparait. La precision compte d abord.</p>
           <button class="btn btn-secondary btn-sm" id="btn-train-start" type="button"
                   style="margin-top:12px;">⌨️ Mode Entraînement</button>
         </div>
@@ -734,17 +734,7 @@
 
   /* ── Boot ── */
   document.addEventListener('DOMContentLoaded', () => {
-    // Bouton "Exercice suivant recommandé"
-        const btnNextEx = document.getElementById('btnNextExercise');
-        const nextEx = getNextExercise(PAGE_ID);
-        if (nextEx && nextEx.name && nextEx.href) {
-          btnNextEx.addEventListener('click', () => {
-            window.location.href = nextEx.href;
-          });
-          btnNextEx.textContent = 'Exercice suivant : ' + nextEx.name;
-        } else {
-          btnNextEx.style.display = 'none';
-        }
+    setupNextExerciseButton(PAGE_ID);
     restart();
     inputEl.addEventListener('input', onInput);
 

@@ -23,7 +23,7 @@
         <div class="page-header fade-up">
           <div class="page-icon">🧭</div>
           <h1>Autoévaluation intelligente</h1>
-          <p>Bureautique et recherche d'emploi. Chaque situation repose sur une seule autoévaluation, avec des <strong>poids différents</strong> selon l'importance des tâches et des blocages critiques si les bases indispensables manquent.</p>
+          <p>Bureautique et recherche d emploi. Chaque situation compte differemment selon son importance, et les bases fragiles font baisser le niveau global.</p>
         </div>
 
         <!-- ── Navigation rapide ── -->
@@ -68,7 +68,7 @@
                 <div id="officeLevel" class="auto-level low">À évaluer</div>
                 <div class="auto-score" id="officeScore">--</div>
                 <div class="auto-bar"><div class="auto-bar-fill" id="officeFill"></div></div>
-                <p id="officeText" style="font-size:13px;color:var(--text3);margin:4px 0 0;">Répondez aux questions pour voir le niveau.</p>
+                <p id="officeText" style="font-size:13px;color:var(--text3);margin:4px 0 0;">Repondez pour afficher le niveau.</p>
               </div>
 
               <div class="auto-result-box">
@@ -76,7 +76,7 @@
                 <div id="jobLevel" class="auto-level low">À évaluer</div>
                 <div class="auto-score" id="jobScore">--</div>
                 <div class="auto-bar"><div class="auto-bar-fill" id="jobFill"></div></div>
-                <p id="jobText" style="font-size:13px;color:var(--text3);margin:4px 0 0;">Répondez aux questions pour voir le niveau.</p>
+                <p id="jobText" style="font-size:13px;color:var(--text3);margin:4px 0 0;">Repondez pour afficher le niveau.</p>
               </div>
 
               <div class="auto-result-box" style="margin-bottom:0;">
@@ -84,7 +84,7 @@
                 <div id="globalLevel" class="auto-level low">À évaluer</div>
                 <div class="auto-score" id="globalScore">--</div>
                 <div class="auto-bar"><div class="auto-bar-fill" id="globalFill"></div></div>
-                <p id="globalText" style="font-size:13px;color:var(--text3);margin:4px 0 0;">Le niveau global dépend des deux domaines, des poids et des blocages critiques.</p>
+                <p id="globalText" style="font-size:13px;color:var(--text3);margin:4px 0 0;">Le niveau global depend des deux domaines et des bases critiques.</p>
               </div>
             </div>
 
@@ -95,18 +95,18 @@
                 <div>
                   <div style="font-size:14px;font-weight:700;margin-bottom:8px;">Forces</div>
                   <ul id="strengths" style="padding-left:18px;margin:0;font-size:14px;color:var(--text2);line-height:1.7;">
-                    <li style="color:var(--text3);">Les points forts vont apparaître ici.</li>
+                    <li style="color:var(--text3);">Les points forts apparaissent ici.</li>
                   </ul>
                 </div>
                 <div>
                   <div style="font-size:14px;font-weight:700;margin-bottom:8px;">Priorités</div>
                   <ul id="priorities" style="padding-left:18px;margin:0;font-size:14px;color:var(--text2);line-height:1.7;">
-                    <li style="color:var(--text3);">Les priorités vont apparaître ici.</li>
+                    <li style="color:var(--text3);">Les priorites apparaissent ici.</li>
                   </ul>
                 </div>
               </div>
               <div class="auto-footer-note" id="logicNote">
-                Les tâches critiques ont un poids plus fort. Le niveau global baisse si les bases indispensables manquent.
+                Les taches critiques comptent plus. Le niveau global baisse si les bases manquent.
               </div>
             </div>
 
@@ -193,14 +193,22 @@
             <div class="card">
               <div class="card-title mb-4">Progression observée</div>
               <div class="auto-progress-box" id="progressBox">
-                <p id="progressObserved" style="margin:0;font-size:14px;color:var(--text3);">Enregistre deux évaluations pour afficher la progression observée automatiquement.</p>
+                <p id="progressObserved" style="margin:0;font-size:14px;color:var(--text3);">Enregistrez deux evaluations pour voir la progression.</p>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-title mb-4">Parcours recommande</div>
+              <p id="recommendedPathIntro" style="font-size:14px;color:var(--text3);margin:0 0 14px;">Repondez pour afficher 3 activites conseillees.</p>
+              <div class="auto-path-list" id="recommendedPath">
+                <div class="auto-path-empty">Le parcours recommande apparaitra ici.</div>
               </div>
             </div>
 
             <!-- Conseil formateur + export -->
             <div class="card">
               <div class="card-title mb-4">Conseil formateur</div>
-              <p id="trainerAdvice" style="font-size:14px;color:var(--text3);">Le conseil personnalisé s'affichera ici.</p>
+              <p id="trainerAdvice" style="font-size:14px;color:var(--text3);">Le conseil apparait ici.</p>
               <div class="flex gap-8 flex-wrap mt-16">
                 <button class="btn btn-primary btn-sm" id="exportBtn" type="button">Exporter le résultat en texte</button>
                 <button class="btn btn-secondary btn-sm" id="resetBtn" type="button">Recommencer</button>
@@ -264,10 +272,128 @@
     strategy: 'Candidature'
   };
 
+  const RECOMMENDATION_LIBRARY = {
+    open_file: [
+      { kind: 'page', page: 'cliquer', focus: 'reperer calmement ou agir a l ecran' },
+      { kind: 'page', page: 'orientation', focus: 'suivre un chemin simple sans se perdre' }
+    ],
+    save_file: [
+      { kind: 'page', page: 'orientation', focus: 'garder les etapes dans le bon ordre' },
+      { kind: 'page', page: 'clavier', focus: 'mieux controler les actions de base' }
+    ],
+    email_attach: [
+      { kind: 'page', page: 'email-pro', focus: 'ecrire un e-mail professionnel simple' },
+      { kind: 'app', href: 'simulateur-email/simulateur-email.html', focus: 's entrainer avec un message complet' }
+    ],
+    format_text: [
+      { kind: 'page', page: 'retaper', focus: 'corriger et relire un texte' },
+      { kind: 'app', href: 'generateur-cv/generateur-cv.html', focus: 'modifier un document utile' }
+    ],
+    fill_form: [
+      { kind: 'page', page: 'formulaire', focus: 'remplir des informations importantes' },
+      { kind: 'page', page: 'completer', focus: 'completer la bonne information' }
+    ],
+    find_offer: [
+      { kind: 'page', page: 'quiz', focus: 'reperer les bonnes informations emploi' },
+      { kind: 'page', page: 'vrai-faux', focus: 'consolider les regles de candidature' }
+    ],
+    read_offer: [
+      { kind: 'page', page: 'vrai-faux', focus: 'mieux comprendre une annonce' },
+      { kind: 'page', page: 'quiz', focus: 'trouver les informations importantes' }
+    ],
+    cv_ready: [
+      { kind: 'app', href: 'generateur-cv/generateur-cv.html', focus: 'preparer un CV simple et utile' },
+      { kind: 'page', page: 'cv-competences', focus: 'choisir des competences pertinentes' }
+    ],
+    targeted_vs_spontaneous: [
+      { kind: 'page', page: 'simulations-dialogues', focus: 'choisir la bonne reponse selon la situation' },
+      { kind: 'page', page: 'trier', focus: 'mettre les etapes d une candidature dans l ordre' }
+    ],
+    send_application: [
+      { kind: 'page', page: 'email-pro', focus: 'envoyer une candidature complete' },
+      { kind: 'app', href: 'simulateur-email/simulateur-email.html', focus: 's entrainer avec un envoi complet' }
+    ]
+  };
+
+  const AUTOEVAL_STORAGE_KEY = 'ah:autoevaluation:v1';
+
   /* ════════════════════════════════════════════
      ÉTAT
   ════════════════════════════════════════════ */
   const state = { selfAnswers: {}, eval1: null, eval2: null };
+
+  function safeParse(raw, fallback) {
+    try {
+      return raw ? JSON.parse(raw) : fallback;
+    } catch (_) {
+      return fallback;
+    }
+  }
+
+  function loadSavedState() {
+    if (!window.localStorage) return;
+    const saved = safeParse(window.localStorage.getItem(AUTOEVAL_STORAGE_KEY), null);
+    if (!saved || typeof saved !== 'object') return;
+
+    if (saved.selfAnswers && typeof saved.selfAnswers === 'object') {
+      state.selfAnswers = Object.assign({}, saved.selfAnswers);
+    }
+    if (saved.eval1 && typeof saved.eval1 === 'object') {
+      state.eval1 = saved.eval1;
+    }
+    if (saved.eval2 && typeof saved.eval2 === 'object') {
+      state.eval2 = saved.eval2;
+    }
+
+    if (saved.date1) {
+      document.getElementById('date1').value = saved.date1;
+    }
+    if (saved.date2) {
+      document.getElementById('date2').value = saved.date2;
+    }
+  }
+
+  function persistState() {
+    if (!window.localStorage) return;
+
+    const office = computeDomain('office');
+    const job = computeDomain('job');
+    const global = computeGlobal(office, job);
+    const recommendedPath = buildRecommendedPath();
+    const weakestDomain = [office, job]
+      .map(function(result, index) {
+        return {
+          key: index === 0 ? 'office' : 'job',
+          label: index === 0 ? 'Bureautique' : 'Recherche d emploi',
+          score: result.score
+        };
+      })
+      .filter(function(item) { return item.score !== null; })
+      .sort(function(a, b) { return a.score - b.score; })[0] || null;
+
+    const payload = {
+      updatedAt: Date.now(),
+      answeredCount: getAnsweredCount(),
+      selfAnswers: Object.assign({}, state.selfAnswers),
+      eval1: state.eval1,
+      eval2: state.eval2,
+      date1: document.getElementById('date1').value || '',
+      date2: document.getElementById('date2').value || '',
+      summary: {
+        office: { score: office.score, label: office.label },
+        job: { score: job.score, label: job.label },
+        global: { score: global.score, label: global.label },
+        weakestDomain: weakestDomain,
+        recommendedPath: recommendedPath
+      }
+    };
+
+    try {
+      window.localStorage.setItem(AUTOEVAL_STORAGE_KEY, JSON.stringify(payload));
+    } catch (_) {
+      // ignore storage errors
+    }
+  }
 
   /* ════════════════════════════════════════════
      INIT COMPTEURS
@@ -344,13 +470,45 @@
     return questions.filter(function(q) { return getEffectiveValue(q, sourceSelf) !== null; }).length;
   }
 
+  function getPageMeta(page) {
+    return (window.EXERCISE_CONFIG && window.EXERCISE_CONFIG.meta && window.EXERCISE_CONFIG.meta[page]) || {};
+  }
+
+  function getAppMeta(href) {
+    const apps = (window.EXERCISE_CONFIG && window.EXERCISE_CONFIG.apps) || [];
+    return apps.find(function(app) { return app.href === href; }) || null;
+  }
+
+  function buildRecommendationTarget(entry) {
+    if (!entry) return null;
+    if (entry.kind === 'page') {
+      const meta = getPageMeta(entry.page);
+      return {
+        href: meta.href || (entry.page + '.html'),
+        name: meta.name || entry.page,
+        badge: meta.section || meta.cat || 'Exercice',
+        focus: entry.focus
+      };
+    }
+    if (entry.kind === 'app') {
+      const app = getAppMeta(entry.href);
+      return {
+        href: entry.href,
+        name: app ? app.name : 'Outil',
+        badge: 'Application',
+        focus: entry.focus
+      };
+    }
+    return null;
+  }
+
   function computeDomain(domain, sourceSelf) {
     sourceSelf = sourceSelf || state.selfAnswers;
     const qs       = questions.filter(function(q) { return q.domain === domain; });
     const answered = qs.filter(function(q) { return getEffectiveValue(q, sourceSelf) !== null; });
 
     if (!answered.length) {
-      return { score: null, label: 'À évaluer', className: 'low', text: 'Répondez aux questions pour voir le niveau.', strengths: [], priorities: [], criticalBlocked: false };
+      return { score: null, label: 'À évaluer', className: 'low', text: 'Repondez pour afficher le niveau.', strengths: [], priorities: [], criticalBlocked: false };
     }
 
     let weightedSum = 0, totalWeight = 0;
@@ -428,7 +586,7 @@
 
   function computeGlobal(office, job) {
     if (office.score === null && job.score === null) {
-      return { score: null, label: 'À évaluer', className: 'low', text: 'Répondez aux questions pour voir le niveau global.' };
+      return { score: null, label: 'À évaluer', className: 'low', text: 'Repondez pour afficher le niveau global.' };
     }
 
     const oScore = office.score != null ? office.score : 0;
@@ -448,6 +606,63 @@
     if (office.criticalBlocked || job.criticalBlocked) text += ' Un blocage critique limite le niveau global.';
 
     return { score: base, label, className, text };
+  }
+
+  function buildRecommendedPath(sourceSelf) {
+    sourceSelf = sourceSelf || state.selfAnswers;
+    const answeredCount = getAnsweredCount(sourceSelf);
+    if (!answeredCount) return [];
+
+    const weakQuestions = questions
+      .map(function(q) {
+        const value = getEffectiveValue(q, sourceSelf);
+        if (value === null || value > 1) return null;
+        return {
+          question: q,
+          value: value,
+          priority: (q.weight * 10) + (q.critical ? 5 : 0) + (value === 0 || value === 0.5 ? 3 : 0)
+        };
+      })
+      .filter(Boolean)
+      .sort(function(a, b) { return b.priority - a.priority; });
+
+    const path = [];
+    const seen = new Set();
+
+    weakQuestions.forEach(function(item) {
+      const targets = RECOMMENDATION_LIBRARY[item.question.id] || [];
+      targets.forEach(function(entry) {
+        const target = buildRecommendationTarget(entry);
+        if (!target || seen.has(target.href) || path.length >= 3) return;
+        path.push({
+          href: target.href,
+          name: target.name,
+          badge: target.badge,
+          reason: 'Pour travailler : ' + entry.focus + '.'
+        });
+        seen.add(target.href);
+      });
+    });
+
+    if (path.length < 3) {
+      [
+        { kind: 'page', page: 'formulaire', focus: 'reprendre une tache utile et concrete' },
+        { kind: 'page', page: 'email-pro', focus: 'mieux structurer un message simple' },
+        { kind: 'page', page: 'quiz', focus: 'verifier la comprehension des consignes' }
+      ].forEach(function(entry) {
+        const target = buildRecommendationTarget(entry);
+        if (!target || seen.has(target.href) || path.length >= 3) return;
+        path.push({
+          href: target.href,
+          name: target.name,
+          badge: target.badge,
+          reason: 'Bonne activite de consolidation pour continuer sans se perdre.'
+        });
+        seen.add(target.href);
+      });
+    }
+
+    return path.slice(0, 3);
   }
 
   /* ════════════════════════════════════════════
@@ -479,6 +694,32 @@
     const el = document.getElementById(id);
     if (!el) return;
     el.innerHTML = items.map(function(item) { return '<li>' + escapeHtml(item) + '</li>'; }).join('');
+  }
+
+  function renderRecommendedPath(sourceSelf) {
+    const intro = document.getElementById('recommendedPathIntro');
+    const list = document.getElementById('recommendedPath');
+    if (!intro || !list) return;
+
+    const items = buildRecommendedPath(sourceSelf);
+    if (!items.length) {
+      intro.textContent = 'Repondez aux questions pour afficher 3 exercices conseilles.';
+      list.innerHTML = '<div class="auto-path-empty">Le parcours recommande apparaitra ici.</div>';
+      return;
+    }
+
+    intro.textContent = 'Ces 3 activites sont choisies pour transformer le diagnostic en petite seance de travail.';
+    list.innerHTML = items.map(function(item, index) {
+      return [
+        '<a class="auto-path-card" href="' + escapeHtml(item.href) + '">',
+          '<div class="auto-path-step">Etape ' + (index + 1) + '</div>',
+          '<div class="auto-path-badge">' + escapeHtml(item.badge) + '</div>',
+          '<div class="auto-path-name">' + escapeHtml(item.name) + '</div>',
+          '<p>' + escapeHtml(item.reason) + '</p>',
+          '<span class="auto-path-link">Ouvrir</span>',
+        '</a>'
+      ].join('');
+    }).join('');
   }
 
   /* ════════════════════════════════════════════
@@ -571,7 +812,7 @@
     if (elCurrent) {
       elCurrent.innerHTML = buildRadarSvg(
         [{ axes: currentAxes, color: 'var(--accent)', fill: 'rgba(50,93,169,0.18)' }],
-        'Répondez aux questions pour afficher le graphique radar.'
+        'Repondez pour afficher le graphique radar.'
       );
     }
 
@@ -583,7 +824,7 @@
     if (elCompare) {
       elCompare.innerHTML = buildRadarSvg(
         compareDatasets,
-        'Enregistre deux évaluations pour comparer visuellement le profil avant / après.'
+        'Enregistrez deux evaluations pour comparer le profil.'
       );
     }
   }
@@ -630,7 +871,7 @@
 
     if (!state.eval1 || !state.eval2) {
       progressBox.className = 'auto-progress-box';
-      progressText.textContent = 'Enregistre deux évaluations pour afficher la progression observée automatiquement.';
+      progressText.textContent = 'Enregistrez deux evaluations pour voir la progression.';
       renderRadar();
       return;
     }
@@ -689,8 +930,10 @@
     }
     document.getElementById('trainerAdvice').textContent = advice;
 
+    renderRecommendedPath();
     renderRadar();
     updateComparison();
+    persistState();
   }
 
   /* ════════════════════════════════════════════
@@ -719,6 +962,11 @@
       '',
       'Priorités :',
     ]).concat(priorities).concat([
+      '',
+      'Parcours recommande :',
+    ].concat(buildRecommendedPath().map(function(item, index) {
+      return (index + 1) + '. ' + item.name + ' - ' + item.reason;
+    })).concat([
       '',
       'Progression observée :',
       document.getElementById('progressObserved').textContent,
@@ -799,6 +1047,11 @@
     /* Test 7 : compteur */
     assert('Compteur réponses = 10', getAnsweredCount(radarSample) === 10);
 
+    /* Test 8 : parcours recommande */
+    const recommended = buildRecommendedPath(radarSample);
+    assert('Parcours recommande limite a 3 liens', recommended.length > 0 && recommended.length <= 3);
+    assert('Parcours recommande sans doublons', new Set(recommended.map(function(item) { return item.href; })).size === recommended.length);
+
     /* Restauration */
     state.selfAnswers = savedSelf;
     state.eval1       = savedEval1;
@@ -815,21 +1068,26 @@
   document.getElementById('saveEval1Btn').addEventListener('click', function() {
     state.eval1 = getCurrentSnapshot();
     updateComparison();
+    persistState();
   });
   document.getElementById('saveEval2Btn').addEventListener('click', function() {
     state.eval2 = getCurrentSnapshot();
     updateComparison();
+    persistState();
   });
   document.getElementById('resetBtn').addEventListener('click', function() {
     state.selfAnswers = {};
     renderQuiz();
     updateResults();
   });
+  document.getElementById('date1').addEventListener('change', persistState);
+  document.getElementById('date2').addEventListener('change', persistState);
   document.getElementById('exportBtn').addEventListener('click', exportResult);
 
   /* ════════════════════════════════════════════
      DÉMARRAGE
   ════════════════════════════════════════════ */
+  loadSavedState();
   renderQuiz();
   updateResults();
   runTests();

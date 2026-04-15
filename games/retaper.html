@@ -22,7 +22,7 @@
         <div class="page-header fade-up">
           <div class="page-icon">&#9997;&#65039;</div>
           <h1>Retaper un e-mail</h1>
-          <p>Lisez la situation et l'objet, puis recopiez seulement le corps du mod&egrave;le dans la zone de saisie.</p>
+          <p>Lisez la situation, puis retapez seulement le corps du modele.</p>
         </div>
 
         <!-- KPI -->
@@ -824,17 +824,9 @@
     });
 
     /* Recommencer */
-    document.getElementById('btnRestart').addEventListener('click', startSession);
+    setupRestartButton(startSession);
 
-    /* Exercice suivant recommandé */
-    const btnNextEx = document.getElementById('btnNextExercise');
-    const nextEx    = getNextExercise(PAGE_ID);
-    if (nextEx && nextEx.name && nextEx.href) {
-      btnNextEx.addEventListener('click', () => { window.location.href = nextEx.href; });
-      btnNextEx.textContent = 'Exercice suivant\u00a0: ' + nextEx.name;
-    } else {
-      btnNextEx.style.display = 'none';
-    }
+    setupNextExerciseButton(PAGE_ID);
 
     /* Raccourci clavier : Entrée pour valider quand non soumis */
     document.addEventListener('keydown', e => {

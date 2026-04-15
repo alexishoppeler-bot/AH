@@ -22,7 +22,7 @@
         <div class="page-header fade-up">
           <div class="page-icon">🔍</div>
           <h1>Cherche et clique</h1>
-          <p>Reconnaissez les icônes et cliquez sur celle demandée. Testez votre vitesse de repérage.</p>
+          <p>Reperez l icone demandee et cliquez dessus.</p>
         </div>
 
         <!-- KPI en temps réel -->
@@ -314,15 +314,7 @@
 
     endExerciseSession(PAGE_ID);
 
-    // Bouton suivant
-    const nextEx = getNextExercise(PAGE_ID);
-    const btnNext = document.getElementById('btnNextExercise');
-    if (nextEx && nextEx.href) {
-      btnNext.textContent = 'Exercice suivant : ' + nextEx.name + ' →';
-      btnNext.onclick = () => window.location.href = nextEx.href;
-    } else {
-      btnNext.style.display = 'none';
-    }
+    setupNextExerciseButton(PAGE_ID, { labelSuffix: ' →' });
   }
 
   /* ── Bouton Rejouer ── */

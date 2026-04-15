@@ -22,7 +22,7 @@
         <div class="page-header fade-up">
           <div class="page-icon">🖱️</div>
           <h1>Clic souris</h1>
-          <p>Parcours en 5 étapes : du clic simple à la sélection de texte.</p>
+          <p>Parcours en 5 etapes pour s entrainer aux gestes de la souris.</p>
         </div>
 
         <!-- KPI global -->
@@ -753,15 +753,7 @@
     loadStep(0);
   });
 
-  // Bouton "Exercice suivant"
-  const btnNextEx = document.getElementById('btnNextExercise');
-  const nextEx = getNextExercise(PAGE_ID);
-  if (nextEx && nextEx.name && nextEx.href) {
-    btnNextEx.addEventListener('click', () => { window.location.href = nextEx.href; });
-    btnNextEx.textContent = 'Exercice suivant : ' + nextEx.name;
-  } else {
-    btnNextEx.style.display = 'none';
-  }
+  setupNextExerciseButton(PAGE_ID);
 
   // Afficher les règles XP et lancer l'étape 1
   showXPRules('Cliquer');

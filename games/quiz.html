@@ -22,7 +22,7 @@
         <div class="page-header fade-up">
           <div class="page-icon">❓</div>
           <h1>Questions simples</h1>
-          <p>Lisez la question. Puis choisissez une réponse.</p>
+          <p>Lisez la question, puis choisissez la bonne reponse.</p>
         </div>
 
         <!-- KPIs -->
@@ -100,7 +100,7 @@
         <div class="result-zone fade-up" id="resultZone">
           <div class="card card-accent card-lg" style="text-align:center;">
             <div style="font-size:56px;margin-bottom:16px;" id="resEmoji">🏆</div>
-            <h2 style="font-family:var(--font-head);font-size:24px;font-weight:800;margin-bottom:4px;" id="resTitle">Exercice fini</h2>
+            <h2 style="font-family:var(--font-head);font-size:24px;font-weight:800;margin-bottom:4px;" id="resTitle">Session terminee</h2>
             <p style="color:var(--text2);margin-bottom:24px;" id="resSubtitle"></p>
 
             <!-- Ring de score -->
@@ -134,8 +134,8 @@
               <button class="btn btn-ghost btn-sm btn-share" type="button">Copier mon résumé</button>
             </div>
             <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-              <button class="btn btn-primary btn-lg" id="btnNextExercise" type="button">Suite</button>
-              <button class="btn btn-secondary btn-lg" id="btnRestart" type="button">Réessayer</button>
+              <button class="btn btn-primary btn-lg" id="btnNextExercise" type="button">Exercice suivant</button>
+              <button class="btn btn-secondary btn-lg" id="btnRestart" type="button">Rejouer</button>
               <a href="accueil.html" class="btn btn-secondary btn-lg">← Accueil</a>
             </div>
           </div>
@@ -445,17 +445,7 @@
 
   /* ===== EVENTS ===== */
   document.addEventListener('DOMContentLoaded', () => {
-    // Bouton "Exercice suivant recommandé"
-        const btnNextEx = document.getElementById('btnNextExercise');
-        const nextEx = getNextExercise(PAGE_ID);
-        if (nextEx && nextEx.name && nextEx.href) {
-          btnNextEx.addEventListener('click', () => {
-            window.location.href = nextEx.href;
-          });
-          btnNextEx.textContent = 'Suite : ' + nextEx.name;
-        } else {
-          btnNextEx.style.display = 'none';
-        }
+    setupNextExerciseButton(PAGE_ID);
         
     // Phase 5: Quick Play toggle
     document.getElementById('btnModeComplete').addEventListener('click', () => {
@@ -487,6 +477,3 @@
   </script>
 </body>
 </html>
-
-
-
