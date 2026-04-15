@@ -11,6 +11,7 @@ const ROOT_DIR = path.resolve(__dirname, '..');
 const GAMES_DIR = path.join(ROOT_DIR, 'games');
 const JS_DIR = path.join(ROOT_DIR, 'js');
 const CONFIG_PATH = path.join(JS_DIR, 'exercises-config.js');
+const ROOT_HTML_FILES = ['index.html'];
 
 const report = {
   errors: [],
@@ -86,6 +87,7 @@ function checkExerciseConfig(config) {
   const nonOrderedSet = new Set(nonOrderedPages);
   const meta = config.meta && typeof config.meta === 'object' ? config.meta : {};
   const bonus = Array.isArray(config.bonusExercises) ? config.bonusExercises : [];
+  const apps = Array.isArray(config.apps) ? config.apps : [];
   const xpByPage = config.xpRules && config.xpRules.byPage ? config.xpRules.byPage : {};
 
   if (orderedPages.length === 0) {
@@ -121,13 +123,26 @@ function checkExerciseConfig(config) {
     if (!meta[entry.page]) addWarning(`Bonus sans meta: "${entry.page}".`);
   }
 
+  for (const app of apps) {
+    if (!app || !app.href) continue;
+    const target = path.join(GAMES_DIR, app.href);
+    if (!fs.existsSync(target)) {
+      addError(`Application manquante dans config.apps: games/${app.href}`);
+    }
+  }
+
   for (const page of orderedPages) {
     if (!xpByPage[page]) addWarning(`Regle XP manquante pour "${page}".`);
   }
 }
 
 function checkHtmlReferences() {
-  const htmlFiles = listFilesRecursive(GAMES_DIR, (file) => file.toLowerCase().endsWith('.html'));
+  const htmlFiles = [
+    ...listFilesRecursive(GAMES_DIR, (file) => file.toLowerCase().endsWith('.html')),
+    ...ROOT_HTML_FILES
+      .map((file) => path.join(ROOT_DIR, file))
+      .filter((file) => fs.existsSync(file))
+  ];
   const assetRegex = /\b(?:src|href)=["']([^"']+)["']/g;
 
   for (const htmlFile of htmlFiles) {

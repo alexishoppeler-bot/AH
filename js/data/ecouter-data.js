@@ -259,12 +259,12 @@ window.ECOUTER_DATA = [
   },
 
   {
-    id: ‘ep07’,
-    type: ‘dialogue’,
-    title: ‘À l’ORP’,
-    category: ‘Recherche d’emploi’,
-    difficulty: ‘medium’,
-    theme: ‘orp’,
+    id: 'ep07',
+    type: 'dialogue',
+    title: "À l'ORP",
+    category: "Recherche d'emploi",
+    difficulty: 'medium',
+    theme: 'orp',
     lines: [
       { speaker: 'Conseillère', gender: 'f', text: 'Bonjour Monsieur Diallo. Asseyez-vous, je vous en prie.' },
       { speaker: 'Mamadou', gender: 'm', text: 'Bonjour Madame. Merci.' },

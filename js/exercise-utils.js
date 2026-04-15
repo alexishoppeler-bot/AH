@@ -521,8 +521,6 @@ function recordExerciseProgress(page, delta) {
 
   ScoreManager.updateMetrics(page, delta);
   ScoreManager.promoteStatus(page, 'in_progress');
-  maybeShowCoachToast(page, delta);
-  maybeShowAccuracyToast(page, getCoachState(page), Date.now());
 }
 
 /**

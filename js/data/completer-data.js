@@ -6,7 +6,7 @@ window.COMPLETER_DATA = [
     category: 'Formulaire',
     difficulty: 'easy',
     theme: 'numérique',
-    text: 'J'écris mon ___ de famille dans la première case.',
+    text: "J'écris mon ___ de famille dans la première case.",
     answer: 'nom',
     choices: ['nom', 'pays', 'mail', 'document'],
     hint: 'Exemple : Dupont.'
@@ -15,7 +15,7 @@ window.COMPLETER_DATA = [
     category: 'Formulaire',
     difficulty: 'easy',
     theme: 'numérique',
-    text: 'J'écris mon ___ après le nom.',
+    text: "J'écris mon ___ après le nom.",
     answer: 'prénom',
     choices: ['prénom', 'âge', 'numéro', 'titre'],
     hint: 'Exemple : Nadia.'
@@ -24,16 +24,16 @@ window.COMPLETER_DATA = [
     category: 'Adresse',
     difficulty: 'easy',
     theme: 'numérique',
-    text: 'J'écris mon ___ complète avec la rue et le numéro.',
+    text: "J'écris mon ___ complète avec la rue et le numéro.",
     answer: 'adresse',
     choices: ['adresse', 'signature', 'photo', 'question'],
-    hint: 'C'est l'endroit où vous habitez.'
+    hint: "C'est l'endroit où vous habitez."
   },
   {
     category: 'Contact',
     difficulty: 'easy',
     theme: 'numérique',
-    text: 'J'écris mon numéro de ___ pour être contacté.',
+    text: "J'écris mon numéro de ___ pour être contacté.",
     answer: 'téléphone',
     choices: ['téléphone', 'passeport', 'clavier', 'papier'],
     hint: 'En Suisse, il commence souvent par 07.'
@@ -42,7 +42,7 @@ window.COMPLETER_DATA = [
     category: 'Contact',
     difficulty: 'easy',
     theme: 'numérique',
-    text: 'J'écris mon ___ pour recevoir un message électronique.',
+    text: "J'écris mon ___ pour recevoir un message électronique.",
     answer: 'e-mail',
     choices: ['e-mail', 'nom', 'pays', 'stylo'],
     hint: 'Exemple : nom@email.ch'
@@ -51,7 +51,7 @@ window.COMPLETER_DATA = [
     category: 'Identité',
     difficulty: 'easy',
     theme: 'numérique',
-    text: 'J'écris ma date de ___ : jour, mois, année.',
+    text: "J'écris ma date de ___ : jour, mois, année.",
     answer: 'naissance',
     choices: ['naissance', 'ville', 'réponse', 'case'],
     hint: 'Exemple : 12.05.1990'
@@ -60,7 +60,7 @@ window.COMPLETER_DATA = [
     category: 'Adresse',
     difficulty: 'easy',
     theme: 'numérique',
-    text: 'J'écris le code ___ de ma commune.',
+    text: "J'écris le code ___ de ma commune.",
     answer: 'postal',
     choices: ['postal', 'civil', 'numérique', 'simple'],
     hint: 'Exemple : 1003.'
@@ -69,7 +69,7 @@ window.COMPLETER_DATA = [
     category: 'Adresse',
     difficulty: 'easy',
     theme: 'numérique',
-    text: 'J'écris le nom de ma ___ après le code postal.',
+    text: "J'écris le nom de ma ___ après le code postal.",
     answer: 'ville',
     choices: ['ville', 'date', 'ligne', 'page'],
     hint: 'Exemple : Lausanne.'
@@ -96,7 +96,7 @@ window.COMPLETER_DATA = [
     category: 'Action',
     difficulty: 'easy',
     theme: 'numérique',
-    text: 'Je ___ le formulaire avant de l'envoyer.',
+    text: "Je ___ le formulaire avant de l'envoyer.",
     answer: 'vérifie',
     choices: ['vérifie', 'dessine', 'coupe', 'branche'],
     hint: 'Je contrôle les informations.'
@@ -116,7 +116,7 @@ window.COMPLETER_DATA = [
     category: 'ORP',
     difficulty: 'medium',
     theme: 'orp',
-    text: 'Je vais à l'___ pour parler avec mon conseiller et chercher un emploi.',
+    text: "Je vais à l'___ pour parler avec mon conseiller et chercher un emploi.",
     answer: 'ORP',
     choices: ['ORP', 'gare', 'pharmacie', 'banque'],
     hint: 'Office Régional de Placement.'
@@ -125,10 +125,10 @@ window.COMPLETER_DATA = [
     category: 'Emploi',
     difficulty: 'medium',
     theme: 'emploi',
-    text: 'J'envoie mon ___ pour montrer mon expérience professionnelle.',
+    text: "J'envoie mon ___ pour montrer mon expérience professionnelle.",
     answer: 'CV',
     choices: ['CV', 'billet', 'formulaire', 'horaire'],
-    hint: 'Document avec la formation et l'expérience.'
+    hint: "Document avec la formation et l'expérience."
   },
   {
     category: 'Emploi',
@@ -143,16 +143,16 @@ window.COMPLETER_DATA = [
     category: 'Entretien',
     difficulty: 'medium',
     theme: 'emploi',
-    text: 'Je dois arriver à ___ pour mon entretien d'embauche à 9h00.',
-    answer: 'l'heure',
-    choices: ['l'heure', 'la gare', 'en retard', 'la maison'],
+    text: "Je dois arriver à ___ pour mon entretien d'embauche à 9h00.",
+    answer: "l'heure",
+    choices: ["l'heure", 'la gare', 'en retard', 'la maison'],
     hint: 'La ponctualité est importante.'
   },
   {
     category: 'Entretien',
     difficulty: 'hard',
     theme: 'emploi',
-    text: 'Pendant l'entretien, je parle de mes ___ pour ce poste.',
+    text: "Pendant l'entretien, je parle de mes ___ pour ce poste.",
     answer: 'compétences',
     choices: ['compétences', 'vacances', 'voisins', 'formulaires'],
     hint: 'Ce que je sais faire pour le travail.'
@@ -163,7 +163,7 @@ window.COMPLETER_DATA = [
     category: 'Transports',
     difficulty: 'easy',
     theme: 'transports',
-    text: 'Je regarde l'___ pour connaître l'heure du prochain bus.',
+    text: "Je regarde l'___ pour connaître l'heure du prochain bus.",
     answer: 'horaire',
     choices: ['horaire', 'adresse', 'prénom', 'code postal'],
     hint: 'Tableau avec les heures de départ.'
@@ -172,7 +172,7 @@ window.COMPLETER_DATA = [
     category: 'Transports',
     difficulty: 'easy',
     theme: 'transports',
-    text: 'J'achète mon ___ avant de monter dans le tram.',
+    text: "J'achète mon ___ avant de monter dans le tram.",
     answer: 'billet',
     choices: ['billet', 'stylo', 'formulaire', 'document'],
     hint: 'Ticket pour voyager.'
@@ -219,7 +219,7 @@ window.COMPLETER_DATA = [
     category: 'E-mail',
     difficulty: 'medium',
     theme: 'numérique',
-    text: 'J'écris l'___ du message avant le texte.',
+    text: "J'écris l'___ du message avant le texte.",
     answer: 'objet',
     choices: ['objet', 'horaire', 'billet', 'prénom'],
     hint: 'Petite ligne qui résume le message.'
@@ -228,16 +228,16 @@ window.COMPLETER_DATA = [
     category: 'E-mail',
     difficulty: 'medium',
     theme: 'emploi',
-    text: 'Je joins mon ___ à l'e-mail de candidature.',
+    text: "Je joins mon ___ à l'e-mail de candidature.",
     answer: 'CV',
     choices: ['CV', 'quai', 'ticket', 'stylo'],
-    hint: 'Document avec l'expérience et la formation.'
+    hint: "Document avec l'expérience et la formation."
   },
   {
     category: 'ORP',
     difficulty: 'hard',
     theme: 'orp',
-    text: 'Mon conseiller ORP m'envoie une ___ pour un rendez-vous.',
+    text: "Mon conseiller ORP m'envoie une ___ pour un rendez-vous.",
     answer: 'convocation',
     choices: ['convocation', 'photo', 'adresse', 'fenêtre'],
     hint: 'Message officiel qui demande de venir.'
@@ -246,7 +246,7 @@ window.COMPLETER_DATA = [
     category: 'Administratif',
     difficulty: 'medium',
     theme: 'numérique',
-    text: 'Je prends un ___ à l'entrée pour attendre au guichet.',
+    text: "Je prends un ___ à l'entrée pour attendre au guichet.",
     answer: 'ticket',
     choices: ['ticket', 'métier', 'quartier', 'contrat'],
     hint: 'Petit papier avec un numéro.'
@@ -255,7 +255,7 @@ window.COMPLETER_DATA = [
     category: 'Santé',
     difficulty: 'medium',
     theme: 'santé',
-    text: 'Je montre ma carte d'___ à la réception du cabinet.',
+    text: "Je montre ma carte d'___ à la réception du cabinet.",
     answer: 'assurance',
     choices: ['assurance', 'emploi', 'station', 'signature'],
     hint: 'Elle sert pour les soins médicaux.'
@@ -276,13 +276,13 @@ window.COMPLETER_DATA = [
     text: 'Je regarde sur quel ___ arrive le train.',
     answer: 'quai',
     choices: ['quai', 'bureau', 'papier', 'prénom'],
-    hint: 'Lieu où j'attends le train.'
+    hint: "Lieu où j'attends le train."
   },
   {
     category: 'Vie quotidienne',
     difficulty: 'easy',
     theme: 'numérique',
-    text: 'Je garde mon ___ de caisse après avoir payé.',
+    text: "Je garde mon ___ de caisse après avoir payé.",
     answer: 'reçu',
     choices: ['reçu', 'salon', 'guichet', 'métro'],
     hint: 'Petit document donné après le paiement.'
@@ -291,9 +291,9 @@ window.COMPLETER_DATA = [
     category: 'Logement',
     difficulty: 'hard',
     theme: 'logement',
-    text: 'Je contacte la ___ si j'ai un problème dans mon appartement.',
+    text: "Je contacte la ___ si j'ai un problème dans mon appartement.",
     answer: 'gérance',
     choices: ['gérance', 'gare', 'poste', 'cuisine'],
-    hint: 'Service qui gère l'immeuble.'
+    hint: "Service qui gère l'immeuble."
   },
 ];

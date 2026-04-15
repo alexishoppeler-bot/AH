@@ -3,14 +3,14 @@
 
 window.TRIER_DATA = [
   {
-    theme: 'Entretien d'embauche',
+    theme: "Entretien d'embauche",
     difficulty: 'medium',
     topic: 'emploi',
     groups: [
-      { label: 'Avant l'entretien', emoji: '📚', items: ['Se préparer', 'Relire son CV', 'Connaître l'entreprise', 'Vérifier l'adresse'] },
-      { label: 'Documents à apporter', emoji: '📄', items: ['CV', 'Lettre de motivation', 'Diplôme', 'Pièce d'identité'] },
-      { label: 'Pendant l'entretien', emoji: '🗣️', items: ['Se présenter', 'Répondre aux questions', 'Parler clairement', 'Rester poli'] },
-      { label: 'Fin de l'entretien', emoji: '🤝', items: ['Remercier', 'Dire au revoir', 'Poser une question', 'Quitter calmement'] },
+      { label: "Avant l'entretien", emoji: '📚', items: ['Se préparer', 'Relire son CV', "Connaître l'entreprise", "Vérifier l'adresse"] },
+      { label: "Documents à apporter", emoji: '📄', items: ['CV', 'Lettre de motivation', 'Diplôme', "Pièce d'identité"] },
+      { label: "Pendant l'entretien", emoji: '🗣️', items: ['Se présenter', 'Répondre aux questions', 'Parler clairement', 'Rester poli'] },
+      { label: "Fin de l'entretien", emoji: '🤝', items: ['Remercier', 'Dire au revoir', 'Poser une question', 'Quitter calmement'] },
     ],
   },
 
@@ -27,12 +27,12 @@ window.TRIER_DATA = [
   },
 
   {
-    theme: 'Questions de l'employeur',
+    theme: "Questions de l'employeur",
     difficulty: 'hard',
     topic: 'emploi',
     groups: [
       { label: 'Expérience', emoji: '🛠️', items: ['Où avez-vous travaillé', 'Quelle expérience avez-vous', 'Quel est votre métier', 'Que savez-vous faire'] },
-      { label: 'Motivation', emoji: '🔥', items: ['Pourquoi ce poste', 'Pourquoi cette entreprise', 'Pourquoi voulez-vous travailler ici', 'Qu'est-ce qui vous intéresse'] },
+      { label: 'Motivation', emoji: '🔥', items: ['Pourquoi ce poste', 'Pourquoi cette entreprise', 'Pourquoi voulez-vous travailler ici', "Qu'est-ce qui vous intéresse"] },
       { label: 'Disponibilité', emoji: '📅', items: ['Êtes-vous disponible', 'Quand pouvez-vous commencer', 'Travaillez-vous le week-end', 'Êtes-vous libre rapidement'] },
       { label: 'Personnalité', emoji: '🙂', items: ['Quelles sont vos qualités', 'Comment êtes-vous', 'Travaillez-vous en équipe', 'Êtes-vous ponctuel'] },
     ],
@@ -43,8 +43,8 @@ window.TRIER_DATA = [
     difficulty: 'medium',
     topic: 'emploi',
     groups: [
-      { label: 'Parler de soi', emoji: '🧍', items: ['Je suis motivé', 'Je suis sérieux', 'Je suis ponctuel', 'J'aime travailler en équipe'] },
-      { label: 'Parler de son expérience', emoji: '📋', items: ['J'ai travaillé dans le nettoyage', 'J'ai de l'expérience en cuisine', 'J'ai travaillé en logistique', 'J'ai travaillé dans la vente'] },
+      { label: 'Parler de soi', emoji: '🧍', items: ['Je suis motivé', 'Je suis sérieux', 'Je suis ponctuel', "J'aime travailler en équipe"] },
+      { label: 'Parler de son expérience', emoji: '📋', items: ["J'ai travaillé dans le nettoyage", "J'ai de l'expérience en cuisine", "J'ai travaillé en logistique", "J'ai travaillé dans la vente"] },
       { label: 'Parler de ses compétences', emoji: '🔧', items: ['Je sais utiliser des outils', 'Je sais servir les clients', 'Je sais préparer des commandes', 'Je sais nettoyer des locaux'] },
       { label: 'Parler de sa disponibilité', emoji: '⏰', items: ['Je suis disponible immédiatement', 'Je peux commencer lundi', 'Je suis libre à temps partiel', 'Je suis disponible le matin'] },
     ],
@@ -55,7 +55,7 @@ window.TRIER_DATA = [
     difficulty: 'medium',
     topic: 'emploi',
     groups: [
-      { label: 'Bon comportement', emoji: '✅', items: ['Écouter', 'Regarder la personne', 'Répondre calmement', 'Arriver à l'heure'] },
+      { label: 'Bon comportement', emoji: '✅', items: ['Écouter', 'Regarder la personne', 'Répondre calmement', "Arriver à l'heure"] },
       { label: 'À éviter', emoji: '❌', items: ['Couper la parole', 'Regarder le téléphone', 'Arriver en retard', 'Parler trop vite'] },
       { label: 'Politesse', emoji: '🙏', items: ['Bonjour', 'Merci', 'Au revoir', 'Enchanté'] },
       { label: 'Attitude', emoji: '🙂', items: ['Sourire', 'Rester calme', 'Être respectueux', 'Montrer sa motivation'] },
@@ -67,7 +67,7 @@ window.TRIER_DATA = [
     difficulty: 'easy',
     topic: 'transports',
     groups: [
-      { label: 'Avant de partir', emoji: '🗺️', items: ['Regarder l'adresse', 'Vérifier l'heure', 'Préparer le trajet', 'Prendre les documents'] },
+      { label: 'Avant de partir', emoji: '🗺️', items: ["Regarder l'adresse", "Vérifier l'heure", 'Préparer le trajet', 'Prendre les documents'] },
       { label: 'Transports', emoji: '🚌', items: ['Bus', 'Train', 'Tram', 'Métro'] },
       { label: 'Lieux', emoji: '📍', items: ['Gare', 'Arrêt', 'Entreprise', 'Bâtiment'] },
       { label: 'En cas de problème', emoji: '📞', items: ['Téléphoner', 'Prévenir', 'Demander son chemin', 'Regarder le plan'] },
@@ -80,14 +80,14 @@ window.TRIER_DATA = [
     topic: 'emploi',
     groups: [
       { label: 'Documents principaux', emoji: '📄', items: ['CV', 'Lettre de motivation', 'Certificat', 'Diplôme'] },
-      { label: 'Documents personnels', emoji: '🪪', items: ['Pièce d'identité', 'Permis de séjour', 'Permis de conduire', 'Photo'] },
+      { label: 'Documents personnels', emoji: '🪪', items: ["Pièce d'identité", 'Permis de séjour', 'Permis de conduire', 'Photo'] },
       { label: 'Documents utiles', emoji: '📁', items: ['Références', 'Attestation', 'Certificat de travail', 'Copie de diplôme'] },
       { label: 'Actions', emoji: '📨', items: ['Imprimer', 'Envoyer', 'Joindre', 'Préparer'] },
     ],
   },
 
   {
-    theme: 'Vocabulaire de l'entretien',
+    theme: "Vocabulaire de l'entretien",
     difficulty: 'hard',
     topic: 'emploi',
     groups: [

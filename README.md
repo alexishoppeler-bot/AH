@@ -27,7 +27,9 @@ node admin/revision-complete.mjs
 Le script contrôle notamment :
 
 - cohérence de `js/exercises-config.js`
+- existence des applications déclarées dans `config.apps`
 - existence des références HTML (`src` / `href`)
+- références des pages HTML dans `games/` et à la racine du projet
 - syntaxe JavaScript
 - artefacts d'encodage
 - fichiers parasites
