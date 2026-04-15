@@ -8,11 +8,24 @@
   background: var(--bg2);
   border-bottom: 1px solid var(--border);
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  justify-content: center;
   padding: 0 clamp(18px, 2vw, 30px);
   z-index: 1000;
   backdrop-filter: blur(10px);
+  gap: 6px;
+}
+
+.header-row1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-row2 {
+  display: flex;
+  align-items: center;
+  gap: 24px;
 }
 
 .header-logo {
@@ -36,16 +49,21 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-left: 20px;
+}
+
+.header-progress-wrap + .header-progress-wrap {
+  padding-left: 20px;
+  border-left: 1px solid var(--border);
 }
 
 .header-progress-label {
   font-size: 12px;
   color: var(--text3);
   font-weight: 700;
+  white-space: nowrap;
 }
 
-#headerProgressText {
+.header-progress-pct {
   font-size: 12px;
   color: var(--text3);
   font-weight: 500;
@@ -67,8 +85,8 @@
   border-radius: 3px;
 }
 
-@media (max-width: 600px) {
-  .header-progress-wrap { display: none; }
+@media (max-width: 480px) {
+  .header-row2 { display: none; }
 }
 
 .header-right {
@@ -208,7 +226,7 @@ body.accessible-ui .header-progress-wrap {
   gap: 10px;
 }
 
-body.accessible-ui #headerProgressText,
+body.accessible-ui .header-progress-pct,
 body.accessible-ui .header-progress-label {
   font-size: 14px;
 }

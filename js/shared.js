@@ -33,24 +33,40 @@
     ];
   }
 
+  const GROUP_SECTIONS = [
+    { key: 'Numérique',   label: 'Bureautique', id: 'numerique'  },
+    { key: 'Emploi & ORP', label: 'Emploi',    id: 'emploi'     },
+    { key: 'Français',    label: 'Français',    id: 'francais'   }
+  ];
+
   function renderHeader() {
     const slot = document.getElementById('header-slot');
     if (!slot) return;
+    const groupBars = GROUP_SECTIONS.map((g) =>
+      '<div class="header-progress-wrap">' +
+      '<span class="header-progress-label">' + g.label + '</span>' +
+      '<span class="header-progress-pct" id="groupPct-' + g.id + '">0%</span>' +
+      '<div class="header-progress-bar"><div class="header-progress-fill" id="groupFill-' + g.id + '" style="width:0%"></div></div>' +
+      '</div>'
+    ).join('');
     slot.innerHTML = [
       '<header class="header">',
-      '  <div class="header-logo">',
+      '  <div class="header-row1">',
       '    <a href="accueil.html" class="header-logo" style="text-decoration:none;color:inherit;">',
       '      <span class="header-logo-icon" aria-hidden="true"></span>',
       '      <span>Autonomie numerique</span>',
       '    </a>',
-      '    <div class="header-progress-wrap">',
-      '      <span class="header-progress-label">Mon avance</span>',
-      '      <span id="headerProgressText">0%</span>',
-      '      <div class="header-progress-bar"><div id="headerProgressFill" class="header-progress-fill" style="width:0%"></div></div>',
+      '    <div class="header-right">',
+      '      <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Ouvrir le menu">☰</button>',
       '    </div>',
       '  </div>',
-      '  <div class="header-right">',
-      '    <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Ouvrir le menu">☰</button>',
+      '  <div class="header-row2">',
+      '    <div class="header-progress-wrap">',
+      '      <span class="header-progress-label">Mon avance</span>',
+      '      <span class="header-progress-pct" id="headerProgressText">0%</span>',
+      '      <div class="header-progress-bar"><div id="headerProgressFill" class="header-progress-fill" style="width:0%"></div></div>',
+      '    </div>',
+      '    ' + groupBars,
       '  </div>',
       '</header>'
     ].join('');
@@ -116,13 +132,37 @@
 
   function updateHeaderProgress() {
     if (!window.ScoreManager || !window.EXERCISE_CONFIG) return;
-    const summary = window.ScoreManager.getGlobalSummary(window.EXERCISE_CONFIG.orderedPages || []);
-    const total = (window.EXERCISE_CONFIG.orderedPages || []).length || 1;
+    const meta = window.EXERCISE_CONFIG.meta || {};
+    const orderedPages = window.EXERCISE_CONFIG.orderedPages || [];
+
+    // Global progress
+    const summary = window.ScoreManager.getGlobalSummary(orderedPages);
+    const total = orderedPages.length || 1;
     const pct = Math.round((summary.completed / total) * 100);
     const text = document.getElementById('headerProgressText');
     const fill = document.getElementById('headerProgressFill');
     if (text) text.textContent = pct + '%';
     if (fill) fill.style.width = pct + '%';
+
+    // Per-group progress
+    const groupTotals = {};
+    const groupCompleted = {};
+    for (const page of orderedPages) {
+      const section = meta[page] && meta[page].section;
+      if (!section) continue;
+      groupTotals[section] = (groupTotals[section] || 0) + 1;
+      const status = window.ScoreManager.readMetrics(page).status;
+      if (status === 'completed') groupCompleted[section] = (groupCompleted[section] || 0) + 1;
+    }
+    for (const g of GROUP_SECTIONS) {
+      const t = groupTotals[g.key] || 1;
+      const c = groupCompleted[g.key] || 0;
+      const gPct = Math.round((c / t) * 100);
+      const gText = document.getElementById('groupPct-' + g.id);
+      const gFill = document.getElementById('groupFill-' + g.id);
+      if (gText) gText.textContent = gPct + '%';
+      if (gFill) gFill.style.width = gPct + '%';
+    }
   }
 
   function initSidebarToggle() {
