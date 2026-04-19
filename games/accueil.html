@@ -19,14 +19,34 @@
     <main class="main">
       <div class="container">
 
-        <!-- Prochaine etape -->
+        <!-- Présentation -->
         <div class="next-card fade-up">
           <div class="next-card-body">
-            <div class="next-card-label">Prochaine etape</div>
-            <div class="next-card-title" id="nextExerciseName">Chargement...</div>
-            <p class="next-card-desc" id="nextExerciseText">La meilleure suite pour continuer.</p>
+            <div class="next-card-label">Bienvenue</div>
+            <div class="next-card-title">Ce que vous pouvez faire sur cette plateforme</div>
+            <p class="next-card-desc">
+              Vous pouvez vous entraîner pas à pas sur l'ordinateur, la recherche d'emploi et le français,
+              puis suivre vos résultats sur cet appareil.
+            </p>
+            <div class="platform-summary">
+              <div class="platform-summary-item">
+                <strong>S'exercer</strong>
+                <span>Cliquer, écrire, compléter, lire et comprendre des consignes simples.</span>
+              </div>
+              <div class="platform-summary-item">
+                <strong>Préparer l'emploi</strong>
+                <span>Travailler le CV, les e-mails, les formulaires et les démarches de candidature.</span>
+              </div>
+              <div class="platform-summary-item">
+                <strong>Suivre ses progrès</strong>
+                <span>Voir les évaluations, faire une autoévaluation et reprendre calmement les points fragiles.</span>
+              </div>
+            </div>
+            <p class="next-card-note">
+              Activité conseillée : <a id="nextExerciseLink" href="#"><span id="nextExerciseName">Chargement...</span></a>
+              <span id="nextExerciseText">La meilleure suite pour continuer.</span>
+            </p>
           </div>
-          <a class="btn btn-primary btn-lg" id="nextExerciseLink" href="#">Commencer</a>
         </div>
 
         <!-- Grille d'exercices -->
@@ -77,12 +97,13 @@
         || (orderedPages[0] ? { page: orderedPages[0], name: firstMeta.name, href: firstMeta.href } : null);
 
       if (nextExercise) {
-        setText('nextExerciseName', nextExercise.name || 'Commencer');
+        setText('nextExerciseName', nextExercise.name || 'Premiere activite');
+        setText('nextExerciseText', ' - une bonne suite pour continuer simplement.');
         var link = document.getElementById('nextExerciseLink');
         if (link) link.href = nextExercise.href || (nextExercise.page + '.html');
       } else {
         setText('nextExerciseName', 'Choisissez une activite');
-        setText('nextExerciseText', 'Parcourez les exercices ci-dessous pour commencer.');
+        setText('nextExerciseText', ' - parcourez les exercices ci-dessous pour commencer.');
       }
 
       renderCategoryChips(config, orderedPages);

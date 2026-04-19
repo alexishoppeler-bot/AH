@@ -42,6 +42,46 @@
   line-height: 1.65;
 }
 
+.platform-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.platform-summary-item {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  border: 1px solid rgba(50,93,169,0.12);
+  border-radius: var(--r-lg);
+  background: rgba(255,255,255,0.7);
+}
+
+.platform-summary-item strong {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.platform-summary-item span {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text2);
+}
+
+.next-card-note {
+  margin-top: 16px;
+  color: var(--text2);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.next-card-note a {
+  font-weight: 700;
+  color: var(--accent);
+}
+
 /* === Parcours === */
 .parcours-section {
   border: 1px solid var(--border);
@@ -237,7 +277,7 @@
 
 @media (max-width: 600px) {
   .next-card { padding: 20px; }
-  .next-card .btn { width: 100%; justify-content: center; }
+  .platform-summary { grid-template-columns: 1fr; }
   .parcours-section { padding: 18px; }
   .parcours-head { flex-direction: column; align-items: flex-start; gap: 10px; }
 }
