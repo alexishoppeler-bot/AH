@@ -87,6 +87,21 @@
     });
 
     var activeThemeFilter = null;
+    var activeCategoryFilter = null;
+
+    function setText(id, value) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = value;
+    }
+
+    function escapeHTML(text) {
+      return String(text || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
 
     function renderAccueil() {
       var config = window.EXERCISE_CONFIG || {};
@@ -109,6 +124,48 @@
       renderCategoryChips(config, orderedPages);
       renderThemeFilterBar(config, orderedPages);
       renderGameCards(config, orderedPages, nextExercise);
+    }
+
+    function getVisiblePages(config, orderedPages) {
+      return orderedPages.filter(function (page) {
+        var item = config.meta && config.meta[page];
+        if (!item) return false;
+        var categoryOk = !activeCategoryFilter || item.cat === activeCategoryFilter;
+        var themeOk = !activeThemeFilter || (Array.isArray(item.themes) && item.themes.includes(activeThemeFilter));
+        return categoryOk && themeOk;
+      });
+    }
+
+    function renderCategoryChips(config, orderedPages) {
+      var container = document.getElementById('categoryChips');
+      if (!container) return;
+
+      var categories = [];
+      orderedPages.forEach(function (page) {
+        var item = config.meta && config.meta[page];
+        if (item && item.cat && categories.indexOf(item.cat) === -1) categories.push(item.cat);
+      });
+
+      if (!categories.length) {
+        container.innerHTML = '';
+        return;
+      }
+
+      var html = '<button class="category-chip' + (!activeCategoryFilter ? ' active' : '') + '" data-category="" type="button">Toutes</button>';
+      html += categories.map(function (category) {
+        return '<button class="category-chip' + (activeCategoryFilter === category ? ' active' : '') +
+          '" data-category="' + escapeHTML(category) + '" type="button">' + escapeHTML(category) + '</button>';
+      }).join('');
+      container.innerHTML = html;
+
+      container.querySelectorAll('.category-chip').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          activeCategoryFilter = btn.dataset.category || null;
+          renderCategoryChips(config, orderedPages);
+          renderGameCards(config, orderedPages,
+            (window.StageManager && StageManager.getNextRecommendedExercise()) || null);
+        });
+      });
     }
 
     function renderThemeFilterBar(config, orderedPages) {
@@ -136,13 +193,73 @@
       bar.querySelectorAll('.theme-chip').forEach(function (btn) {
         btn.addEventListener('click', function () {
           activeThemeFilter = btn.dataset.theme || null;
-          var cfg = window.EXERCISE_CONFIG || {};
-          var pages = Array.isArray(cfg.orderedPages) ? cfg.orderedPages : [];
-          renderThemeFilterBar(cfg, pages);
-          renderGameCards(cfg, pages,
+          renderThemeFilterBar(config, orderedPages);
+          renderGameCards(config, orderedPages,
             (window.StageManager && StageManager.getNextRecommendedExercise()) || null);
         });
       });
+    }
+
+    function renderGameCards(config, orderedPages, nextExercise) {
+      var container = document.getElementById('exerciseCards');
+      if (!container) return;
+
+      var visiblePages = getVisiblePages(config, orderedPages);
+      if (!visiblePages.length) {
+        container.innerHTML = '<div class="auto-path-empty">Aucune activite ne correspond aux filtres choisis.</div>';
+        return;
+      }
+
+      var grouped = {};
+      visiblePages.forEach(function (page) {
+        var item = config.meta && config.meta[page];
+        if (!item) return;
+        var section = item.section || 'Autres';
+        if (!grouped[section]) grouped[section] = [];
+        grouped[section].push({ page: page, item: item });
+      });
+
+      var sectionOrder = ['Numérique', 'Emploi & ORP', 'Français', 'Autres'];
+      var sections = Object.keys(grouped).sort(function (a, b) {
+        var ai = sectionOrder.indexOf(a);
+        var bi = sectionOrder.indexOf(b);
+        if (ai === -1 && bi === -1) return a.localeCompare(b, 'fr');
+        if (ai === -1) return 1;
+        if (bi === -1) return -1;
+        return ai - bi;
+      });
+
+      container.innerHTML = sections.map(function (section) {
+        var cards = grouped[section].map(function (entry) {
+          var href = entry.item.href || (entry.page + '.html');
+          var recommended = nextExercise && nextExercise.page === entry.page;
+          var desc = getCardDescription(entry.item);
+          return [
+            '<a class="level-card' + (recommended ? ' recommended' : '') + '" href="' + escapeHTML(href) + '">',
+              '<div class="level-card-top">',
+                '<span class="level-card-category">' + escapeHTML(entry.item.cat || 'Activite') + '</span>',
+                recommended ? '<span class="level-card-flag">Conseillé</span>' : '',
+              '</div>',
+              '<h3>' + escapeHTML((entry.item.icon || '•') + ' ' + (entry.item.name || entry.page)) + '</h3>',
+              '<p class="level-card-desc">' + escapeHTML(desc) + '</p>',
+              '<div class="level-card-meta">' + escapeHTML(section) + '</div>',
+              '<div class="level-card-cta">Ouvrir</div>',
+            '</a>'
+          ].join('');
+        }).join('');
+
+        return [
+          '<div class="section-group-header"><h3 class="section-group-title">' + escapeHTML(section) + '</h3></div>',
+          cards
+        ].join('');
+      }).join('');
+    }
+
+    function getCardDescription(item) {
+      var byCategory = (window.EXERCISE_CONFIG && window.EXERCISE_CONFIG.categoryContentByCategory) || {};
+      var categoryInfo = item && item.cat ? byCategory[item.cat] : null;
+      if (categoryInfo && categoryInfo.desc) return categoryInfo.desc;
+      return 'Activite simple pour s entrainer pas a pas.';
     }
   </script>
 </body>
