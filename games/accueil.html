@@ -18,206 +18,36 @@
   <div class="layout">
     <main class="main">
       <div class="container">
-        <section class="hero-section fade-up">
-          <div class="hero-copy">
-            <span class="hero-eyebrow">Simple et pas a pas</span>
-            <h1>Apprendre doucement. Faire seul. Reussir.</h1>
-            <p>
-              Cette plateforme aide a utiliser l ordinateur au quotidien.
-              Vous pouvez lire, ecrire, remplir un formulaire, envoyer un e-mail et ranger des documents, pas a pas.
-            </p>
-            <div class="hero-actions">
-              <a class="btn btn-primary btn-lg" href="#parcours">Commencer</a>
-              <a class="btn btn-secondary btn-lg" href="evaluations.html">Voir mes resultats</a>
-            </div>
+
+        <!-- Prochaine etape -->
+        <div class="next-card fade-up">
+          <div class="next-card-body">
+            <div class="next-card-label">Prochaine etape</div>
+            <div class="next-card-title" id="nextExerciseName">Chargement...</div>
+            <p class="next-card-desc" id="nextExerciseText">La meilleure suite pour continuer.</p>
           </div>
+          <a class="btn btn-primary btn-lg" id="nextExerciseLink" href="#">Commencer</a>
+        </div>
 
-          <aside class="hero-panel card card-accent">
-            <div class="hero-panel-title">Aujourd'hui</div>
-            <div class="hero-panel-grid">
-              <div class="hero-metric">
-                <strong id="summaryExercises">0</strong>
-                <span>activites</span>
-              </div>
-              <div class="hero-metric">
-                <strong id="summaryCategories">0</strong>
-                <span>themes</span>
-              </div>
-              <div class="hero-metric">
-                <strong id="summaryCompleted">0</strong>
-                <span>faites</span>
-              </div>
-              <div class="hero-metric">
-                <strong id="summaryAutonomy">100%</strong>
-                <span>niveau</span>
-              </div>
-            </div>
-            <div class="next-step-box">
-              <div class="section-label">Prochaine etape</div>
-              <div class="next-step-name" id="nextExerciseName">Chargement...</div>
-              <p id="nextExerciseText">La meilleure suite pour continuer apparait ici.</p>
-              <a class="btn btn-ghost btn-sm" id="nextExerciseLink" href="formulaire.html">Ouvrir</a>
-            </div>
-            <div class="diagnostic-box">
-              <div class="section-label">Dernier diagnostic</div>
-              <div class="diagnostic-topline" id="diagnosticDate">Pas encore d autoevaluation</div>
-              <div class="diagnostic-level" id="diagnosticLevel">A faire</div>
-              <p id="diagnosticText">Faites l autoevaluation pour obtenir une orientation plus precise.</p>
-              <a class="btn btn-secondary btn-sm" id="diagnosticLink" href="autoevaluation.html">Ouvrir l autoevaluation</a>
-            </div>
-            <div class="refresh-alert-box" id="refreshAlertBox" hidden>
-              <div class="section-label">A refaire bientot</div>
-              <div class="refresh-alert-title" id="refreshAlertTitle">Une petite consolidation est utile</div>
-              <p id="refreshAlertText">Un domaine demande une petite reprise prochaine.</p>
-              <a class="btn btn-ghost btn-sm" id="refreshAlertLink" href="#plan-du-jour">Voir le plan du jour</a>
-            </div>
-            <div class="rhythm-box">
-              <div class="section-label">Rythme recent</div>
-              <div class="rhythm-grid">
-                <div class="rhythm-card">
-                  <div class="rhythm-label">Fait aujourd hui</div>
-                  <div class="rhythm-value" id="todayDoneValue">0 session</div>
-                  <p id="todayDoneText">Aucune activite terminee pour le moment.</p>
-                </div>
-                <div class="rhythm-card rhythm-card-accent">
-                  <div class="rhythm-label">A reprendre demain</div>
-                  <div class="rhythm-value" id="tomorrowReviewValue">Choix en cours</div>
-                  <p id="tomorrowReviewText">La plateforme cherche une bonne activite a reprendre.</p>
-                  <a class="btn btn-secondary btn-sm" id="tomorrowReviewLink" href="#plan-du-jour">Voir</a>
-                </div>
-              </div>
-            </div>
-          </aside>
-        </section>
-
-        <section class="intro-grid fade-up delay-1">
-          <article class="intro-card">
-            <div class="section-label">Ce que vous faites</div>
-            <h2>Des exercices utiles</h2>
-            <p>
-              Chaque exercice travaille une action simple:
-              comprendre une consigne, cliquer au bon endroit, choisir la bonne information et ecrire un message court.
-            </p>
-          </article>
-          <article class="intro-card">
-            <div class="section-label">Pourquoi c'est utile</div>
-            <h2>Voir ses progres</h2>
-            <p>
-              Vous pouvez refaire les exercices autant que besoin.
-              Le plus important n est pas d aller vite, mais de comprendre et de faire seul.
-            </p>
-          </article>
-        </section>
-
-        <section class="session-focus-section fade-up delay-2">
-          <div class="section-label">Seance conseillee</div>
-          <h2 class="section-heading">Que faire maintenant</h2>
-          <div class="session-focus-grid">
-            <article class="session-focus-card">
-              <div class="session-focus-title">Priorite</div>
-              <div class="session-focus-value" id="focusPriorityTitle">Chargement...</div>
-              <p id="focusPriorityText">La plateforme cherche le domaine a consolider.</p>
-            </article>
-            <article class="session-focus-card">
-              <div class="session-focus-title">Objectif</div>
-              <div class="session-focus-value" id="focusGoalTitle">Chargement...</div>
-              <p id="focusGoalText">Un objectif simple va apparaitre ici.</p>
-            </article>
-            <article class="session-focus-card session-focus-card-accent">
-              <div class="session-focus-title">Prochaine action</div>
-              <div class="session-focus-value" id="focusActionTitle">Chargement...</div>
-              <p id="focusActionText">La meilleure suite pour continuer va apparaitre ici.</p>
-              <a class="btn btn-primary btn-sm" id="focusActionLink" href="formulaire.html">Ouvrir</a>
-            </article>
-          </div>
-        </section>
-
-        <section class="daily-plan-section fade-up delay-3" id="plan-du-jour">
-          <div class="section-label">Plan du jour</div>
-          <h2 class="section-heading">Trois activites conseillees</h2>
-          <p class="daily-plan-intro" id="dailyPlanIntro">La plateforme prepare un petit plan simple pour cette session.</p>
-          <div class="daily-plan-grid" id="dailyPlanGrid"></div>
-        </section>
-
-        <section class="activities-section fade-up delay-2">
-          <div class="section-label">Activites</div>
-          <h2 class="section-heading">Tous les exercices</h2>
-          <div class="activities-grid" id="activitiesGrid"></div>
-        </section>
-
-        <section class="focus-grid fade-up delay-3">
-          <article class="focus-panel">
-            <div class="section-label">Objectifs</div>
-            <h2>Ce que vous allez apprendre</h2>
-            <ul class="check-list">
-              <li>Comprendre une consigne simple.</li>
-              <li>Remplir un formulaire.</li>
-              <li>Ecrire ou choisir un e-mail.</li>
-              <li>Utiliser la souris, le clavier et les dossiers.</li>
-              <li>Lire et ecouter plus facilement.</li>
-            </ul>
-          </article>
-
-          <article class="focus-panel autonomy-panel">
-            <div class="section-label">Aide</div>
-            <h2>Avancer tranquillement</h2>
-            <ol class="steps-list">
-              <li>Choisissez une activite.</li>
-              <li>Faites l'exercice a votre rythme.</li>
-              <li>Recommencez si besoin.</li>
-            </ol>
-            <p class="motivation-note">
-              Chaque exercice termine montre un progres.
-              Quelques minutes suffisent pour avancer.
-            </p>
-          </article>
-        </section>
-
-        <section class="quick-access fade-up delay-4">
-          <div class="section-label">Acces rapide</div>
-          <div class="quick-links">
-            <a class="quick-link" href="evaluations.html">
-              <span>📈</span>
-              <span>Voir mes resultats</span>
-            </a>
-            <a class="quick-link" href="regles.html">
-              <span>📏</span>
-              <span>Voir les points</span>
-            </a>
-            <a class="quick-link" href="donnees.html">
-              <span>💾</span>
-              <span>Voir les donnees</span>
-            </a>
-          </div>
-        </section>
-
-        <section class="apps-section fade-up delay-4b" id="apps">
-          <div class="section-label">Applications</div>
-          <h2 class="section-heading">Outils</h2>
-          <div class="apps-grid" id="appsGrid"></div>
-        </section>
-
-        <section class="parcours-section fade-up delay-5" id="parcours">
+        <!-- Grille d'exercices -->
+        <section class="parcours-section fade-up delay-1" id="parcours">
           <div class="parcours-head">
-            <div>
-              <div class="section-label">Parcours</div>
-              <h2 class="section-heading">Choisissez et commencez</h2>
-            </div>
+            <h2 class="section-heading">Choisir une activite</h2>
             <div class="category-chips" id="categoryChips"></div>
           </div>
-
-          <!-- Filtres par thème de vie -->
-          <div class="theme-filter-bar" id="themeFilterBar" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;"></div>
-
+          <div class="theme-filter-bar" id="themeFilterBar"></div>
           <div class="level-cards" id="exerciseCards"></div>
         </section>
 
-        <div class="footer-info fade-up delay-6">
+        <div class="footer-info fade-up delay-2">
           <p>
-            Resultats sur cet appareil · Exercices simples ·
-            <a href="donnees.html">Confidentialite</a>
+            Resultats sur cet appareil ·
+            <a href="evaluations.html">Mes resultats</a> ·
+            <a href="autoevaluation.html">Autoevaluation</a> ·
+            <a href="donnees.html">Donnees</a>
           </p>
         </div>
+
       </div>
     </main>
     <div id="footer-slot"></div>
@@ -230,716 +60,69 @@
   <script src="../js/shared.js"></script>
   <script src="../js/ui.js"></script>
   <script>
-    const AUTOEVAL_STORAGE_KEY = 'ah:autoevaluation:v1';
+    'use strict';
 
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', function () {
       renderAccueil();
     });
 
-    let activeThemeFilter = null;
+    var activeThemeFilter = null;
 
     function renderAccueil() {
-      const config = window.EXERCISE_CONFIG || {};
-      const orderedPages = Array.isArray(config.orderedPages) ? config.orderedPages : [];
-      const meta = config.meta || {};
-      const firstMeta = orderedPages[0] ? (meta[orderedPages[0]] || {}) : {};
-      const diagnostic = readSavedAutoevaluation();
-      const nextExercise = (window.StageManager && StageManager.getNextRecommendedExercise())
+      var config = window.EXERCISE_CONFIG || {};
+      var orderedPages = Array.isArray(config.orderedPages) ? config.orderedPages : [];
+      var meta = config.meta || {};
+      var firstMeta = orderedPages[0] ? (meta[orderedPages[0]] || {}) : {};
+      var nextExercise = (window.StageManager && StageManager.getNextRecommendedExercise())
         || (orderedPages[0] ? { page: orderedPages[0], name: firstMeta.name, href: firstMeta.href } : null);
 
-      renderSummary(config, orderedPages, nextExercise);
-      renderLastDiagnostic(diagnostic);
-      renderRefreshAlert(diagnostic);
-      renderRecentRhythm(config, orderedPages, nextExercise, diagnostic);
-      renderPedagogicalFocus(config, orderedPages, nextExercise, diagnostic);
-      renderDailyPlan(config, orderedPages, nextExercise, diagnostic);
-      renderApps(config);
-      renderActivities(config, orderedPages);
+      if (nextExercise) {
+        setText('nextExerciseName', nextExercise.name || 'Commencer');
+        var link = document.getElementById('nextExerciseLink');
+        if (link) link.href = nextExercise.href || (nextExercise.page + '.html');
+      } else {
+        setText('nextExerciseName', 'Choisissez une activite');
+        setText('nextExerciseText', 'Parcourez les exercices ci-dessous pour commencer.');
+      }
+
       renderCategoryChips(config, orderedPages);
       renderThemeFilterBar(config, orderedPages);
       renderGameCards(config, orderedPages, nextExercise);
     }
 
-    function readSavedAutoevaluation() {
-      if (!window.localStorage) return null;
-      try {
-        const raw = window.localStorage.getItem(AUTOEVAL_STORAGE_KEY);
-        const parsed = raw ? JSON.parse(raw) : null;
-        if (!parsed || typeof parsed !== 'object') return null;
-        if (!parsed.summary || typeof parsed.summary !== 'object') return null;
-        if (!(Number(parsed.answeredCount) > 0)) return null;
-        return parsed;
-      } catch (_) {
-        return null;
-      }
-    }
-
-    function formatDiagnosticDate(timestamp) {
-      if (!timestamp) return 'Pas encore d autoevaluation';
-      const date = new Date(timestamp);
-      if (Number.isNaN(date.getTime())) return 'Diagnostic date inconnue';
-      return 'Mis a jour le ' + date.toLocaleDateString('fr-CH') + ' a ' + date.toLocaleTimeString('fr-CH', {
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    }
-
-    function renderLastDiagnostic(diagnostic) {
-      const dateEl = document.getElementById('diagnosticDate');
-      const levelEl = document.getElementById('diagnosticLevel');
-      const textEl = document.getElementById('diagnosticText');
-      const linkEl = document.getElementById('diagnosticLink');
-      if (!dateEl || !levelEl || !textEl || !linkEl) return;
-
-      if (!diagnostic || !diagnostic.summary) {
-        dateEl.textContent = 'Pas encore d autoevaluation';
-        levelEl.textContent = 'A faire';
-        textEl.textContent = 'Faites l autoevaluation pour obtenir une orientation plus precise.';
-        linkEl.textContent = 'Ouvrir l autoevaluation';
-        linkEl.href = 'autoevaluation.html';
-        return;
-      }
-
-      const global = diagnostic.summary.global || {};
-      const weakest = diagnostic.summary.weakestDomain || null;
-      const recommendedPath = Array.isArray(diagnostic.summary.recommendedPath) ? diagnostic.summary.recommendedPath : [];
-
-      dateEl.textContent = formatDiagnosticDate(diagnostic.updatedAt);
-      levelEl.textContent = global.score != null
-        ? (global.label || 'Diagnostic') + ' (' + global.score + '/100)'
-        : (global.label || 'Diagnostic en cours');
-      textEl.textContent = weakest
-        ? 'Priorite actuelle : ' + weakest.label + '. ' + (recommendedPath[0] ? 'Commencez par ' + recommendedPath[0].name + '.' : 'Reprenez une activite simple dans ce domaine.')
-        : 'Le diagnostic est disponible. Utilisez-le pour choisir les prochaines activites.';
-      linkEl.textContent = recommendedPath.length ? 'Revoir le diagnostic' : 'Ouvrir l autoevaluation';
-      linkEl.href = 'autoevaluation.html';
-    }
-
-    function getDiagnosticRefreshAlert(diagnostic) {
-      if (!diagnostic || !diagnostic.eval1 || !diagnostic.eval2) return null;
-
-      const pairs = [
-        { key: 'office', label: 'Bureautique' },
-        { key: 'job', label: 'Recherche d emploi' },
-        { key: 'global', label: 'Niveau global' }
-      ];
-
-      const drops = pairs.map(function(item) {
-        const before = diagnostic.eval1[item.key];
-        const after = diagnostic.eval2[item.key];
-        const beforeScore = before && before.score != null ? before.score : null;
-        const afterScore = after && after.score != null ? after.score : null;
-        if (beforeScore === null || afterScore === null) return null;
-        return {
-          label: item.label,
-          diff: afterScore - beforeScore
-        };
-      }).filter(function(item) {
-        return item && item.diff < 0;
-      }).sort(function(a, b) {
-        return a.diff - b.diff;
-      });
-
-      if (!drops.length) return null;
-
-      const primary = drops[0];
-      const extra = drops.length > 1 ? ' Un autre domaine est aussi a revoir doucement.' : '';
-      return {
-        title: primary.label + ' a refaire bientot',
-        text: 'Depuis la derniere comparaison, ' + primary.label.toLowerCase() + ' a baisse de ' + Math.abs(primary.diff) + ' points.' +
-          ' Une courte reprise est conseillee.' + extra
-      };
-    }
-
-    function renderRefreshAlert(diagnostic) {
-      const box = document.getElementById('refreshAlertBox');
-      const title = document.getElementById('refreshAlertTitle');
-      const text = document.getElementById('refreshAlertText');
-      const link = document.getElementById('refreshAlertLink');
-      if (!box || !title || !text || !link) return;
-
-      const alert = getDiagnosticRefreshAlert(diagnostic);
-      if (!alert) {
-        box.hidden = true;
-        return;
-      }
-
-      title.textContent = alert.title;
-      text.textContent = alert.text;
-      link.href = '#plan-du-jour';
-      box.hidden = false;
-    }
-
     function renderThemeFilterBar(config, orderedPages) {
-      const bar = document.getElementById('themeFilterBar');
+      var bar = document.getElementById('themeFilterBar');
       if (!bar) return;
-
-      const labels = (window.LIFE_THEME_LABELS) || {};
-      const themes = (window.LIFE_THEMES) || [];
-
-      /* Ne garder que les thèmes qui ont au moins un exercice */
-      const presentThemes = themes.filter(t =>
-        orderedPages.some(p => {
-          const m = config.meta && config.meta[p];
+      var labels = window.LIFE_THEME_LABELS || {};
+      var themes = window.LIFE_THEMES || [];
+      var presentThemes = themes.filter(function (t) {
+        return orderedPages.some(function (p) {
+          var m = config.meta && config.meta[p];
           return m && Array.isArray(m.themes) && m.themes.includes(t);
-        })
-      );
-
+        });
+      });
       if (presentThemes.length === 0) { bar.style.display = 'none'; return; }
-
-      const allBtn = '<button class="theme-chip' + (!activeThemeFilter ? ' active' : '') +
+      bar.style.display = '';
+      var allBtn = '<button class="theme-chip' + (!activeThemeFilter ? ' active' : '') +
         '" data-theme="" type="button">Tous</button>';
-
-      const themeBtns = presentThemes.map(t => {
-        const info = labels[t] || { label: t, icon: '●' };
-        const isActive = activeThemeFilter === t;
-        return '<button class="theme-chip' + (isActive ? ' active' : '') +
+      var themeBtns = presentThemes.map(function (t) {
+        var info = labels[t] || { label: t, icon: '●' };
+        return '<button class="theme-chip' + (activeThemeFilter === t ? ' active' : '') +
           '" data-theme="' + escapeHTML(t) + '" type="button">' +
           escapeHTML(info.icon) + ' ' + escapeHTML(info.label) + '</button>';
       }).join('');
-
       bar.innerHTML = allBtn + themeBtns;
-
-      bar.querySelectorAll('.theme-chip').forEach(btn => {
-        btn.addEventListener('click', () => {
+      bar.querySelectorAll('.theme-chip').forEach(function (btn) {
+        btn.addEventListener('click', function () {
           activeThemeFilter = btn.dataset.theme || null;
-          renderThemeFilterBar(config, orderedPages);
-          renderGameCards(config, orderedPages,
+          var cfg = window.EXERCISE_CONFIG || {};
+          var pages = Array.isArray(cfg.orderedPages) ? cfg.orderedPages : [];
+          renderThemeFilterBar(cfg, pages);
+          renderGameCards(cfg, pages,
             (window.StageManager && StageManager.getNextRecommendedExercise()) || null);
         });
       });
     }
-
-    function renderApps(config) {
-      const grid = document.getElementById('appsGrid');
-      if (!grid) return;
-      const apps = Array.isArray(config.apps) ? config.apps : [];
-      if (apps.length === 0) {
-        document.getElementById('apps').style.display = 'none';
-        return;
-      }
-      grid.innerHTML = apps.map((app) => [
-        '<a class="app-card" href="' + escapeHTML(app.href) + '">',
-        '  <div class="app-card-icon">' + escapeHTML(app.icon) + '</div>',
-        '  <div class="app-card-body">',
-        '    <h3>' + escapeHTML(app.name) + '</h3>',
-        '    <p>' + escapeHTML(app.desc) + '</p>',
-        '  </div>',
-        '  <div class="app-card-cta">Ouvrir →</div>',
-        '</a>'
-      ].join('')).join('');
-    }
-
-    function renderSummary(config, orderedPages, nextExercise) {
-      const categories = new Set();
-      let completed = 0;
-      const globalSummary = window.ScoreManager ? ScoreManager.getGlobalSummary(orderedPages) : { level: 1 };
-
-      orderedPages.forEach((page) => {
-        const pageMeta = config.meta && config.meta[page];
-        if (pageMeta && pageMeta.cat) categories.add(pageMeta.cat);
-        if (window.ScoreManager && ScoreManager.readMetrics(page).status === 'completed') completed += 1;
-      });
-
-      setText('summaryExercises', orderedPages.length);
-      setText('summaryCategories', categories.size);
-      setText('summaryCompleted', completed);
-      setText('summaryAutonomy', globalSummary.level || 1);
-
-      if (nextExercise) {
-        setText('nextExerciseName', nextExercise.name || 'Commencer');
-        setText('nextExerciseText', 'Le meilleur point de depart pour continuer.');
-        const link = document.getElementById('nextExerciseLink');
-        if (link) link.href = nextExercise.href || (nextExercise.page + '.html');
-      }
-    }
-
-    function buildRecentRhythm(config, orderedPages, nextExercise, diagnostic) {
-      const store = window.ScoreManager && typeof ScoreManager.exportStore === 'function'
-        ? ScoreManager.exportStore()
-        : { sessions: [] };
-      const sessions = Array.isArray(store.sessions) ? store.sessions : [];
-      const todayKey = new Date().toISOString().slice(0, 10);
-      const todaySessions = sessions.filter(function(session) {
-        return new Date(session.timestamp || 0).toISOString().slice(0, 10) === todayKey;
-      });
-      const todayXp = todaySessions.reduce(function(total, session) {
-        return total + (Number(session.xp) || 0);
-      }, 0);
-      const uniqueToday = new Set(todaySessions.map(function(session) { return session.page || session.gameName || ''; }).filter(Boolean));
-
-      const diagnosticPath = diagnostic && diagnostic.summary && Array.isArray(diagnostic.summary.recommendedPath)
-        ? diagnostic.summary.recommendedPath
-        : [];
-
-      const recentPages = new Map();
-      sessions.slice(0, 20).forEach(function(session) {
-        if (!session || !session.page) return;
-        const typed = Number(session.typed) || 0;
-        const accuracy = typed > 0 ? Math.round(((Number(session.correct) || 0) / typed) * 100) : 0;
-        const current = recentPages.get(session.page);
-        if (!current) {
-          recentPages.set(session.page, {
-            page: session.page,
-            name: session.gameName || session.page,
-            href: ((config.meta || {})[session.page] || {}).href || (session.page + '.html'),
-            accuracy: accuracy,
-            timestamp: Number(session.timestamp) || 0
-          });
-          return;
-        }
-        if (accuracy < current.accuracy || ((Number(session.timestamp) || 0) > current.timestamp && accuracy === current.accuracy)) {
-          current.accuracy = accuracy;
-          current.timestamp = Number(session.timestamp) || 0;
-        }
-      });
-
-      const revisit = Array.from(recentPages.values())
-        .sort(function(a, b) {
-          if (a.accuracy !== b.accuracy) return a.accuracy - b.accuracy;
-          return b.timestamp - a.timestamp;
-        })[0];
-
-      const fallback = diagnosticPath[0] || nextExercise || null;
-
-      return {
-        todayValue: todaySessions.length > 0
-          ? todaySessions.length + ' session' + (todaySessions.length > 1 ? 's' : '')
-          : 'Pas encore',
-        todayText: todaySessions.length > 0
-          ? uniqueToday.size + ' activite' + (uniqueToday.size > 1 ? 's' : '') + ' travaillees · ' + todayXp + ' XP gagnes aujourd hui.'
-          : 'Aucune activite terminee pour le moment. Une petite session suffit pour commencer.',
-        tomorrowValue: revisit
-          ? revisit.name
-          : (fallback ? fallback.name : 'Choisir une activite'),
-        tomorrowText: revisit
-          ? 'Precision recente autour de ' + revisit.accuracy + '%. Reprendre cette activite aidera a consolider.'
-          : (fallback
-            ? 'Bonne activite a prevoir pour demain.'
-            : 'Choisissez une activite courte a reprendre demain.'),
-        tomorrowHref: revisit
-          ? revisit.href
-          : (fallback ? (fallback.href || (fallback.page + '.html')) : '#parcours')
-      };
-    }
-
-    function renderRecentRhythm(config, orderedPages, nextExercise, diagnostic) {
-      const todayValue = document.getElementById('todayDoneValue');
-      const todayText = document.getElementById('todayDoneText');
-      const tomorrowValue = document.getElementById('tomorrowReviewValue');
-      const tomorrowText = document.getElementById('tomorrowReviewText');
-      const tomorrowLink = document.getElementById('tomorrowReviewLink');
-      if (!todayValue || !todayText || !tomorrowValue || !tomorrowText || !tomorrowLink) return;
-
-      const rhythm = buildRecentRhythm(config, orderedPages, nextExercise, diagnostic);
-      todayValue.textContent = rhythm.todayValue;
-      todayText.textContent = rhythm.todayText;
-      tomorrowValue.textContent = rhythm.tomorrowValue;
-      tomorrowText.textContent = rhythm.tomorrowText;
-      tomorrowLink.href = rhythm.tomorrowHref;
-    }
-
-    function renderPedagogicalFocus(config, orderedPages, nextExercise, diagnostic) {
-      const overview = buildSectionLearningOverview(config, orderedPages);
-      const weakest = overview.weakest;
-      const strongest = overview.strongest;
-      const nextInWeakest = weakest ? getNextExerciseInSection(config, orderedPages, weakest.key) : nextExercise;
-      const diagnosticPath = diagnostic && diagnostic.summary && Array.isArray(diagnostic.summary.recommendedPath)
-        ? diagnostic.summary.recommendedPath
-        : [];
-      const diagnosticWeakest = diagnostic && diagnostic.summary ? diagnostic.summary.weakestDomain : null;
-      const action = diagnosticPath[0] || nextInWeakest || nextExercise;
-
-      setText(
-        'focusPriorityTitle',
-        diagnosticWeakest ? diagnosticWeakest.label : (weakest ? weakest.label : 'Commencer doucement')
-      );
-      setText(
-        'focusPriorityText',
-        diagnosticWeakest
-          ? 'Le dernier diagnostic indique que ce domaine demande une petite seance ciblee.'
-          : weakest
-          ? weakest.completed === 0
-            ? 'Ce domaine n est pas encore lance. Un premier exercice simple aidera a prendre confiance.'
-            : 'C est le domaine a consolider en premier.'
-          : 'Tous les domaines peuvent encore etre travailles.'
-      );
-
-      setText(
-        'focusGoalTitle',
-        diagnosticPath.length ? 'Suivre le diagnostic' : (weakest ? 'Faire 1 exercice puis refaire' : 'Faire 1 petit exercice')
-      );
-      setText(
-        'focusGoalText',
-        diagnosticPath.length
-          ? 'Commencez par ' + diagnosticPath[0].name + ', puis suivez les activites conseillees.'
-          : weakest && strongest
-          ? 'Commencez par ' + weakest.label.toLowerCase() + ', puis revoyez un exercice deja reussi en ' + strongest.label.toLowerCase() + '.'
-          : 'L objectif du jour est simple : terminer une activite et relire la consigne.'
-      );
-
-      setText('focusActionTitle', action ? (action.name || 'Ouvrir un exercice') : 'Choisir un exercice');
-      setText(
-        'focusActionText',
-        diagnosticWeakest && action
-          ? 'Bonne suite pour travailler ' + diagnosticWeakest.label.toLowerCase() + ' selon le dernier diagnostic.'
-          : weakest && action
-          ? 'Bonne suite pour travailler ' + weakest.label.toLowerCase() + '.'
-          : 'Bonne prochaine etape pour continuer.'
-      );
-
-      const link = document.getElementById('focusActionLink');
-      if (link && action) {
-        link.href = action.href || (action.page + '.html');
-      }
-    }
-
-    function renderDailyPlan(config, orderedPages, nextExercise, diagnostic) {
-      const grid = document.getElementById('dailyPlanGrid');
-      const intro = document.getElementById('dailyPlanIntro');
-      if (!grid || !intro) return;
-
-      const plan = buildDailyPlan(config, orderedPages, nextExercise, diagnostic);
-      intro.textContent = plan.intro;
-
-      grid.innerHTML = plan.steps.map(function(step, index) {
-        return [
-          '<a class="daily-plan-card" href="' + escapeHTML(step.href) + '">',
-          '  <div class="daily-plan-step">Etape ' + (index + 1) + '</div>',
-          '  <div class="daily-plan-badge">' + escapeHTML(step.badge) + '</div>',
-          '  <div class="daily-plan-name">' + escapeHTML(step.name) + '</div>',
-          '  <p>' + escapeHTML(step.text) + '</p>',
-          '  <div class="daily-plan-cta">' + escapeHTML(step.cta) + ' →</div>',
-          '</a>'
-        ].join('');
-      }).join('');
-    }
-
-    function buildSectionLearningOverview(config, orderedPages) {
-      const labels = {
-        'Emploi & ORP': 'Emploi',
-        'Numérique': 'Bureautique',
-        'Français': 'Francais'
-      };
-      const sectionMap = buildSectionMap(config, orderedPages);
-      const items = Object.keys(sectionMap).map((section) => {
-        const pages = sectionMap[section];
-        let completed = 0;
-        let totalXp = 0;
-        let playedCount = 0;
-        let accuracyTotal = 0;
-
-        pages.forEach((page) => {
-          const metrics = window.ScoreManager ? ScoreManager.readMetrics(page) : null;
-          if (!metrics) return;
-          if (metrics.status === 'completed') completed += 1;
-          totalXp += Number(metrics.xp) || 0;
-          if ((Number(metrics.typed) || 0) > 0) {
-            playedCount += 1;
-            accuracyTotal += Math.round((metrics.correct / metrics.typed) * 100);
-          }
-        });
-
-        const completionPct = pages.length > 0 ? Math.round((completed / pages.length) * 100) : 0;
-        const avgAccuracy = playedCount > 0 ? Math.round(accuracyTotal / playedCount) : 0;
-        const score = Math.round((completionPct * 0.6) + (avgAccuracy * 0.4));
-
-        return {
-          key: section,
-          label: labels[section] || section,
-          pages: pages,
-          completed: completed,
-          totalXp: totalXp,
-          completionPct: completionPct,
-          avgAccuracy: avgAccuracy,
-          score: score
-        };
-      });
-
-      const sorted = items.slice().sort((a, b) => a.score - b.score);
-      return {
-        items: items,
-        weakest: sorted[0] || null,
-        strongest: sorted[sorted.length - 1] || null
-      };
-    }
-
-    function buildDailyPlan(config, orderedPages, nextExercise, diagnostic) {
-      const diagnosticPath = diagnostic && diagnostic.summary && Array.isArray(diagnostic.summary.recommendedPath)
-        ? diagnostic.summary.recommendedPath
-        : [];
-      const diagnosticWeakest = diagnostic && diagnostic.summary ? diagnostic.summary.weakestDomain : null;
-
-      if (diagnosticPath.length) {
-        return {
-          intro: diagnosticWeakest
-            ? 'Le plan du jour suit votre dernier diagnostic sur ' + diagnosticWeakest.label.toLowerCase() + '.'
-            : 'Le plan du jour suit votre dernier diagnostic.',
-          steps: diagnosticPath.slice(0, 3).map(function(item, index) {
-            return {
-              href: item.href,
-              name: item.name,
-              badge: index === 0
-                ? 'Diagnostic prioritaire'
-                : (index === 1 ? 'Diagnostic consolidation' : 'Diagnostic suite'),
-              text: item.reason || 'Activite choisie a partir du dernier diagnostic d autoevaluation.',
-              cta: index === 0 ? 'Commencer' : (index === 1 ? 'Continuer' : 'Terminer')
-            };
-          })
-        };
-      }
-
-      const overview = buildSectionLearningOverview(config, orderedPages);
-      const items = overview.items.slice().sort(function(a, b) { return a.score - b.score; });
-      const weakest = items[0] || null;
-      const middle = items[Math.min(1, Math.max(0, items.length - 1))] || weakest;
-      const strongest = items[items.length - 1] || weakest;
-      const used = new Set();
-      const steps = [];
-
-      function addExerciseStep(exercise, badge, text, cta) {
-        if (!exercise || !exercise.href || used.has(exercise.href)) return false;
-        used.add(exercise.href);
-        steps.push({
-          href: exercise.href,
-          name: exercise.name || 'Exercice',
-          badge: badge,
-          text: text,
-          cta: cta
-        });
-        return true;
-      }
-
-      function getReplayExercise(sectionItem) {
-        if (!sectionItem || !Array.isArray(sectionItem.pages)) return null;
-        let best = null;
-        sectionItem.pages.forEach(function(page) {
-          const meta = (config.meta && config.meta[page]) || {};
-          const metrics = window.ScoreManager ? ScoreManager.readMetrics(page) : null;
-          const typed = metrics ? Number(metrics.typed) || 0 : 0;
-          const accuracy = typed > 0 ? Math.round((metrics.correct / metrics.typed) * 100) : 0;
-          if (!best && meta.href) {
-            best = { href: meta.href, name: meta.name || page, accuracy: accuracy, typed: typed };
-          }
-          if (typed > 0 && accuracy >= 70) {
-            if (!best || accuracy > best.accuracy) {
-              best = { href: meta.href || (page + '.html'), name: meta.name || page, accuracy: accuracy, typed: typed };
-            }
-          }
-        });
-        return best;
-      }
-
-      const weakestExercise = weakest ? getNextExerciseInSection(config, orderedPages, weakest.key) : nextExercise;
-      const middleExercise = middle ? getNextExerciseInSection(config, orderedPages, middle.key) : nextExercise;
-      const strongestReplay = strongest ? getReplayExercise(strongest) : null;
-
-      addExerciseStep(
-        weakestExercise || nextExercise,
-        weakest ? ('Priorite ' + weakest.label) : 'Demarrage',
-        weakest
-          ? 'Commencez ici pour travailler le domaine le plus fragile sans vous disperser.'
-          : 'Commencez par une activite simple pour lancer la session.',
-        'Commencer'
-      );
-
-      addExerciseStep(
-        middleExercise || nextExercise,
-        middle && weakest && middle.key !== weakest.key ? ('Consolider ' + middle.label) : 'Refaire doucement',
-        middle && weakest && middle.key !== weakest.key
-          ? 'Apres la priorite, gardez un deuxieme exercice pour stabiliser un autre domaine utile.'
-          : 'Refaites une deuxieme activite proche pour mieux retenir la methode.',
-        'Continuer'
-      );
-
-      addExerciseStep(
-        strongestReplay || nextExercise,
-        strongest ? ('Point fort ' + strongest.label) : 'Finir sur une reussite',
-        strongestReplay
-          ? 'Terminez avec un exercice deja mieux reussi pour finir sur une action plus autonome.'
-          : 'Terminez avec une activite connue pour garder confiance.',
-        'Revoir'
-      );
-
-      if (steps.length < 3 && nextExercise) {
-        addExerciseStep(
-          nextExercise,
-          'Suite conseillee',
-          'Bonne activite de secours si le plan du jour contient deja vos exercices connus.',
-          'Ouvrir'
-        );
-      }
-
-      const intro = weakest
-        ? 'Le plan commence par ' + weakest.label.toLowerCase() + ', puis ajoute une activite de consolidation et une activite de reussite.'
-        : 'Le plan du jour propose trois activites courtes.';
-
-      return {
-        intro: intro,
-        steps: steps.slice(0, 3)
-      };
-    }
-
-    function getNextExerciseInSection(config, orderedPages, section) {
-      if (!section) return null;
-      const pages = orderedPages.filter((page) => {
-        const meta = (config.meta && config.meta[page]) || {};
-        return meta.section === section;
-      });
-      for (const page of pages) {
-        const metrics = window.ScoreManager ? ScoreManager.readMetrics(page) : { status: 'not_started' };
-        if (metrics.status !== 'completed') {
-          const meta = (config.meta && config.meta[page]) || {};
-          return {
-            page: page,
-            name: meta.name || page,
-            href: meta.href || (page + '.html')
-          };
-        }
-      }
-      if (!pages.length) return null;
-      const page = pages[0];
-      const meta = (config.meta && config.meta[page]) || {};
-      return {
-        page: page,
-        name: meta.name || page,
-        href: meta.href || (page + '.html')
-      };
-    }
-
-    function renderActivities(config, orderedPages) {
-      const activitiesGrid = document.getElementById('activitiesGrid');
-      if (!activitiesGrid) return;
-
-      const categoryMap = buildCategoryMap(config, orderedPages);
-      const contentByCategory = (config && config.categoryContentByCategory) || {};
-
-      activitiesGrid.innerHTML = Object.keys(categoryMap).map((category) => {
-        const info = contentByCategory[category] || {
-          title: category,
-          desc: 'Exercices simples pour avancer pas a pas.'
-        };
-        const examples = categoryMap[category].slice(0, 3).map((item) => item.name).join(' · ');
-        return [
-          '<article class="activity-card">',
-          '  <div class="activity-top">',
-          '    <span class="activity-badge">' + escapeHTML(category) + '</span>',
-          '    <span class="activity-count">' + categoryMap[category].length + ' activites</span>',
-          '  </div>',
-          '  <h3>' + escapeHTML(info.title) + '</h3>',
-          '  <p>' + escapeHTML(info.desc) + '</p>',
-          '  <div class="activity-examples">' + escapeHTML(examples) + '</div>',
-          '</article>'
-        ].join('');
-      }).join('');
-    }
-
-    function renderCategoryChips(config, orderedPages) {
-      const container = document.getElementById('categoryChips');
-      if (!container) return;
-      const sectionMap = buildSectionMap(config, orderedPages);
-      const sectionOrder = ['Emploi & ORP', 'Numérique', 'Français'];
-      const sections = sectionOrder.filter((s) => sectionMap[s]);
-      Object.keys(sectionMap).forEach((s) => { if (!sections.includes(s)) sections.push(s); });
-      container.innerHTML = sections.map((section) => {
-        return '<span class="category-chip">' + escapeHTML(section) + ' · ' + sectionMap[section].length + '</span>';
-      }).join('');
-    }
-
-    function renderGameCards(config, orderedPages, nextExercise) {
-      const cardsContainer = document.getElementById('exerciseCards');
-      if (!cardsContainer) return;
-
-      cardsContainer.innerHTML = '';
-
-      /* Filtrer par thème actif */
-      const filteredPages = activeThemeFilter
-        ? orderedPages.filter(p => {
-            const m = config.meta && config.meta[p];
-            return m && Array.isArray(m.themes) && m.themes.includes(activeThemeFilter);
-          })
-        : orderedPages;
-
-      const sectionOrder = ['Emploi & ORP', 'Numérique', 'Français'];
-      const sectionMap = buildSectionMap(config, filteredPages);
-      const sections = sectionOrder.filter((s) => sectionMap[s]);
-      Object.keys(sectionMap).forEach((s) => { if (!sections.includes(s)) sections.push(s); });
-
-      sections.forEach((section) => {
-        const pages = sectionMap[section];
-        if (!pages || pages.length === 0) return;
-
-        const header = document.createElement('div');
-        header.className = 'section-group-header';
-        header.innerHTML = '<h3 class="section-group-title">' + escapeHTML(section) + '</h3>';
-        cardsContainer.appendChild(header);
-
-        pages.forEach((page) => {
-          const pageMeta = (config.meta && config.meta[page]) || {};
-          const metrics = window.ScoreManager ? ScoreManager.readMetrics(page) : { status: 'not_started', xp: 0, typed: 0, correct: 0 };
-          const status = metrics.status || 'not_started';
-          const completionText = status === 'completed'
-            ? 'Fini'
-            : (status === 'in_progress' ? 'En cours' : 'A faire');
-          const category = pageMeta.cat || 'Exercice';
-          const accuracy = metrics.typed > 0 ? Math.round((metrics.correct / metrics.typed) * 100) : null;
-          const statsText = accuracy !== null ? (metrics.xp || 0) + ' XP · ' + accuracy + '% juste' : (metrics.xp || 0) + ' XP';
-          const isRecommended = nextExercise && nextExercise.page === page;
-
-          const card = document.createElement('a');
-          card.href = pageMeta.href || (page + '.html');
-          card.className = 'level-card' + (isRecommended ? ' recommended' : '');
-          card.innerHTML = [
-            '<div class="level-card-top">',
-            '  <span class="level-card-category">' + escapeHTML(category) + '</span>',
-            isRecommended ? '  <span class="level-card-flag">Conseille</span>' : '',
-            '</div>',
-            '<h3>' + escapeHTML(pageMeta.name || page) + '</h3>',
-            '<p class="level-card-desc">' + completionText + '</p>',
-            '<div class="level-card-meta">' + escapeHTML(statsText) + '</div>',
-            '<div class="level-card-cta">' + (status === 'completed' ? 'Refaire' : 'Commencer') + ' →</div>'
-          ].join('');
-          cardsContainer.appendChild(card);
-        });
-      });
-    }
-
-    function buildCategoryMap(config, orderedPages) {
-      return orderedPages.reduce((acc, page) => {
-        const pageMeta = (config.meta && config.meta[page]) || {};
-        const category = pageMeta.cat || 'Autres';
-        if (!acc[category]) acc[category] = [];
-        acc[category].push({ page: page, name: pageMeta.name || page });
-        return acc;
-      }, {});
-    }
-
-    function buildSectionMap(config, orderedPages) {
-      return orderedPages.reduce((acc, page) => {
-        const pageMeta = (config.meta && config.meta[page]) || {};
-        const section = pageMeta.section || 'Autres';
-        if (!acc[section]) acc[section] = [];
-        acc[section].push(page);
-        return acc;
-      }, {});
-    }
-
-    function setText(id, value) {
-      const el = document.getElementById(id);
-      if (el) el.textContent = String(value);
-    }
-
-    function escapeHTML(text) {
-      return String(text)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
-
-    document.addEventListener('score:updated', renderAccueil);
-    document.addEventListener('admin:unlock-changed', renderAccueil);
   </script>
 </body>
 </html>
