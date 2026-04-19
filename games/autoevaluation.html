@@ -27,10 +27,23 @@
         </div>
 
         <!-- ── Navigation rapide ── -->
+        <div class="auto-actions">
+          <a href="accueil.html" class="btn btn-secondary btn-sm">Accueil</a>
+          <a href="evaluations.html" class="btn btn-secondary btn-sm">Évaluations</a>
+          <a href="donnees.html" class="btn btn-secondary btn-sm">Données</a>
+          <a href="regles.html" class="btn btn-secondary btn-sm">Règles XP</a>
+        </div>
 
+        <div class="card auto-intro-card">
+          <div class="card-title">Comment utiliser cette page</div>
+          <p>
+            Répondez aux 10 mises en situation, puis enregistrez deux évaluations si vous voulez comparer l'évolution.
+            Le diagnostic met davantage de poids sur les bases importantes du quotidien.
+          </p>
+        </div>
 
         <!-- ── KPI compteur réponses ── -->
-        <div class="kpi-grid fade-up delay-1" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:20px;">
+        <div class="kpi-grid auto-kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:20px;">
           <div class="kpi-card">
             <div class="kpi-value" id="answeredCount">0</div>
             <div class="kpi-label">Réponses données</div>
@@ -46,7 +59,7 @@
         </div>
 
         <!-- ── Grille principale ── -->
-        <div class="auto-grid fade-up delay-2">
+        <div class="auto-grid auto-main-grid">
 
           <!-- Colonne gauche : quiz -->
           <div>
@@ -54,7 +67,7 @@
           </div>
 
           <!-- Colonne droite : résultats + analyse + radars + comparaison -->
-          <div style="display:grid;gap:20px;">
+          <div class="auto-side-column">
 
             <!-- Résultats automatiques -->
             <div class="card">
@@ -410,6 +423,7 @@
         '<div class="card-title" style="margin:0;">Mises en situation à évaluer</div>',
         '<span class="badge badge-blue">Autoévaluation guidée</span>',
       '</div>',
+      '<p style="margin:0 0 14px;font-size:14px;color:var(--text2);line-height:1.7;">Lis chaque situation puis choisis une réponse. Une seule réponse est possible par ligne.</p>',
       '<div class="auto-legend">',
         '<span class="auto-radar-chip"><span class="auto-radar-dot" style="background:var(--accent)"></span>Réponse choisie</span>',
         '<span class="auto-radar-chip">Poids 3 = très important</span>',
@@ -946,6 +960,9 @@
 
     const strengths  = Array.from(document.querySelectorAll('#strengths li')).map(function(li) { return '- ' + li.textContent; });
     const priorities = Array.from(document.querySelectorAll('#priorities li')).map(function(li) { return '- ' + li.textContent; });
+    const recommendedPathLines = buildRecommendedPath().map(function(item, index) {
+      return (index + 1) + '. ' + item.name + ' - ' + item.reason;
+    });
 
     return [
       'AUTOÉVALUATION INTELLIGENTE',
@@ -964,9 +981,7 @@
     ]).concat(priorities).concat([
       '',
       'Parcours recommande :',
-    ].concat(buildRecommendedPath().map(function(item, index) {
-      return (index + 1) + '. ' + item.name + ' - ' + item.reason;
-    })).concat([
+    ]).concat(recommendedPathLines).concat([
       '',
       'Progression observée :',
       document.getElementById('progressObserved').textContent,

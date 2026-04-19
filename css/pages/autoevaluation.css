@@ -1,11 +1,38 @@
 /* ===== AUTOEVALUATION.CSS — Styles spécifiques à l'autoévaluation ===== */
 
 /* ── Grille principale ── */
+.auto-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.auto-intro-card {
+  margin-bottom: 20px;
+}
+
+.auto-intro-card p {
+  margin: 0;
+  color: var(--text2);
+  line-height: 1.7;
+}
+
+.auto-kpi-grid,
+.auto-main-grid {
+  opacity: 1;
+}
+
 .auto-grid {
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
   gap: 20px;
   align-items: start;
+}
+
+.auto-side-column {
+  display: grid;
+  gap: 20px;
 }
 
 /* ── Questions ── */
