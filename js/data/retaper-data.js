@@ -131,5 +131,61 @@ window.RETAPER_DATA = [
       femme: { signature: 'Sara Müller' }
     },
     hint: 'Envoyer un remerciement après un entretien montre votre sérieux et votre motivation.'
+  },
+
+  {
+    category: 'Sant\u00e9',
+    difficulty: 'easy',
+    theme: 'sant\u00e9',
+    contexte: 'Vous avez un rendez-vous chez le m\u00e9decin. Vous envoyez un e-mail pour confirmer votre pr\u00e9sence.',
+    sujet: 'Confirmation de rendez-vous m\u00e9dical',
+    corps: 'Bonjour,\n\nJe vous confirme mon rendez-vous du mercredi 20 mai \u00e0 14h30.\nJe serai pr\u00e9sent \u00e0 l\'heure.\n\nMerci et \u00e0 bient\u00f4t,\nKarim Belhadj',
+    profileVariants: {
+      homme: { signature: 'Karim Belhadj' },
+      femme: { signature: 'Leila Ouali', replacements: [['pr\u00e9sent', 'pr\u00e9sente']] }
+    },
+    hint: 'N\u2019oubliez pas de mentionner le jour, l\u2019heure et la date du rendez-vous.'
+  },
+
+  {
+    category: 'Logement',
+    difficulty: 'medium',
+    theme: 'logement',
+    contexte: 'Votre chauffage ne fonctionne pas. Vous \u00e9crivez un e-mail \u00e0 la g\u00e9rance pour signaler le probl\u00e8me.',
+    sujet: 'Signalement d\'un probl\u00e8me de chauffage',
+    corps: 'Madame, Monsieur,\n\nJe vous contacte car le chauffage de mon appartement ne fonctionne pas depuis lundi.\nJ\'habite au 3e \u00e9tage, appartement 12, au chemin des C\u00e8dres 5 \u00e0 Lausanne.\nPourriez-vous envoyer quelqu\'un pour r\u00e9parer le probl\u00e8me ?\n\nCordialement,\nSofia Nguyen',
+    profileVariants: {
+      homme: { signature: 'Omar Ciss\u00e9' },
+      femme: { signature: 'Sofia Nguyen' }
+    },
+    hint: 'Donnez votre adresse compl\u00e8te et d\u00e9crivez clairement le probl\u00e8me.'
+  },
+
+  {
+    category: 'Banque',
+    difficulty: 'medium',
+    theme: 'num\u00e9rique',
+    contexte: 'Vous voulez ouvrir un compte bancaire. Vous envoyez un e-mail pour demander des informations.',
+    sujet: 'Demande d\'informations \u2013 Ouverture de compte',
+    corps: 'Bonjour,\n\nJe souhaite ouvrir un compte bancaire en Suisse.\nPourriez-vous m\'indiquer les documents n\u00e9cessaires et les horaires de votre agence ?\n\nMerci d\'avance,\nEmilio Santos',
+    profileVariants: {
+      homme: { signature: 'Emilio Santos' },
+      femme: { signature: 'Yasmine Tabet' }
+    },
+    hint: '"Pourriez-vous" est une formule polie pour demander des informations.'
+  },
+
+  {
+    category: 'Absence',
+    difficulty: 'easy',
+    theme: 'emploi',
+    contexte: 'Vous \u00eates malade et ne pouvez pas venir travailler. Vous \u00e9crivez un e-mail \u00e0 votre employeur.',
+    sujet: 'Absence pour maladie',
+    corps: 'Bonjour,\n\nJe vous informe que je suis malade aujourd\'hui et ne peux pas venir travailler.\nJe vais consulter un m\u00e9decin et vous enverrai un certificat m\u00e9dical.\n\nCordialement,\nJose Ferreira',
+    profileVariants: {
+      homme: { signature: 'Jose Ferreira' },
+      femme: { signature: 'Amira Benali' }
+    },
+    hint: '"Je vous informe que" est une formule utile pour annoncer une situation importante.'
   }
 ];

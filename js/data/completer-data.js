@@ -291,9 +291,87 @@ window.COMPLETER_DATA = [
     category: 'Logement',
     difficulty: 'hard',
     theme: 'logement',
-    text: "Je contacte la ___ si j'ai un problème dans mon appartement.",
-    answer: 'gérance',
-    choices: ['gérance', 'gare', 'poste', 'cuisine'],
-    hint: "Service qui gère l'immeuble."
+    text: "Je contacte la ___ si j'ai un probl\u00e8me dans mon appartement.",
+    answer: 'g\u00e9rance',
+    choices: ['g\u00e9rance', 'gare', 'poste', 'cuisine'],
+    hint: "Service qui g\u00e8re l\u2019immeuble."
+  },
+
+  // Sant\u00e9
+  {
+    category: 'Sant\u00e9',
+    difficulty: 'easy',
+    theme: 'sant\u00e9',
+    text: 'Je vais \u00e0 la ___ pour chercher mes m\u00e9dicaments avec mon ordonnance.',
+    answer: 'pharmacie',
+    choices: ['pharmacie', 'gare', 'commune', 'piscine'],
+    hint: 'Lieu o\u00f9 on ach\u00e8te des m\u00e9dicaments.'
+  },
+  {
+    category: 'Sant\u00e9',
+    difficulty: 'easy',
+    theme: 'sant\u00e9',
+    text: 'Le m\u00e9decin me donne une ___ pour ach\u00e9ter des m\u00e9dicaments.',
+    answer: 'ordonnance',
+    choices: ['ordonnance', 'facture', 'cl\u00e9', 'carte'],
+    hint: 'Document sign\u00e9 par le m\u00e9decin.'
+  },
+  {
+    category: 'Sant\u00e9',
+    difficulty: 'medium',
+    theme: 'sant\u00e9',
+    text: 'Je paie ma ___ d\u2019assurance maladie chaque mois.',
+    answer: 'prime',
+    choices: ['prime', 'caution', 'loyer', 'facture'],
+    hint: 'Montant mensuel pay\u00e9 \u00e0 la caisse-maladie.'
+  },
+
+  // Logement
+  {
+    category: 'Logement',
+    difficulty: 'easy',
+    theme: 'logement',
+    text: 'Je paie mon ___ chaque mois \u00e0 la g\u00e9rance.',
+    answer: 'loyer',
+    choices: ['loyer', 'salaire', 'billet', 'permis'],
+    hint: 'Montant pay\u00e9 pour habiter dans l\u2019appartement.'
+  },
+  {
+    category: 'Logement',
+    difficulty: 'medium',
+    theme: 'logement',
+    text: 'Je signe le ___ avant d\u2019entrer dans mon appartement.',
+    answer: 'bail',
+    choices: ['bail', 'billet', 'formulaire', 'livret'],
+    hint: 'Contrat de location entre locataire et propri\u00e9taire.'
+  },
+  {
+    category: 'Logement',
+    difficulty: 'medium',
+    theme: 'logement',
+    text: 'Je verse la ___ sur un compte bloqu\u00e9 \u00e0 la banque.',
+    answer: 'caution',
+    choices: ['caution', 'prime', 'attestation', 'ordonnance'],
+    hint: 'D\u00e9p\u00f4t de garantie remis \u00e0 la fin du bail.'
+  },
+
+  // Banque
+  {
+    category: 'Banque',
+    difficulty: 'easy',
+    theme: 'num\u00e9rique',
+    text: 'Je fais un ___ pour payer ma facture depuis mon e-banking.',
+    answer: 'virement',
+    choices: ['virement', 'trajet', 'rendez-vous', 'formulaire'],
+    hint: 'Transfert d\u2019argent d\u2019un compte \u00e0 un autre.'
+  },
+  {
+    category: 'Banque',
+    difficulty: 'medium',
+    theme: 'num\u00e9rique',
+    text: 'Je v\u00e9rifie mon ___ de compte chaque mois pour contr\u00f4ler mes d\u00e9penses.',
+    answer: 'relev\u00e9',
+    choices: ['relev\u00e9', 'bail', 'permis', 'horaire'],
+    hint: 'Document qui liste toutes les op\u00e9rations bancaires.'
   },
 ];

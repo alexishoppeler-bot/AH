@@ -306,13 +306,96 @@ window.ECOUTER_DATA = [
   },
 
   {
+    id: 'ep09',
+    type: 'histoire',
+    title: '\u00c0 la pharmacie',
+    category: 'Sant\u00e9',
+    difficulty: 'easy',
+    theme: 'sant\u00e9',
+    transcript: `Rania a mal \u00e0 la gorge depuis deux jours. Elle t\u00e9l\u00e9phone au cabinet m\u00e9dical et prend rendez-vous pour le lendemain. Le m\u00e9decin l\u2019examine et lui donne une ordonnance. Rania va ensuite \u00e0 la pharmacie. Elle donne l\u2019ordonnance au pharmacien. Il regarde les m\u00e9dicaments prescrits et va les chercher. Il revient avec deux bo\u00eetes et explique comment les prendre : un comprim\u00e9 le matin et un le soir, pendant sept jours. Il lui dit aussi de bien boire de l\u2019eau. Rania paie \u00e0 la caisse et garde le re\u00e7u. Elle sait qu\u2019elle devra envoyer le re\u00e7u \u00e0 son assurance maladie pour \u00eatre rembours\u00e9e.`,
+    questions: [
+      {
+        question: 'Pourquoi Rania va-t-elle chez le m\u00e9decin ?',
+        choices: ['Elle a mal au dos', 'Elle a mal \u00e0 la gorge', 'Elle a un rendez-vous de contr\u00f4le', 'Elle a perdu ses m\u00e9dicaments'],
+        answer: 1,
+        explication: 'Le texte dit qu\u2019elle a mal \u00e0 la gorge depuis deux jours.'
+      },
+      {
+        question: 'Que donne le m\u00e9decin \u00e0 Rania ?',
+        choices: ['Un billet de bus', 'Une ordonnance', 'Un formulaire administratif', 'Un rendez-vous \u00e0 l\u2019h\u00f4pital'],
+        answer: 1,
+        explication: 'Le m\u00e9decin lui donne une ordonnance pour acheter les m\u00e9dicaments.'
+      },
+      {
+        question: 'Comment doit-elle prendre les m\u00e9dicaments ?',
+        choices: ['Trois fois par jour', 'Seulement le soir', 'Un comprim\u00e9 le matin et un le soir pendant sept jours', 'Un comprim\u00e9 par semaine'],
+        answer: 2,
+        explication: 'Le pharmacien explique : un comprim\u00e9 le matin et un le soir pendant sept jours.'
+      },
+      {
+        question: 'Pourquoi garde-t-elle le re\u00e7u ?',
+        choices: ['Pour offrir les m\u00e9dicaments', 'Pour l\u2019envoyer \u00e0 l\u2019ORP', 'Pour l\u2019envoyer \u00e0 son assurance maladie', 'Pour montrer au m\u00e9decin'],
+        answer: 2,
+        explication: 'Elle garde le re\u00e7u pour l\u2019envoyer \u00e0 son assurance afin d\u2019\u00eatre rembours\u00e9e.'
+      }
+    ]
+  },
+
+  {
+    id: 'ep10',
+    type: 'dialogue',
+    title: 'Probl\u00e8me de chauffage',
+    category: 'Logement',
+    difficulty: 'medium',
+    theme: 'logement',
+    lines: [
+      { speaker: 'G\u00e9rance', gender: 'f', text: 'G\u00e9rance du Parc, bonjour.' },
+      { speaker: 'Omar', gender: 'm', text: 'Bonjour madame. Je m\u2019appelle Omar Ciss\u00e9. J\u2019habite au 3e \u00e9tage, appartement 12.' },
+      { speaker: 'G\u00e9rance', gender: 'f', text: 'Bonjour monsieur. Que puis-je faire pour vous ?' },
+      { speaker: 'Omar', gender: 'm', text: 'Mon chauffage ne fonctionne plus depuis lundi. Il fait tr\u00e8s froid dans mon appartement.' },
+      { speaker: 'G\u00e9rance', gender: 'f', text: 'Je suis d\u00e9sol\u00e9e d\u2019entendre \u00e7a. Avez-vous v\u00e9rifi\u00e9 le thermostat ?' },
+      { speaker: 'Omar', gender: 'm', text: 'Oui, j\u2019ai v\u00e9rifi\u00e9. Le probl\u00e8me n\u2019est pas le thermostat.' },
+      { speaker: 'G\u00e9rance', gender: 'f', text: 'D\u2019accord. Je vais envoyer un technicien demain matin entre 9h et 11h. Vous serez \u00e0 la maison ?' },
+      { speaker: 'Omar', gender: 'm', text: 'Oui, je serai disponible.' },
+      { speaker: 'G\u00e9rance', gender: 'f', text: 'Parfait. Merci de nous avoir pr\u00e9venus. Nous allons r\u00e9soudre le probl\u00e8me rapidement.' },
+      { speaker: 'Omar', gender: 'm', text: 'Merci beaucoup, bonne journ\u00e9e.' }
+    ],
+    questions: [
+      {
+        question: 'Quel est le probl\u00e8me d\u2019Omar ?',
+        choices: ['Le r\u00e9frig\u00e9rateur est cass\u00e9', 'Le chauffage ne fonctionne plus', 'Il a perdu ses cl\u00e9s', 'L\u2019eau chaude est coup\u00e9e'],
+        answer: 1,
+        explication: 'Omar explique que son chauffage ne fonctionne plus depuis lundi.'
+      },
+      {
+        question: 'Depuis quand a-t-il ce probl\u00e8me ?',
+        choices: ['Depuis hier', 'Depuis lundi', 'Depuis une semaine', 'Depuis ce matin'],
+        answer: 1,
+        explication: 'Omar dit : \u00ab depuis lundi \u00bb.'
+      },
+      {
+        question: 'Quand le technicien va-t-il venir ?',
+        choices: ['Ce soir', 'Demain entre 9h et 11h', 'Jeudi apr\u00e8s-midi', 'La semaine prochaine'],
+        answer: 1,
+        explication: 'La g\u00e9rance dit qu\u2019elle envoie un technicien demain matin entre 9h et 11h.'
+      },
+      {
+        question: 'Qu\u2019a-t-il d\u00e9j\u00e0 v\u00e9rifi\u00e9 ?',
+        choices: ['Les fen\u00eatres', 'Le thermostat', 'L\u2019\u00e9lectricit\u00e9', 'L\u2019adresse'],
+        answer: 1,
+        explication: 'Omar confirme qu\u2019il a v\u00e9rifi\u00e9 le thermostat mais que ce n\u2019est pas le probl\u00e8me.'
+      }
+    ]
+  },
+
+  {
     id: 'ep08',
     type: 'histoire',
-    title: 'Prendre le bus à Lausanne',
+    title: 'Prendre le bus \u00e0 Lausanne',
     category: 'Transports publics',
     difficulty: 'easy',
     theme: 'transports',
-    transcript: `Fatima doit aller à Renens pour un entretien d’embauche. Elle habite à Pully. Elle regarde l’horaire des bus sur son téléphone. Le bus numéro 9 part à 8h15 de l’arrêt Pully-Gare. Fatima va à l’arrêt et achète un billet à la machine. Elle vérifie que son billet est valable pour deux zones. Le bus arrive à l’heure. Fatima monte et s’assoit. Elle regarde les noms des arrêts sur l’écran. À la gare de Lausanne, elle change de bus. Elle prend un bus direction Renens-Gare. Elle descend à l’arrêt Renens-Gare et arrive cinq minutes avant l’entretien.`,
+    transcript: `Fatima doit aller \u00e0 Renens pour un entretien d\u2019embauche. Elle habite \u00e0 Pully. Elle regarde l\u2019horaire des bus sur son t\u00e9l\u00e9phone. Le bus num\u00e9ro 9 part \u00e0 8h15 de l\u2019arr\u00eat Pully-Gare. Fatima va \u00e0 l\u2019arr\u00eat et ach\u00e8te un billet \u00e0 la machine. Elle v\u00e9rifie que son billet est valable pour deux zones. Le bus arrive \u00e0 l\u2019heure. Fatima monte et s\u2019assoit. Elle regarde les noms des arr\u00eats sur l\u2019\u00e9cran. \u00c0 la gare de Lausanne, elle change de bus. Elle prend un bus direction Renens-Gare. Elle descend \u00e0 l\u2019arr\u00eat Renens-Gare et arrive cinq minutes avant l\u2019entretien.`,
     questions: [
       {
         question: 'Où habite Fatima ?',

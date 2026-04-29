@@ -119,5 +119,53 @@ window.MOTS_CROISES_DATA = [
       { id: 4, dir: 'down', r: 0, c: 0, answer: 'TRAIN', clue: 'Transport qui circule sur les rails' },
       { id: 5, dir: 'down', r: 0, c: 2, answer: 'ARRET', clue: 'Endroit ou on attend le bus ou le tram' },
     ],
+  },
+
+  {
+    name: 'Grille 6 — Sante',
+    difficulty: 'medium',
+    theme: 'santé',
+    rows: 8,
+    cols: 8,
+    layout: [
+      '#S######',
+      '#A##VH##',
+      '#N##AO##',
+      '#T##CP##',
+      'MEDECIN#',
+      '####IT##',
+      '#SOINA##',
+      '#####L##',
+    ],
+    words: [
+      { id: 1, dir: 'across', r: 4, c: 0, answer: 'MEDECIN', clue: 'Professionnel de la sante a consulter' },
+      { id: 2, dir: 'across', r: 6, c: 1, answer: 'SOIN', clue: 'Traitement ou aide medicale' },
+      { id: 3, dir: 'down', r: 0, c: 1, answer: 'SANTE', clue: 'Bien-etre physique et mental' },
+      { id: 4, dir: 'down', r: 1, c: 4, answer: 'VACCIN', clue: 'Protection contre certaines maladies' },
+      { id: 5, dir: 'down', r: 1, c: 5, answer: 'HOPITAL', clue: 'Grand etablissement de soins medicaux' },
+    ],
+  },
+
+  {
+    name: 'Grille 7 — Logement',
+    difficulty: 'medium',
+    theme: 'logement',
+    rows: 7,
+    cols: 8,
+    layout: [
+      '###L####',
+      '###O####',
+      '###Y####',
+      '###EB###',
+      '#GERANCE',
+      'CAUTION#',
+      '####L###',
+    ],
+    words: [
+      { id: 1, dir: 'across', r: 4, c: 1, answer: 'GERANCE', clue: 'Societe qui gere les immeubles en location' },
+      { id: 2, dir: 'across', r: 5, c: 0, answer: 'CAUTION', clue: 'Garantie versee avant d entrer dans un logement' },
+      { id: 3, dir: 'down', r: 0, c: 3, answer: 'LOYER', clue: 'Somme mensuelle payee pour habiter' },
+      { id: 4, dir: 'down', r: 3, c: 4, answer: 'BAIL', clue: 'Contrat de location signe avec le proprietaire' },
+    ],
   }
 ];

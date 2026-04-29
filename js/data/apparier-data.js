@@ -39,13 +39,13 @@ window.APPARIER_DATA = [
     ]
   },
   {
-    category: "Recherche d'emploi",
+    category: "Recherche d’emploi",
     difficulty: 'medium',
     theme: 'emploi',
     pairs: [
       { term: 'ORP', def: 'Office qui aide à chercher un emploi' },
-      { term: 'CV', def: "Document avec la formation et l'expérience" },
-      { term: 'Entretien', def: "Rencontre avec l'employeur" },
+      { term: 'CV', def: "Document avec la formation et l’expérience" },
+      { term: 'Entretien', def: "Rencontre avec l’employeur" },
       { term: 'Candidature', def: 'Demande pour obtenir un poste' },
       { term: 'Employeur', def: 'Personne ou entreprise qui donne du travail' },
     ]
@@ -55,15 +55,15 @@ window.APPARIER_DATA = [
     difficulty: 'easy',
     theme: 'transports',
     pairs: [
-      { term: 'Arrêt', def: "Endroit où le bus ou le tram s'arrête" },
-      { term: 'Horaire', def: "Heures de départ et d'arrivée" },
+      { term: 'Arrêt', def: "Endroit où le bus ou le tram s’arrête" },
+      { term: 'Horaire', def: "Heures de départ et d’arrivée" },
       { term: 'Billet', def: 'Ticket pour voyager' },
       { term: 'Quai', def: 'Endroit où attendre le train' },
       { term: 'Correspondance', def: 'Changement de bus ou de train' },
     ]
   },
   {
-    category: "Entretien d'embauche",
+    category: "Entretien d’embauche",
     difficulty: 'medium',
     theme: 'emploi',
     pairs: [
@@ -107,7 +107,55 @@ window.APPARIER_DATA = [
       { term: 'Commune', def: 'Administration locale' },
       { term: 'Assurance', def: 'Service qui couvre certains frais' },
       { term: 'Facture', def: 'Document qui demande un paiement' },
-      { term: 'Rendez-vous', def: "Moment prévu pour rencontrer quelqu'un" },
+      { term: 'Rendez-vous', def: "Moment prévu pour rencontrer quelqu’un" },
+    ]
+  },
+  {
+    category: 'Santé',
+    difficulty: 'medium',
+    theme: 'santé',
+    pairs: [
+      { term: 'Médecin de famille', def: 'Médecin principal à consulter en premier' },
+      { term: 'Ordonnance', def: 'Document signé par le médecin pour obtenir des médicaments' },
+      { term: 'Pharmacie', def: 'Lieu où l’on achète les médicaments' },
+      { term: 'Urgences', def: 'Service hospitalier pour les cas graves' },
+      { term: 'Carte d’assuré', def: 'Document à apporter à chaque rendez-vous médical' },
+    ]
+  },
+  {
+    category: 'Assurance maladie',
+    difficulty: 'hard',
+    theme: 'santé',
+    pairs: [
+      { term: 'LAMal', def: 'Assurance maladie obligatoire en Suisse' },
+      { term: 'Franchise', def: 'Montant payé par vous-même avant que l’assurance intervienne' },
+      { term: 'Prime', def: 'Montant mensuel versé à l’assurance maladie' },
+      { term: 'Remboursement', def: 'Argent rendu par l’assurance après un soin' },
+      { term: 'Caisse-maladie', def: 'Compagnie qui gère l’assurance maladie' },
+    ]
+  },
+  {
+    category: 'Logement',
+    difficulty: 'medium',
+    theme: 'logement',
+    pairs: [
+      { term: 'Loyer', def: 'Somme mensuelle payée pour habiter un logement' },
+      { term: 'Bail', def: 'Contrat de location signé entre locataire et propriétaire' },
+      { term: 'Caution', def: 'Garantie versée à l’entrée dans le logement' },
+      { term: 'Gérance', def: 'Société qui gère les immeubles en location' },
+      { term: 'Locataire', def: 'Personne qui loue un logement' },
+    ]
+  },
+  {
+    category: 'Banque',
+    difficulty: 'medium',
+    theme: 'numérique',
+    pairs: [
+      { term: 'IBAN', def: 'Numéro de compte bancaire international' },
+      { term: 'Virement', def: 'Transfert d’argent d’un compte à un autre' },
+      { term: 'Bulletin de salaire', def: 'Document mensuel qui détaille le salaire reçu' },
+      { term: 'Phishing', def: 'Tentative d’arnaque par e-mail pour voler des données' },
+      { term: 'Code PIN', def: 'Code secret personnel pour utiliser une carte bancaire' },
     ]
   },
 ];
