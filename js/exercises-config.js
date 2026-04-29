@@ -20,6 +20,9 @@
     { page: 'cherche-clique',name:'Cherche & clique',          icon: '🔎', cat: 'Competences',   section: 'Numérique',          themes: ['numérique', 'emploi', 'transports', 'orp'] },
     { page: 'completer',   name: 'Completer',                 icon: '🧩', cat: 'Competences',   section: 'Numérique',          themes: ['numérique', 'emploi', 'orp', 'transports', 'santé', 'logement'] },
     { page: 'orientation', name: 'Orientation',               icon: '🗺️', cat: 'Jeu',           section: 'Numérique',          themes: ['numérique', 'transports'] },
+    { page: 'maths-pratiques', name: 'Maths pratiques',       icon: '🧮', cat: 'Competences',   section: 'Numérique',          themes: ['numérique', 'emploi', 'transports', 'orp'] },
+    { page: 'mini-word-trainer', name: 'Mini Word Trainer',   icon: '📄', cat: 'Competences',   section: 'Numérique',          themes: ['numérique', 'emploi'] },
+    { page: 'mini-excel-trainer', name: 'Mini Excel Trainer', icon: '📊', cat: 'Competences',   section: 'Numérique',          themes: ['numérique', 'emploi'] },
     { page: 'anagramme',   name: 'Anagramme',                 icon: '🔀', cat: 'Jeu',           section: 'Français',           themes: ['numérique', 'emploi', 'orp', 'transports'] },
     { page: 'apparier',    name: 'Apparier',                  icon: '🔗', cat: 'Jeu',           section: 'Français',           themes: ['numérique', 'emploi', 'orp', 'transports'] },
     { page: 'pendu',       name: 'Pendu',                     icon: '🪢', cat: 'Jeu',           section: 'Français',           themes: ['numérique', 'emploi', 'orp', 'transports', 'santé'] },
@@ -61,6 +64,10 @@
     'retaper':         '+7 XP parfait, +5 XP (>=90%), +3 XP (>=70%), +1 XP sinon. -1 XP si indice.',
     'simulations-dialogues': '+3 XP (bonne reponse), +1 XP (reponse moyenne).',
     'orientation':     '+3 XP arrivee a destination, +2 XP chemin parfait.'
+    ,
+    'maths-pratiques': '+3 XP par bonne reponse, +1 XP par exercice tente.',
+    'mini-word-trainer': '+5 XP par mission reussie.',
+    'mini-excel-trainer': '+5 XP par mission reussie.'
   };
 
   const CATEGORY_CONTENT_BY_CATEGORY = {

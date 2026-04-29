@@ -226,6 +226,46 @@
       50%      { opacity: 0.8; transform: scaleY(1); }
     }
 
+    /* ── Two-column layout: exercise left / keyboard right ── */
+    @media (min-width: 1000px) {
+      .container {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        grid-template-areas:
+          "header   header"
+          "options  keyboard"
+          "kpi      keyboard"
+          "progress keyboard"
+          "exercise keyboard"
+          "train    keyboard"
+          "alert    keyboard";
+        column-gap: 28px;
+        align-items: start;
+      }
+
+      .page-header                 { grid-area: header; }
+      .keyboard-options            { grid-area: options; }
+      .kpi-grid                    { grid-area: kpi; }
+      #progress-card               { grid-area: progress; }
+      .container > .exercise-zone  { grid-area: exercise; }
+      #train-zone                  { grid-area: train; }
+      #virtual-keyboard            { grid-area: keyboard; position: sticky; top: calc(var(--header-h) + 16px); margin-top: 0; }
+      .container > .alert          { grid-area: alert; }
+
+      /* Compact page header in two-column mode */
+      .container .page-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 20px;
+        margin-bottom: 4px;
+      }
+      .container .page-header .page-icon { font-size: 26px; }
+      .container .page-header h1         { font-size: 20px; margin: 0; }
+      .container .page-header p          { font-size: 13px; margin: 0; flex: 1; }
+      .container .page-header #btn-train-start { margin-top: 0; flex-shrink: 0; }
+    }
+
     @media (min-width: 1200px) {
       .kpi-grid {
         grid-template-columns: repeat(5, minmax(0, 1fr));
